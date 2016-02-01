@@ -1,0 +1,5 @@
+This file serves no purpose except to force git to create this directory.
+For task 1 "Gathering Requirements" you must save your PDF file in this directory.
+
+Remember it MUST be a PDF file -- anything else gets no marks.
+
