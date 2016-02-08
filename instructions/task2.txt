@@ -1,0 +1,22 @@
+CS207 SEMESTER 2 PROJECT
+===
+
+Instructions for Task 2
+---
+
+The details of Task 2 are on the course webpage.  These instructions
+are only to explain how to set up the project working copy and Eclipse
+for the minimum of problems, and how to submit the task once you have
+completed it.
+
+NOTE: both partners have to do these instructions in a specific order
+otherwise Eclipse will be unhappy.  It is suggested that you use
+Eclipse and the UML lab plug-in for this.  The Lab computers have
+licenses for UML Lab;  if you want to use it at home, then a demo
+license is available.
+
+Getting Started
+---
+
+I assume you are in the working directory of your project, i.e. the
+one where the readme file is.
