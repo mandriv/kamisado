@@ -3,8 +3,8 @@ gitlab.  To help with marking I need you need to reconfigure your git
 email using the university email address which contains your user
 name, and also add your real name.  For example:
 
-     git config --global user.email="kwb13215@strath.ac.uk" 
-     git config --global user.name="Your Name" 
+     git config --global user.email "kwb13215@strath.ac.uk" 
+     git config --global user.name "Your Name" 
 
 Please USE YOUR OWN USER NAME and your OWN REAL NAME.  
 
