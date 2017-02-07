@@ -47,6 +47,7 @@ public class BoardGui extends JComponent{
 		towers = new ArrayList<Tower>();
 		for(int i=0; i<8; i++){
 			towers.add(new Tower(MARGIN+TILE_OFFSET*i,MARGIN,towerColorSeq[i],"B"));
+			towers.add(new Tower(MARGIN+TILE_OFFSET*i,boardBackground.getHeight(null)-MARGIN-TILE_OFFSET,towerColorSeq[7-i],"W"));
 		}
 	}
 	
