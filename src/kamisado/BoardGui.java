@@ -29,7 +29,7 @@ public class BoardGui extends JComponent{
 		frame.setVisible(true);
 		frame.setResizable(false);
 		frame.setSize(this.boardBackground.getWidth(null), this.boardBackground.getHeight(null));
-		//center the frame
+		//Centre the frame
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 		frame.setLocation(dim.width/2-frame.getSize().width/2, dim.height/2-frame.getSize().height/2);
 		
