@@ -1,4 +1,4 @@
-package kamisado;
+package kamisado_logic;
 
 import java.awt.*;
 import java.util.*;
@@ -53,7 +53,6 @@ public class Tower {
 		fileName.append("Tower");
 		fileName.append(playerColor);
 		fileName.append(".png");
-		System.out.println(fileName.toString());
 		return new ImageIcon(fileName.toString()).getImage();
 	}
 	

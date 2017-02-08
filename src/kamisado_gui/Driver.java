@@ -1,4 +1,4 @@
-package kamisado;
+package kamisado_gui;
 
 public class Driver {
 
