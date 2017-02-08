@@ -1,14 +1,9 @@
 package kamisado_gui;
 
 import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.util.ArrayList;
-import java.util.List;
 import javax.swing.*;
 
 import kamisado_logic.BoardGrid;
-import kamisado_logic.Tower;
 
 public class BoardGui extends JComponent{
 
@@ -26,7 +21,7 @@ public class BoardGui extends JComponent{
 		boardGrid = new BoardGrid();
 
 		//Set background image and frame container dimensions
-		boardBackground = new ImageIcon("src/kamisado_media/board.png").getImage();
+		boardBackground = new ImageIcon("media/frameBackgrounds/board.png").getImage();
 		this.setPreferredSize(new Dimension(boardBackground.getWidth(null),boardBackground.getHeight(null)));
 
 
@@ -52,6 +47,10 @@ public class BoardGui extends JComponent{
 				g.drawImage(boardGrid.getSquare(i,j).getTileImage(),
 						MARGIN_LEFT+TILE_LENGTH*j+TILE_OFFSET*j,
 						MARGIN_TOP+TILE_LENGTH*i+TILE_OFFSET*i, null);
+				if(boardGrid.getSquare(i,j).isOccupied())
+					g.drawImage(boardGrid.getSquare(i,j).getTower().getImage(),
+							MARGIN_LEFT+TILE_LENGTH*j+TILE_OFFSET*j,
+							MARGIN_TOP+TILE_LENGTH*i+TILE_OFFSET*i, null);
 			}
 		}
 	}
