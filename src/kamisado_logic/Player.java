@@ -2,8 +2,8 @@ package kamisado_logic;
 
 public class Player {
 
-	static final int WHITE = 0;
-	static final int BLACK = 1;
+	public static final int WHITE = 0;
+	public static final int BLACK = 1;
 	
 	int player;
 	

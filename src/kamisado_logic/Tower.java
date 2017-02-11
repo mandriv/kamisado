@@ -20,11 +20,7 @@ public class Tower {
 		color = new GameColor(towerColor);
 		player = new Player(playerNum);
 	}
-	
-	/**
-	 * @return
-	 * @throws Exception
-	 */
+
 	public Image getImage(){
 		return new ImageIcon("media/pieces/"+color.toString()+"Tower_"+player.toString()+".png").getImage();
 	}

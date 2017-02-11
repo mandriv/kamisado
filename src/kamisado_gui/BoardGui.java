@@ -4,6 +4,7 @@ import java.awt.*;
 import javax.swing.*;
 
 import kamisado_logic.BoardGrid;
+import kamisado_logic.Square;
 
 public class BoardGui extends JComponent{
 
@@ -14,16 +15,18 @@ public class BoardGui extends JComponent{
 	private static final int TILE_LENGTH = 80;
 
 	private Image boardBackground;
-	private BoardGrid boardGrid;
+	public BoardGrid boardGrid;
 
-	public BoardGui(){
+	public BoardGui(BoardGrid bg){
 		
-		boardGrid = new BoardGrid();
+		boardGrid = bg;
 
 		//Set background image and frame container dimensions
 		boardBackground = new ImageIcon("media/frameBackgrounds/board.png").getImage();
 		this.setPreferredSize(new Dimension(boardBackground.getWidth(null),boardBackground.getHeight(null)));
-
+		
+		//Set mouse click listener
+		this.addMouseListener(new MouseClickListener(this));
 
 		//create and show frame
 		JFrame frame = new JFrame("Kamisado");
@@ -44,16 +47,22 @@ public class BoardGui extends JComponent{
 		g.drawImage(this.boardBackground, 0, 0, null);
 		for(int i=0;i<8;i++){
 			for(int j=0;j<8;j++){
-				g.drawImage(boardGrid.getSquare(i,j).getTileImage(),
-						MARGIN_LEFT+TILE_LENGTH*j+TILE_OFFSET*j,
-						MARGIN_TOP+TILE_LENGTH*i+TILE_OFFSET*i, null);
-				if(boardGrid.getSquare(i,j).isOccupied())
-					g.drawImage(boardGrid.getSquare(i,j).getTower().getImage(),
-							MARGIN_LEFT+TILE_LENGTH*j+TILE_OFFSET*j,
-							MARGIN_TOP+TILE_LENGTH*i+TILE_OFFSET*i, null);
+				Square square = boardGrid.getSquare(i,j);
+				//coordinates of tiles and towers
+				int x = MARGIN_LEFT+TILE_LENGTH*j+TILE_OFFSET*j;
+				int y = MARGIN_TOP+TILE_LENGTH*i+TILE_OFFSET*i;
+				square.setX(x);
+				square.setY(y);				
+				//draw tiles
+				g.drawImage(square.getImage(),x,y, null);				
+				//draw towers
+				if(boardGrid.getSquare(i,j).isOccupied()){
+					g.drawImage(square.getTower().getImage(),x,y,null);
+				}
 			}
 		}
 	}
+	
 	
 
 

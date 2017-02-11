@@ -1,8 +1,11 @@
 package kamisado_logic;
 
+import java.util.ArrayList;
+
 public class BoardGrid {
 	
-	Square[][] board;
+	private Square[][] board;
+	public FocusableSquare focus;
 
 	public BoardGrid() {
 		board =  new Square[8][8];
@@ -33,10 +36,43 @@ public class BoardGrid {
 		for(int i=0;i<8;i++)
 			board[7][i] = new Square(GameColor.BROWN-i,new Tower(GameColor.BROWN-i,Player.WHITE));
 		
+		focus = new FocusableSquare(null, false);
 	}
 	
 	public Square getSquare(int x, int y){
 		return board[x][y];
+	}
+	
+	public ArrayList<Square> getTilesAsList(){
+		ArrayList<Square> tiles = new ArrayList<>();
+		for (int i=0;i<8;i++){
+			for (int j=0;j<8;j++){
+				tiles.add(getSquare(i, j));
+			}
+		}
+		return tiles;
+	}
+
+	public void setFocused(Square square){
+		focus.setFocused(square);
+	}
+	
+	public Square getFocused(){
+		return focus.getSquare();
+	}
+	
+	public void defocus(){
+		focus.defocus();
+	}
+	
+	public boolean hasFocusedSquare(){
+		return focus.isFocused();
+	}
+	
+	public void makeMove(Square srcSq, Square destSq){
+		Tower t = srcSq.getTower();	
+		srcSq.clearSquare();
+		destSq.setTower(t);	
 	}
 
 }

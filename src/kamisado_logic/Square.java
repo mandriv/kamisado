@@ -8,15 +8,20 @@ public class Square {
 	
 	GameColor squareColor;
 	Tower tower;
+	boolean occupied;
+	int xPosition;
+	int yPosition;
 	
 	public Square(int color, Tower tower) {
 		squareColor = new GameColor(color);
 		this.tower = tower;
+		occupied = true;
 	}
 	
 	public Square(int color) {
 		squareColor = new GameColor(color);
 		tower = null;
+		occupied = false;
 	}
 	
 	public void setColor(int color){
@@ -33,6 +38,12 @@ public class Square {
 	
 	public void setTower(Tower tower){
 		this.tower = tower;
+		occupied = true;
+	}
+	
+	public void clearSquare(){
+		setTower(null);
+		occupied = false;
 	}
 	
 	public Tower getTower(){
@@ -40,11 +51,27 @@ public class Square {
 	}
 	
 	public boolean isOccupied(){
-		return (tower!=null);
+		return occupied;
 	}
 	
-	public Image getTileImage(){
+	public Image getImage(){
 		return new ImageIcon("media/tiles/"+getColorString()+"Tile.png").getImage();
+	}
+	
+	public void setX(int x){
+		xPosition = x;
+	}
+	
+	public void setY(int y){
+		yPosition = y;
+	}
+	
+	public int getX(){
+		return xPosition;
+	}
+	
+	public int getY(){
+		return yPosition;
 	}
 
 }

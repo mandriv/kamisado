@@ -2,14 +2,14 @@ package kamisado_logic;
 
 public class GameColor {
 	
-	static final int ORANGE = 0;
-	static final int BLUE = 1;
-	static final int PURPLE = 2;
-	static final int PINK = 3;
-	static final int YELLOW = 4;
-	static final int RED = 5;
-	static final int GREEN = 6;
-	static final int BROWN = 7;
+	public static final int ORANGE = 0;
+	public static final int BLUE = 1;
+	public static final int PURPLE = 2;
+	public static final int PINK = 3;
+	public static final int YELLOW = 4;
+	public static final int RED = 5;
+	public static final int GREEN = 6;
+	public static final int BROWN = 7;
 
 	int value;
 	
