@@ -1,0 +1,51 @@
+• Use case: 		View Statistics
+• Brief Description: 	Enable player to see statistics, best times and achievments
+• Actor: 		Player
+• Precondition:		The player has launched the Kamisado game and chose 
+			"View Statistics" from menu.
+
+• Main flow:		1. Choose "View Statistics from main menu"
+			2. Browse statistics.
+			3. Go back to main menu.
+
+• Alternative Flow:	No alternative flow.
+
+• Postcondition:	Player returned to main menu.
+=================================================================================================
+• Use case: 		Play Kamisado
+• Brief Description: 	Enable player to start a new game of Kamisado
+• Actor: 		Player
+• Precondition:		The player has launched the Kamisado game and chose "Play Kamisado"
+			from main 
+
+• Main flow:		1. Choose between one or two player mode.
+			2. Choose game mode (SPEED or normal).
+			3. Start game
+
+• Alternative Flow:	At 1, return to main menu.
+			At 2, return to selection of number of players.
+			At 3, if one player mode was selected, the choice of difficulty appears.
+
+• Postcondition:	Game started.
+=================================================================================================
+• Use case: 		One player
+• Brief Description: 	Enable player to play Kamisado in a single player mode.
+• Actor: 		Player
+• Precondition:		The player has selected single player in the difficulty selection menu.
+
+• Main flow:
+	1. Choose one player mode.
+	2. Choose game difficulty (easy or hard).
+	3. Start game in the selected difficulty level.
+	4. Play Kamisado against AI.
+		4.1 If the player has enough points to win best of 3/5/7 go to 5.
+		4.2 Go to 4.
+	5. Game ends.
+		5.1 Restart.
+		5.2 Go to main menu.
+
+• Alternative Flow:
+	At 1 and 2, return to number players selection menu.
+	At 4, if player surrenders go to 5.
+
+• Postcondition:	Game started.
