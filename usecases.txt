@@ -16,21 +16,19 @@
 =================================================================================================
 • Use case: 		Play Kamisado
 • Brief Description: 	Enable player to start a new game of Kamisado
-• Actor: 		Player
+• Actor: 		Player, Player 2 (optional)
 • Precondition:		The player has launched the Kamisado game and chose "Play Kamisado"
 			from main 
 
 
 • Main flow:		1. Choose between one or two player mode or resume previously started one player game.
-				1.1 If the game was resumed got to 4 with preloaded settings and game state.
+				1.1 If the game was resumed go to 4 with preloaded settings and game state.
+				1.2 Enter player nickname(s).
 			2. Choose game mode (SPEED or normal).
-			3. Choose how many rounds the game lasts (1/3/5/7 rounds)
-			4. Start game
+			3. Choose how many rounds the game lasts.
+			4. Start game.
 
-• Alternative Flow:	At 1, return to main menu.
-			At 2, return to selection of number of players.
-			At 3, return to the mode selection screen.
-			At 4, if one player mode was selected, the choice of difficulty appears.
+• Alternative Flow:	At 4, if one player mode was selected, the choice of difficulty appears.
 				4.1 Choose between easy and hard level agaisnt AI.
 				4.2 Start game.  
 
