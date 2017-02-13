@@ -1,13 +1,15 @@
 • Use case: 		View Statistics
 • Brief Description: 	Enable player to see statistics, best times and achievments
 • Actor: 		Player
-• Precondition:		The player has launched the Kamisado game and chose 
+• Precondition:	The player has launched the Kamisado game and chose 
 			"View Statistics" from menu.
-
+
+
 • Main flow:		1. Choose "View Statistics from main menu"
 			2. Browse statistics.
 			3. Go back to main menu.
-
+
+
 • Alternative Flow:	No alternative flow.
 
 • Postcondition:	Player returned to main menu.
@@ -17,35 +19,70 @@
 • Actor: 		Player
 • Precondition:		The player has launched the Kamisado game and chose "Play Kamisado"
 			from main 
-
-• Main flow:		1. Choose between one or two player mode.
+
+
+• Main flow:		1. Choose between one or two player mode or resume previously started one player game.
+				1.1 If the game was resumed got to 4 with preloaded settings and game state.
 			2. Choose game mode (SPEED or normal).
-			3. Start game
+			3. Choose how many rounds the game lasts (1/3/5/7 rounds)
+			4. Start game
 
 • Alternative Flow:	At 1, return to main menu.
 			At 2, return to selection of number of players.
-			At 3, if one player mode was selected, the choice of difficulty appears.
+			At 3, return to the mode selection screen.
+			At 4, if one player mode was selected, the choice of difficulty appears.
+				4.1 Choose between easy and hard level agaisnt AI.
+				4.2 Start game.  
 
 • Postcondition:	Game started.
 =================================================================================================
 • Use case: 		One player
 • Brief Description: 	Enable player to play Kamisado in a single player mode.
-• Actor: 		Player
-• Precondition:		The player has selected single player in the difficulty selection menu.
-
+• Actor: 		Player, AI
+• Precondition:		Kamisado game started.
+
+
 • Main flow:
-	1. Choose one player mode.
-	2. Choose game difficulty (easy or hard).
-	3. Start game in the selected difficulty level.
-	4. Play Kamisado against AI.
-		4.1 If the player has enough points to win best of 3/5/7 go to 5.
-		4.2 Go to 4.
-	5. Game ends.
-		5.1 Restart.
-		5.2 Go to main menu.
+	1. Player choses whether they want white or black towers.
+	2. Player with white towers makes a move.
+		2.1 If end game conditions are met go to 4.
+	3. Player with black towers makes a move.
+		3.1 If end game conditions are met go to 4.
+		3.2 Go to 2.
+	4. Display message with winning player's name.
+	5. Add game result and time to statistics.
+	6. Ask human if the want a remacth.
+		6.1 If yes go to 1.
+	7. Show main menu frame.
 
 • Alternative Flow:
-	At 1 and 2, return to number players selection menu.
-	At 4, if player surrenders go to 5.
+	At 1, If previously started game was loaded player who's turn was starts.
+	At 2 and 3, When in SPEED mode and player doesn't make a move within 5 seconds the opposite player wins. Go to 4.
+		If player surrenders before end game conditions are met go to 4.
 
-• Postcondition:	Game started.
+• Postcondition:	Main menu frame.
+====================================================================================================
+• Use case: 		Two player
+• Brief Description: 	Enable player to play Kamisado in a two player mode.
+• Actor: 		Player, Player 2.
+• Precondition:		Kamisado game started.
+
+
+• Main flow:
+	1. Player choses whether they want white or black towers.
+	2. Player with white towers makes a move.
+		2.1 If end game conditions are met go to 4.
+	3. Player with black towers makes a move.
+		3.1 If end game conditions are met go to 4.
+		3.2 Go to 2.
+	4. Display message with winning player's name.
+	5. Add game result and time to statistics.
+	6. Ask both players if they want a remacth.
+		6.1 If both players agree go to 1.
+	7. Show main menu frame.
+
+• Alternative Flow:
+	At 2 and 3, When in SPEED mode and player doesn't make a move within 5 seconds the opposite player wins. Go to 4.
+		If any player surrenders before end game conditions are met go to 4.
+
+• Postcondition:	Main menu frame.
