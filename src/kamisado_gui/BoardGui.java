@@ -14,7 +14,7 @@ public class BoardGui extends JComponent{
 	private static final int TILE_OFFSET = 5;
 	private static final int TILE_LENGTH = 80;
 	
-	private static final Image possibleTileImage = new ImageIcon("media/tiles/focusedTileOverlay.png").getImage();
+	private final Image possibleTileImage = new ImageIcon(getClass().getResource("/kamisado_gui/media/tiles/focusedTileOverlay.png")).getImage();
 
 	private Image boardBackground;
 	public BoardGrid boardGrid;
@@ -24,7 +24,7 @@ public class BoardGui extends JComponent{
 		boardGrid = bg;
 
 		//Set background image and frame container dimensions
-		boardBackground = new ImageIcon("media/frameBackgrounds/board.png").getImage();
+		boardBackground = new ImageIcon(getClass().getResource("/kamisado_gui/media/frameBackgrounds/board.png")).getImage();
 		this.setPreferredSize(new Dimension(boardBackground.getWidth(null),boardBackground.getHeight(null)));
 		
 		//Set mouse click and key press listeners
@@ -33,13 +33,16 @@ public class BoardGui extends JComponent{
 
 		//create and show frame
 		JFrame frame = new JFrame("Kamisado");
-		frame.add(this);
+		frame.setResizable(false);
+		frame.setFocusable(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.add(this);
 		frame.pack();
 		frame.setVisible(true);
-		frame.setFocusable(true);
+		
+		//Enable keyboard focus
 		this.requestFocus();
-		frame.setResizable(false);
+		
 
 		//Centre the frame
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();

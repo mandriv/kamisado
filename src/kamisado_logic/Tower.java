@@ -22,7 +22,7 @@ public class Tower {
 	}
 
 	public Image getImage(){
-		return new ImageIcon("media/pieces/"+color.toString()+"Tower_"+player.toString()+".png").getImage();
+		return new ImageIcon(getClass().getResource("/kamisado_gui/media/pieces/"+color.toString()+"Tower_"+player.toString()+".png")).getImage();
 	}
 	
 	public int getOwner(){

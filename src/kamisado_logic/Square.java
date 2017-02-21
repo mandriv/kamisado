@@ -58,7 +58,7 @@ public class Square {
 	}
 	
 	public Image getImage(){
-		return new ImageIcon("media/tiles/"+getColorString()+"Tile.png").getImage();
+		return new ImageIcon(getClass().getResource("/kamisado_gui/media/tiles/"+getColorString()+"Tile.png")).getImage();
 	}
 	
 	public void setX(int x){
