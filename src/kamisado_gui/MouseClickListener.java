@@ -54,27 +54,9 @@ public class MouseClickListener implements MouseListener{
 	
 	
 	@Override
-	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void mouseEntered(MouseEvent e)  {}
+	public void mouseExited(MouseEvent e)   {}
+	public void mousePressed(MouseEvent e)  {}
+	public void mouseReleased(MouseEvent e) {}
 
 }
