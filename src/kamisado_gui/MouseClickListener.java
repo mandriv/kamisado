@@ -2,43 +2,46 @@ package kamisado_gui;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.ArrayList;
-
 import kamisado_logic.*;
 
 public class MouseClickListener implements MouseListener{
 	
-	BoardGui gui;
-	BoardGrid boardGrid;
-	ArrayList<Square> tiles;
+	private BoardGui gui;
+	private BoardGrid boardGrid;
 
 	public MouseClickListener(BoardGui gui) {
 		this.gui = gui;
 		boardGrid = gui.boardGrid;
-		tiles = boardGrid.getTilesAsList();
 	}
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		int x = e.getX();
 		int y = e.getY();
-		//EXCEPTION if out of bounds! upiekszyc to też
-		Square clickedTile = findTileByCoords(x, y);
-		if(!boardGrid.hasFocusedSquare() && clickedTile.isOccupied()){
-			boardGrid.setFocused(clickedTile);
+		
+		boolean hasFocused = boardGrid.hasFocusedSquare();
+		Square focusedSquare = boardGrid.getFocusedSquare();
+		Square clickedSquare = findTileByCoords(x, y);
+		
+		if(!hasFocused && clickedSquare.isOccupied()){
+			//check if the right player is clicking
+			if(clickedSquare.getTower().getOwner()==boardGrid.getGameState().getWhoseTurn())
+				clickedSquare.setFocused();
 		}
-		else if(boardGrid.hasFocusedSquare() && !clickedTile.isOccupied()){
-			boardGrid.makeMove(boardGrid.getFocused(), clickedTile);
-			boardGrid.defocus();
-			gui.repaint();
+		else if(hasFocused && !clickedSquare.isOccupied()){
+			boardGrid.makeMove(focusedSquare, clickedSquare);
+			focusedSquare.defocus();
 		}
-		else if(boardGrid.hasFocusedSquare() && clickedTile.isOccupied()){
-			boardGrid.defocus();
+		else if(hasFocused && clickedSquare.isOccupied()){
+			focusedSquare.defocus();
+			clickedSquare.setFocused();
 		}
+		
+		gui.repaint();
 	}
 	
     private Square findTileByCoords(int x, int y){
-    	for(Square tile : tiles){
+    	for(Square tile : boardGrid.getTilesAsList()){
     		if (tile.getX() <= x
     		 && tile.getX()+tile.getImage().getWidth(null) >= x
     	     && tile.getY() <= y

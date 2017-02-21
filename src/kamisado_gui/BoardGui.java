@@ -13,6 +13,8 @@ public class BoardGui extends JComponent{
 	private static final int MARGIN_TOP = 55;
 	private static final int TILE_OFFSET = 5;
 	private static final int TILE_LENGTH = 80;
+	
+	private static final Image possibleTileImage = new ImageIcon("media/tiles/focusedTileOverlay.png").getImage();
 
 	private Image boardBackground;
 	public BoardGrid boardGrid;
@@ -25,8 +27,9 @@ public class BoardGui extends JComponent{
 		boardBackground = new ImageIcon("media/frameBackgrounds/board.png").getImage();
 		this.setPreferredSize(new Dimension(boardBackground.getWidth(null),boardBackground.getHeight(null)));
 		
-		//Set mouse click listener
+		//Set mouse click and key press listeners
 		this.addMouseListener(new MouseClickListener(this));
+		this.addKeyListener(new KeyPressListener(this));
 
 		//create and show frame
 		JFrame frame = new JFrame("Kamisado");
@@ -34,6 +37,8 @@ public class BoardGui extends JComponent{
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.pack();
 		frame.setVisible(true);
+		frame.setFocusable(true);
+		this.requestFocus();
 		frame.setResizable(false);
 
 		//Centre the frame
@@ -54,7 +59,11 @@ public class BoardGui extends JComponent{
 				square.setX(x);
 				square.setY(y);				
 				//draw tiles
-				g.drawImage(square.getImage(),x,y, null);				
+				g.drawImage(square.getImage(),x,y, null);
+				//draw focused or possible moves tiles
+				if(square.isFocused() || square.isPossible()){
+					g.drawImage(possibleTileImage, x, y, null);
+				}
 				//draw towers
 				if(boardGrid.getSquare(i,j).isOccupied()){
 					g.drawImage(square.getTower().getImage(),x,y,null);

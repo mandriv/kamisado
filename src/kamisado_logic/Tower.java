@@ -24,5 +24,9 @@ public class Tower {
 	public Image getImage(){
 		return new ImageIcon("media/pieces/"+color.toString()+"Tower_"+player.toString()+".png").getImage();
 	}
+	
+	public int getOwner(){
+		return player.getWhoseTurn();
+	}
 
 }

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class BoardGrid {
 	
 	private Square[][] board;
-	public FocusableSquare focus;
+	private Player gameState;
 
 	public BoardGrid() {
 		board =  new Square[8][8];
@@ -36,11 +36,22 @@ public class BoardGrid {
 		for(int i=0;i<8;i++)
 			board[7][i] = new Square(GameColor.BROWN-i,new Tower(GameColor.BROWN-i,Player.WHITE));
 		
-		focus = new FocusableSquare(null, false);
+		gameState = new Player(Player.WHITE);
+		
 	}
 	
 	public Square getSquare(int x, int y){
 		return board[x][y];
+	}
+	
+	public String getSquareCoords(Square square){
+		for(int x=0;x<8;x++){
+			for(int y=0;y<8;y++){
+				if(board[x][y].equals(square))
+					return Character.toString((char)(65+y))+"-"+(8-x);
+			}
+		}
+		return "invalid";
 	}
 	
 	public ArrayList<Square> getTilesAsList(){
@@ -52,27 +63,33 @@ public class BoardGrid {
 		}
 		return tiles;
 	}
-
-	public void setFocused(Square square){
-		focus.setFocused(square);
-	}
-	
-	public Square getFocused(){
-		return focus.getSquare();
-	}
-	
-	public void defocus(){
-		focus.defocus();
-	}
 	
 	public boolean hasFocusedSquare(){
-		return focus.isFocused();
+		for(Square square : getTilesAsList()){
+			if(square.isFocused())
+				return true;
+		}
+		return false;
 	}
 	
+	public Square getFocusedSquare(){
+		for(Square square : getTilesAsList()){
+			if(square.isFocused())
+				return square;
+		}
+		return null;
+	}
+	
+	public Player getGameState(){
+		return gameState;
+	}
+	
+	
 	public void makeMove(Square srcSq, Square destSq){
-		Tower t = srcSq.getTower();	
+		Tower t = srcSq.getTower();
 		srcSq.clearSquare();
 		destSq.setTower(t);	
+		gameState.changePlayer();
 	}
 
 }

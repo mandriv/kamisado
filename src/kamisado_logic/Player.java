@@ -18,5 +18,13 @@ public class Player {
 			return "white";
 		return "black";
 	}
+	
+	public int getWhoseTurn(){
+		return player;
+	}
+	
+	public void changePlayer(){
+		player = (player + 1) % 2;
+	}
 
 }

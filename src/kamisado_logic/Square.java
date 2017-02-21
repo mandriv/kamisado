@@ -9,6 +9,8 @@ public class Square {
 	GameColor squareColor;
 	Tower tower;
 	boolean occupied;
+	boolean focused;
+	boolean possible;
 	int xPosition;
 	int yPosition;
 	
@@ -16,6 +18,7 @@ public class Square {
 		squareColor = new GameColor(color);
 		this.tower = tower;
 		occupied = true;
+		focused = false;
 	}
 	
 	public Square(int color) {
@@ -73,5 +76,27 @@ public class Square {
 	public int getY(){
 		return yPosition;
 	}
-
+	
+	
+	public void setFocused(){
+		focused = true;
+	}
+	
+	public void defocus(){
+		focused = false;
+	}
+	
+	public boolean isFocused(){
+		return focused;
+	}
+	
+	public void setPossible(boolean possibility){
+		possible = possibility;
+	}
+	
+	
+	public boolean isPossible(){
+		return possible;
+	}
+	
 }
