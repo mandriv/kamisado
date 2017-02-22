@@ -36,7 +36,7 @@ public class MainMenu extends JPanel{
 		soundTrack = st;
 			
 		//Sets the background and dimensions
-		menuBackground = new ImageIcon(getClass().getResource("/kamisado_gui/media/frameBackgrounds/mainmenu.png")).getImage();
+		menuBackground = new ImageIcon(getClass().getResource("/kamisado_media/frameBackgrounds/mainmenu.png")).getImage();
 		this.setPreferredSize(new Dimension(menuBackground.getWidth(null),menuBackground.getHeight(null)));
 		
 		//Adds menu buttons to this panel

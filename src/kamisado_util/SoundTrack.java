@@ -18,7 +18,7 @@ public class SoundTrack implements Runnable{
 	
 	public SoundTrack() {
 		try{
-			mainThemeURL = getClass().getResource("/kamisado_gui/media/sound/mainTheme.wav");
+			mainThemeURL = getClass().getResource("/kamisado_media/sound/mainTheme.wav");
 			ais = AudioSystem.getAudioInputStream(mainThemeURL);
 			format = ais.getFormat();
 			info = new DataLine.Info(Clip.class, format);

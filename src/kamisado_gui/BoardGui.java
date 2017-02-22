@@ -24,9 +24,9 @@ public class BoardGui extends JComponent{
 		boardGrid = bg;
 
 		//Loads possible / focused square ring image
-		possibleTileImage = new ImageIcon(getClass().getResource("/kamisado_gui/media/tiles/focusedTileOverlay.png")).getImage();
+		possibleTileImage = new ImageIcon(getClass().getResource("/kamisado_media/tiles/focusedTileOverlay.png")).getImage();
 		//Set background image and frame container dimensions
-		boardBackground = new ImageIcon(getClass().getResource("/kamisado_gui/media/frameBackgrounds/board.png")).getImage();
+		boardBackground = new ImageIcon(getClass().getResource("/kamisado_media/frameBackgrounds/board.png")).getImage();
 		this.setPreferredSize(new Dimension(boardBackground.getWidth(null),boardBackground.getHeight(null)));
 		
 		//Set mouse click and key press listeners
