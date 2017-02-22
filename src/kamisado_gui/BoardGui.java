@@ -14,15 +14,17 @@ public class BoardGui extends JComponent{
 	private static final int TILE_OFFSET = 5;
 	private static final int TILE_LENGTH = 80;
 	
-	private final Image possibleTileImage = new ImageIcon(getClass().getResource("/kamisado_gui/media/tiles/focusedTileOverlay.png")).getImage();
-
-	private Image boardBackground;
+	private final Image possibleTileImage;
+	private final Image boardBackground;
+	
 	public BoardGrid boardGrid;
 
 	public BoardGui(BoardGrid bg){
 		
 		boardGrid = bg;
 
+		//Loads possible / focused square ring image
+		possibleTileImage = new ImageIcon(getClass().getResource("/kamisado_gui/media/tiles/focusedTileOverlay.png")).getImage();
 		//Set background image and frame container dimensions
 		boardBackground = new ImageIcon(getClass().getResource("/kamisado_gui/media/frameBackgrounds/board.png")).getImage();
 		this.setPreferredSize(new Dimension(boardBackground.getWidth(null),boardBackground.getHeight(null)));
@@ -31,12 +33,16 @@ public class BoardGui extends JComponent{
 		this.addMouseListener(new MouseClickListener(this));
 		this.addKeyListener(new KeyPressListener(this));
 
+		JPanel panel = new JPanel();
+		panel.setLayout(new GridBagLayout());
+		panel.setBackground(new Color(31, 31, 31));
+		panel.add(this);
+		
 		//create and show frame
 		JFrame frame = new JFrame("Kamisado");
-		frame.setResizable(false);
 		frame.setFocusable(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.add(this);
+		frame.add(panel);
 		frame.pack();
 		frame.setVisible(true);
 		
