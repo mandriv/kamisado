@@ -1,0 +1,24 @@
+TO DO:
+
+-dodac autorow do menu :) (latwy)
+-dodac wiecej muzyki (latwy/sredni)
+-dodac opcje poddania sie, zapisania gry - prototypowo, i wylaczenia muzyki, puszczenia nastepnego bita :) (latwy)
+-zmienic deadlock na brak mozliwosci ruchu (bo to nie to samo) i napisac logike dla prawdziwych deadlockow :) (latwy)
+-jakos zaznaczyc ktora wiezyczka mozna sie ruszyc (latwy) - ogarnac czy styknie ten focus, patrz nizej
+-focusy tylko dla aktualnego gracza (latwy)
+-napisac poddanie sie (latwy)
+-dodanie timera calosciowego dla gry i dla ruchu
+-zapisywanie rekordow (trudny)
+-nie pokazuj na poczatku mozliwych ruchow (latwy)
+-automatycznie focusuj na wieze mozliwa do ruszenia (latwy)
+-ladne dialogi jesli koniec rundy, gry albo deadlock (logika - latwy, grafika - trudny)
+-zrobic prototypowo wybor gry czy z AI czy z kims innym (latwy/sredni)
+-dodac nazwy graczy (sredni)
+-dodac generalne ustawianie gry na poczatku (latwy) - prototypowo
+-pokazanie wyniku, ruchu, nazwy graczy (sredni)
+-koniec gry handling (latwy/sredni)
+-zapisywanie i ladowanie stanu gry (sredni)
+-dodanie speed moda (sredni)
+-wymyslic jak we dwojke na jednej maszynie (?)
+-dodac AI (trudny)
+-multi (god mode)
