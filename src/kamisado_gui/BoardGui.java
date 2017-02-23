@@ -15,6 +15,7 @@ public class BoardGui extends JComponent{
 	private static final int TILE_LENGTH = 80;
 	
 	private final Image possibleTileImage;
+	private final Image focusedTileImage;
 	private final Image boardBackground;
 	
 	public BoardGrid boardGrid;
@@ -24,7 +25,8 @@ public class BoardGui extends JComponent{
 		boardGrid = bg;
 
 		//Loads possible / focused square ring image
-		possibleTileImage = new ImageIcon(getClass().getResource("/kamisado_media/tiles/focusedTileOverlay.png")).getImage();
+		possibleTileImage = new ImageIcon(getClass().getResource("/kamisado_media/tiles/possibleTileOverlay.png")).getImage();
+		focusedTileImage = new ImageIcon(getClass().getResource("/kamisado_media/tiles/focusedTileOverlay.png")).getImage();
 		//Set background image and frame container dimensions
 		boardBackground = new ImageIcon(getClass().getResource("/kamisado_media/frameBackgrounds/board.png")).getImage();
 		this.setPreferredSize(new Dimension(boardBackground.getWidth(null),boardBackground.getHeight(null)));
@@ -70,8 +72,11 @@ public class BoardGui extends JComponent{
 				//draw tiles
 				g.drawImage(square.getImage(),x,y, null);
 				//draw focused or possible moves tiles
-				if(square.isFocused() || square.isPossible()){
+				if(square.isPossible() && !square.isFocused()){
 					g.drawImage(possibleTileImage, x, y, null);
+				}
+				if(square.isFocused()){
+					g.drawImage(focusedTileImage, x, y, null);
 				}
 				//draw towers
 				if(boardGrid.getSquare(i,j).isOccupied()){

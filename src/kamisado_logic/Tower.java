@@ -22,11 +22,15 @@ public class Tower {
 	}
 
 	public Image getImage(){
-		return new ImageIcon(getClass().getResource("/kamisado_gui/media/pieces/"+color.toString()+"Tower_"+player.toString()+".png")).getImage();
+		return new ImageIcon(getClass().getResource("/kamisado_media/pieces/"+color.toString()+"Tower_"+player.toString()+".png")).getImage();
 	}
 	
 	public int getOwner(){
 		return player.getWhoseTurn();
+	}
+	
+	public int getColorValue(){
+		return color.getValue();
 	}
 
 }

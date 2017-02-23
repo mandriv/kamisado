@@ -29,14 +29,15 @@ public class MouseClickListener implements MouseListener{
 				clickedSquare.setFocused();
 		}
 		else if(hasFocused && !clickedSquare.isOccupied()){
-			boardGrid.makeMove(focusedSquare, clickedSquare);
-			focusedSquare.defocus();
+			if(boardGrid.makeMove(focusedSquare, clickedSquare))
+				focusedSquare.defocus();
 		}
 		else if(hasFocused && clickedSquare.isOccupied()){
 			focusedSquare.defocus();
 			clickedSquare.setFocused();
 		}
 		
+		boardGrid.markPossibleMoves();
 		gui.repaint();
 	}
 	

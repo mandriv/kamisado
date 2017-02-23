@@ -43,7 +43,6 @@ public class SoundTrack implements Runnable{
 
 	@Override
 	public void run() {
-		playMainThemeOnLoop();
 	}
 	
 }

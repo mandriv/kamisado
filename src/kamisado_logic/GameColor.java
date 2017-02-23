@@ -2,6 +2,7 @@ package kamisado_logic;
 
 public class GameColor {
 	
+	public static final int ANY = -1;
 	public static final int ORANGE = 0;
 	public static final int BLUE = 1;
 	public static final int PURPLE = 2;
@@ -14,7 +15,7 @@ public class GameColor {
 	int value;
 	
 	public GameColor(int x) {
-		if(x<0 || x>7)
+		if(x<-1 || x>7)
 			throw new IllegalArgumentException("Value has to be between 0 and 7!");
 		value = x;
 

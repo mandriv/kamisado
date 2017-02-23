@@ -19,12 +19,14 @@ public class Square {
 		this.tower = tower;
 		occupied = true;
 		focused = false;
+		possible = false;
 	}
 	
 	public Square(int color) {
 		squareColor = new GameColor(color);
 		tower = null;
 		occupied = false;
+		possible = false;
 	}
 	
 	public void setColor(int color){
@@ -58,7 +60,7 @@ public class Square {
 	}
 	
 	public Image getImage(){
-		return new ImageIcon(getClass().getResource("/kamisado_gui/media/tiles/"+getColorString()+"Tile.png")).getImage();
+		return new ImageIcon(getClass().getResource("/kamisado_media/tiles/"+getColorString()+"Tile.png")).getImage();
 	}
 	
 	public void setX(int x){

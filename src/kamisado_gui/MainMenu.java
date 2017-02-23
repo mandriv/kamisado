@@ -122,7 +122,7 @@ public class MainMenu extends JPanel{
 		settingsPanel.setBackground(new Color(20,20,20));
 		settingsPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
 		
-		MenuCheckBox soundCB = new MenuCheckBox("Sounds", true);
+		MenuCheckBox soundCB = new MenuCheckBox("Sounds", false);
 		soundCB.addActionListener(new ActionListener() {
 			
 			@Override
