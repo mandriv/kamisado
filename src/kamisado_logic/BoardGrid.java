@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class BoardGrid {
 	
 	private Square[][] board;
-	private Player gameState;
+	private PlayerColor gameState;
 	private GameColor currentTowerColor;
 	private int[] moveCount;
 	private MoveValidator validator;
@@ -14,7 +14,7 @@ public class BoardGrid {
 		board =  new Square[8][8];
 		
 		for(int i=0;i<8;i++)
-			board[0][i] = new Square(GameColor.ORANGE+i,new Tower(GameColor.ORANGE+i,Player.BLACK));
+			board[0][i] = new Square(GameColor.ORANGE+i,new Tower(GameColor.ORANGE+i,PlayerColor.BLACK));
 		
 		int a=0,b=1,c=2,d=3,e=4,f=5,g=6,h=7;
 		for(int i=1;i<7;i++){
@@ -37,13 +37,13 @@ public class BoardGrid {
 		}
 		
 		for(int i=0;i<8;i++)
-			board[7][i] = new Square(GameColor.BROWN-i,new Tower(GameColor.BROWN-i,Player.WHITE));
+			board[7][i] = new Square(GameColor.BROWN-i,new Tower(GameColor.BROWN-i,PlayerColor.WHITE));
 		
-		gameState = new Player(Player.WHITE);
+		gameState = new PlayerColor(PlayerColor.WHITE);
 		currentTowerColor = new GameColor(GameColor.ANY);
 		moveCount = new int[2];
-		moveCount[Player.WHITE]=0;
-		moveCount[Player.BLACK]=0;
+		moveCount[PlayerColor.WHITE]=0;
+		moveCount[PlayerColor.BLACK]=0;
 		validator = new MoveValidator(this);
 		markPossibleMoves();
 		
@@ -131,7 +131,7 @@ public class BoardGrid {
 		}
 	}
 	
-	public Player getGameState(){
+	public PlayerColor getGameState(){
 		return gameState;
 	}
 	
@@ -169,9 +169,9 @@ public class BoardGrid {
 	}
 	
 	public void handleEndGame(){
-		if (validator.getWinnigPlayerValue() == Player.BLACK)
+		if (validator.getWinnigPlayerValue() == PlayerColor.BLACK)
 			System.out.println("Hurray! Black player wins!");
-		if (validator.getWinnigPlayerValue() == Player.WHITE)
+		if (validator.getWinnigPlayerValue() == PlayerColor.WHITE)
 			System.out.println("Hurray! White player wins!");
 		resetGrid();
 	}
@@ -180,7 +180,7 @@ public class BoardGrid {
 		board =  new Square[8][8];
 		
 		for(int i=0;i<8;i++)
-			board[0][i] = new Square(GameColor.ORANGE+i,new Tower(GameColor.ORANGE+i,Player.BLACK));
+			board[0][i] = new Square(GameColor.ORANGE+i,new Tower(GameColor.ORANGE+i,PlayerColor.BLACK));
 		
 		int a=0,b=1,c=2,d=3,e=4,f=5,g=6,h=7;
 		for(int i=1;i<7;i++){
@@ -203,13 +203,13 @@ public class BoardGrid {
 		}
 		
 		for(int i=0;i<8;i++)
-			board[7][i] = new Square(GameColor.BROWN-i,new Tower(GameColor.BROWN-i,Player.WHITE));
+			board[7][i] = new Square(GameColor.BROWN-i,new Tower(GameColor.BROWN-i,PlayerColor.WHITE));
 		
-		gameState = new Player(Player.WHITE);
+		gameState = new PlayerColor(PlayerColor.WHITE);
 		currentTowerColor = new GameColor(GameColor.ANY);
 		moveCount = new int[2];
-		moveCount[Player.WHITE]=0;
-		moveCount[Player.BLACK]=0;
+		moveCount[PlayerColor.WHITE]=0;
+		moveCount[PlayerColor.BLACK]=0;
 		validator = new MoveValidator(this);
 		markPossibleMoves();
 	}

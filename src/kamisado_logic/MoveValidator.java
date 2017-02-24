@@ -13,7 +13,7 @@ public class MoveValidator {
 	public ArrayList<Square> getPossibleMoveSquares(){
 		ArrayList<Square> list = new ArrayList<>();
 		//first move, no focused
-		if(boardGrid.getCurrentPlayerValue() == Player.WHITE && boardGrid.getCurrentPlayerMoveCount()==0){
+		if(boardGrid.getCurrentPlayerValue() == PlayerColor.WHITE && boardGrid.getCurrentPlayerMoveCount()==0){
 			if(!boardGrid.hasFocusedSquare()){
 				for(int i=1;i<8;i++){
 					for(int j=0;j<8;j++){
@@ -53,7 +53,7 @@ public class MoveValidator {
 			int col = boardGrid.getSquareColCoord(moveSquare);
 			int row = boardGrid.getSquareRowCoord(moveSquare); 
 			//black moves
-			if(moveSquare.getTower().getOwner() == Player.BLACK){
+			if(moveSquare.getTower().getOwner() == PlayerColor.BLACK){
 				//moves down
 				for(int i = row+1; i<=7; i++){
 					if(boardGrid.getSquare(i, col).isOccupied())
@@ -134,9 +134,9 @@ public class MoveValidator {
 		if(boardGrid.getCurrentPlayerMoveCount()!=0){
 			//check if any of white towers is at the end of grid
 			for(Square square : boardGrid.getOccupiedTilesAsList()){
-				if(boardGrid.getSquareRowCoord(square)==0 && square.getTower().getOwner()==Player.WHITE)
+				if(boardGrid.getSquareRowCoord(square)==0 && square.getTower().getOwner()==PlayerColor.WHITE)
 					return true;
-				if(boardGrid.getSquareRowCoord(square)==7 && square.getTower().getOwner()==Player.BLACK)
+				if(boardGrid.getSquareRowCoord(square)==7 && square.getTower().getOwner()==PlayerColor.BLACK)
 					return true;
 				
 			}
@@ -147,9 +147,9 @@ public class MoveValidator {
 	
 	public int getWinnigPlayerValue(){
 		for(Square square : boardGrid.getOccupiedTilesAsList()){
-			if(boardGrid.getSquareRowCoord(square)==0 && square.getTower().getOwner()==Player.WHITE)
+			if(boardGrid.getSquareRowCoord(square)==0 && square.getTower().getOwner()==PlayerColor.WHITE)
 				return square.getTower().getOwner();
-			if(boardGrid.getSquareRowCoord(square)==7 && square.getTower().getOwner()==Player.BLACK)
+			if(boardGrid.getSquareRowCoord(square)==7 && square.getTower().getOwner()==PlayerColor.BLACK)
 				return square.getTower().getOwner();
 			
 		}

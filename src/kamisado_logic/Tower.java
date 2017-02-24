@@ -9,7 +9,7 @@ import javax.swing.ImageIcon;
  */
 public class Tower {
 	
-	Player player;
+	PlayerColor player;
 	GameColor color;
 	
 	/**
@@ -18,7 +18,7 @@ public class Tower {
 	 */
 	public Tower(int towerColor, int playerNum){
 		color = new GameColor(towerColor);
-		player = new Player(playerNum);
+		player = new PlayerColor(playerNum);
 	}
 
 	public Image getImage(){

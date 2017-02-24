@@ -5,6 +5,7 @@ import kamisado_gui.MainMenu;
 public class StartGame implements Runnable{
 	
 	private SoundTrack soundTrack;
+	MainMenu menu;
 	
 	public StartGame(SoundTrack st) {
 		soundTrack = st;
@@ -12,7 +13,7 @@ public class StartGame implements Runnable{
 
 	@Override
 	public void run() {
-		MainMenu menu = new MainMenu(soundTrack);
+		menu = new MainMenu(soundTrack);
 	}
 
 }
