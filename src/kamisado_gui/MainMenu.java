@@ -3,6 +3,7 @@ package kamisado_gui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -28,6 +29,7 @@ public class MainMenu extends JPanel{
 	
 	private JPanel btnPanel;
 	private JPanel settingsPanel;
+	private JPanel loginPanel;
 	
 	JFrame frame;
 
@@ -43,6 +45,7 @@ public class MainMenu extends JPanel{
 		this.setLayout(new GridBagLayout());
 		addMenuButtons();
 		addSettingsButtons();
+		addLoginPanel();
 		
 		//create and show frame
 		frame = new JFrame("Kamisado");
@@ -86,6 +89,14 @@ public class MainMenu extends JPanel{
 		btnPanel.add(loadBtn);
 		
 		JButton onlineBtn = new MenuButton("Play Online");
+		onlineBtn.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				btnPanel.setVisible(false);
+				loginPanel.setVisible(true);
+			}
+		});
 		btnPanel.add(onlineBtn);
 		
 		JButton settingsBtn = new MenuButton("Settings");
@@ -151,7 +162,7 @@ public class MainMenu extends JPanel{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				settingsPanel.setVisible(false);
-				addMenuButtons();
+				btnPanel.setVisible(true);
 			}
 		});
 		settingsPanel.add(returnBtn);
@@ -161,6 +172,50 @@ public class MainMenu extends JPanel{
 		this.add(settingsPanel);
 	}
 	
+	public void addLoginPanel(){
+		//Create a new panel for settings
+		loginPanel = new JPanel(new GridLayout(0, 1,10,10));
+		loginPanel.setVisible(false);
+		loginPanel.setBackground(new Color(20,20,20));
+		loginPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
+		
+		JTextField loginField = new JTextField();
+		loginPanel.add(loginField);
+		
+		MenuButton dummyBtn1 = new MenuButton("");
+		MenuButton dummyBtn2 = new MenuButton("");
+		dummyBtn1.setVisible(false);
+		dummyBtn2.setVisible(false);
+		loginPanel.add(dummyBtn1);
+		loginPanel.add(dummyBtn2);
+		
+		MenuButton loginBtn = new MenuButton("Sign in");
+		loginBtn.setFont(new Font("Tahoma",Font.BOLD,20));
+		loginBtn.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		loginPanel.add(loginBtn);
+		
+		MenuButton returnBtn = new MenuButton("Return to Main Menu");
+		returnBtn.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				loginPanel.setVisible(false);
+				btnPanel.setVisible(true);
+			}
+		});
+		loginPanel.add(returnBtn);
+		
+		
+		//Add settings panel to the centre of frame's container
+		this.add(loginPanel);
+	}
 	
 
 }
