@@ -1,7 +1,7 @@
 package kamisado_logic;
 
 public class GameColor {
-	
+
 	public static final int ANY = -1;
 	public static final int ORANGE = 0;
 	public static final int BLUE = 1;
@@ -13,9 +13,9 @@ public class GameColor {
 	public static final int BROWN = 7;
 
 	int value;
-	
+
 	public GameColor(int x) {
-		if(x<-1 || x>7)
+		if (x < -1 || x > 7)
 			throw new IllegalArgumentException("Value has to be between 0 and 7!");
 		value = x;
 
@@ -23,25 +23,33 @@ public class GameColor {
 
 	@Override
 	public String toString() {
-		switch(value){
-			case 0 : return "orange";
-			case 1 : return "blue";
-			case 2 : return "purple";
-			case 3 : return "pink";
-			case 4 : return "yellow";
-			case 5 : return "red";
-			case 6 : return "green";
-			case 7 : return "brown";
+		switch (value) {
+		case 0:
+			return "orange";
+		case 1:
+			return "blue";
+		case 2:
+			return "purple";
+		case 3:
+			return "pink";
+		case 4:
+			return "yellow";
+		case 5:
+			return "red";
+		case 6:
+			return "green";
+		case 7:
+			return "brown";
 		}
 		throw new IllegalStateException();
 	}
-	
-	public int getValue(){
+
+	public int getValue() {
 		return value;
 	}
-	
-	public void setValue(int x){
+
+	public void setValue(int x) {
 		value = x;
 	}
-	
+
 }

@@ -7,12 +7,10 @@ public class SinglePlayerGame {
 
 	BoardGui gui;
 	BoardGrid boardGrid;
-	
-	
+
 	public SinglePlayerGame() {
 		boardGrid = new BoardGrid();
 		gui = new BoardGui(boardGrid);
 	}
-
 
 }

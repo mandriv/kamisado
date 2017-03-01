@@ -6,7 +6,7 @@ import java.awt.event.KeyListener;
 import kamisado_logic.BoardGrid;
 
 public class KeyPressListener implements KeyListener {
-	
+
 	private BoardGui gui;
 	private BoardGrid boardGrid;
 
@@ -14,13 +14,13 @@ public class KeyPressListener implements KeyListener {
 		this.gui = gui;
 		boardGrid = gui.boardGrid;
 	}
-	
+
 	@Override
 	public void keyPressed(KeyEvent ke) {
 		String chuj = KeyEvent.getKeyText(ke.getKeyCode());
 		System.out.println(chuj);
 	}
-	
+
 	@Override
 	public void keyReleased(KeyEvent ke) {
 
