@@ -12,18 +12,20 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 
 public class MultiplayerClient {
 
-	private static final String apiURL = "http://localhost:3000/";
+	private static final String apiURL = "https://kamisado-cs207.herokuapp.com/";
 	private String token;
 
 	public MultiplayerClient() {
 		token = null;
 	}
 
-	public boolean connectToAPI(String email, String password) {
+	public boolean connectToAPI(String username, String password) {
 		JSONObject body = new JSONObject();
-		body.put("email", email);
+		body.put("name", username);
 		body.put("password", password);
-
+		
+		System.out.println(body.toString());
+		
 		try {
 			token = getAuthToken(body);
 			if (token == null) {
@@ -33,7 +35,7 @@ public class MultiplayerClient {
 		} catch (UnirestException e) {
 			e.printStackTrace();
 		}
-
+		
 		System.out.println("authentication passed, got token");
 		return true;
 	}
@@ -42,7 +44,8 @@ public class MultiplayerClient {
 		System.out.println("POST on /auth...");
 		HttpResponse<JsonNode> response = Unirest.post(apiURL + "auth")
 				.header("Content-Type", "application/json")
-				.body(body).asJson();
+				.body(body)
+				.asJson();
 
 		JSONObject jsonResponse = response.getBody().getObject();
 		if (!jsonResponse.has("token") || jsonResponse.getBoolean("error"))
@@ -62,9 +65,12 @@ public class MultiplayerClient {
 				.header("token", token)
 				.asJson();
 		JSONObject jsonResponse = response.getBody().getObject();
-		if (jsonResponse.getBoolean("error"))
-			throw new Exception("Error on GET /games!");
+		
 		System.out.println("Got results:\n" + jsonResponse.toString());
+		
+		if (jsonResponse.getBoolean("error")){
+			throw new Exception("Error on GET /games!");
+		}
 		
 		JSONArray jsonGamesArray = jsonResponse.getJSONArray("message");
 		for(int i=0; i<jsonGamesArray.length(); i++){

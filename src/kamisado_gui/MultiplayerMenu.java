@@ -29,10 +29,9 @@ public class MultiplayerMenu extends JPanel {
 	private int gamesWon;
 	private String rank;
 
-	public MultiplayerMenu() {
+	public MultiplayerMenu(MultiplayerClient client) {
 		//Online connection
-		mpClient = new MultiplayerClient();
-		mpClient.connectToAPI("admin@admin.com", "admin");
+		mpClient = client;
 
 		name = "Test name";
 		avatar = new ImageIcon(getClass().getResource("/kamisado_media/sampleavatar.jpg"));
@@ -43,7 +42,6 @@ public class MultiplayerMenu extends JPanel {
 		homePanel = new JPanel();
 		
 		this.setLayout(new MigLayout());
-		refreshGameList();
 		generateUI();
 		
 		
@@ -104,6 +102,7 @@ public class MultiplayerMenu extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				cards.show(contentPanel, "games");
+				refreshGameList();
 			}
 		});
 		btnPanel.add(gameBrowserBtn, "sg");
@@ -117,15 +116,6 @@ public class MultiplayerMenu extends JPanel {
 		btnPanel.add(returnBtn, "sg");
 		this.add(btnPanel);
 		
-		cards = new CardLayout(); 
-		contentPanel = new JPanel(cards);
-		contentPanel.setPreferredSize(new Dimension(750, 630));
-		contentPanel.add(homePanel,"home");
-		contentPanel.add(gameList, "games");
-		this.add(contentPanel);
-	}
-	
-	private void refreshGameList(){
 		gameList = new JPanel(new MigLayout("fillx, wrap 15"));
 		gameList.setPreferredSize(new Dimension(750, 630));
 		JLabel nameGameLabel = new JLabel("Name");
@@ -138,6 +128,16 @@ public class MultiplayerMenu extends JPanel {
 		gameList.add(statusLabel, "span 2");
 		JLabel emptyLabel = new JLabel("");
 		gameList.add(emptyLabel, "span 2");
+		
+		cards = new CardLayout(); 
+		contentPanel = new JPanel(cards);
+		contentPanel.setPreferredSize(new Dimension(750, 630));
+		contentPanel.add(homePanel,"home");
+		contentPanel.add(gameList, "games");
+		this.add(contentPanel);
+	}
+	
+	private void refreshGameList(){
 		try {
 			for(GameListing game: mpClient.getGames()){
 				JLabel gameNameLabel = new JLabel(game.getName());

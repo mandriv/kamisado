@@ -2,7 +2,6 @@ package kamisado_gui;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -15,7 +14,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
 import kamisado_util.SinglePlayerGame;
@@ -31,7 +29,6 @@ public class MainMenu extends JPanel {
 
 	private JPanel btnPanel;
 	private JPanel settingsPanel;
-	private JPanel loginPanel;
 
 	JFrame frame;
 
@@ -95,8 +92,10 @@ public class MainMenu extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				frame.dispose();
-				MultiplayerMenu mpMenu = new MultiplayerMenu();
+				@SuppressWarnings("unused")
+				SignInUpFrame signInUpFrame = new SignInUpFrame(frame);
+				//frame.dispose();
+				//MultiplayerMenu mpMenu = new MultiplayerMenu();
 			}
 		});
 		btnPanel.add(onlineBtn);
