@@ -12,6 +12,7 @@ import javax.swing.*;
 
 import kamisado_mp.GameListing;
 import kamisado_mp.MultiplayerClient;
+import kamisado_mp.User;
 
 public class MultiplayerMenu extends JPanel {
 
@@ -27,17 +28,25 @@ public class MultiplayerMenu extends JPanel {
 	private ImageIcon avatar;
 	private int gamesPlayed;
 	private int gamesWon;
-	private String rank;
+	private int rank;
+	private User user;
 
 	public MultiplayerMenu(MultiplayerClient client) {
 		//Online connection
 		mpClient = client;
+		
+		try {
+			user = client.getUserByID(client.userID);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
-		name = "Test name";
+		name = user.name;
 		avatar = new ImageIcon(getClass().getResource("/kamisado_media/sampleavatar.jpg"));
-		gamesPlayed = 120;
-		gamesWon = 100;
-		rank = "Master Sergeant";
+		gamesPlayed = user.gamesPlayed;
+		gamesWon = user.gamesWon;
+		rank = user.elo;
 		
 		homePanel = new JPanel();
 		

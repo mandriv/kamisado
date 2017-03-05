@@ -1,5 +1,7 @@
 package kamisado_mp;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import org.json.JSONArray;
@@ -14,9 +16,11 @@ public class MultiplayerClient {
 
 	private static final String apiURL = "https://kamisado-cs207.herokuapp.com/";
 	private String token;
+	public String userID;
 
 	public MultiplayerClient() {
 		token = null;
+		userID = null;
 	}
 
 	public boolean connectToAPI(String username, String password) {
@@ -27,12 +31,10 @@ public class MultiplayerClient {
 		System.out.println(body.toString());
 		
 		try {
-			token = getAuthToken(body);
-			if (token == null) {
-				System.out.println("error authenticating");
+			if(!setTokenAndUserID(body))
 				return false;
-			}
 		} catch (UnirestException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -40,7 +42,7 @@ public class MultiplayerClient {
 		return true;
 	}
 
-	private String getAuthToken(JSONObject body) throws UnirestException {
+	private boolean setTokenAndUserID(JSONObject body) throws UnirestException {
 		System.out.println("POST on /auth...");
 		HttpResponse<JsonNode> response = Unirest.post(apiURL + "auth")
 				.header("Content-Type", "application/json")
@@ -48,10 +50,13 @@ public class MultiplayerClient {
 				.asJson();
 
 		JSONObject jsonResponse = response.getBody().getObject();
-		if (!jsonResponse.has("token") || jsonResponse.getBoolean("error"))
-			return null;
+		if (jsonResponse.getBoolean("error"))
+			return false;
 		System.out.println("Got results:\n" + jsonResponse.toString());
-		return jsonResponse.getString("token");
+		
+		token = jsonResponse.getString("token");
+		userID = jsonResponse.getString("userID");
+		return true;
 	}
 	
 	public ArrayList<GameListing> getGames() throws Exception{
@@ -100,6 +105,34 @@ public class MultiplayerClient {
 				.body(game.toJSONObject())
 				.asJson().getBody().getObject();
 		return jsonReponse.getBoolean("error");
+	}
+	
+	public User getUserByID(String userID) throws Exception{
+		if(token == null)
+			throw new Exception("No authentication! You need to connect first!");
+		
+		System.out.println("GET on /games/" + userID + "...");
+		HttpResponse<JsonNode> response = Unirest.get(apiURL + "users/" + userID)
+				.header("token", token)
+				.asJson();
+		JSONObject jsonResponse = response.getBody().getObject().getJSONObject("message");
+		
+		System.out.println("Got results:\n" + jsonResponse.toString());
+		
+		String name = jsonResponse.getString("name");
+		String email = jsonResponse.getString("email");
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+		df.setTimeZone(TimeZone.getTimeZone("UTC"));
+		Date dateJoined = df.parse(jsonResponse.getString("dateJoined"));
+		String hashedPassword = jsonResponse.getString("password");
+		int gamesPlayed = jsonResponse.getInt("gamesPlayed");
+		int gamesWon = jsonResponse.getInt("gamesWon");
+		int elo = jsonResponse.getInt("eloRating");
+		boolean admin = jsonResponse.getBoolean("admin");
+		
+		User user = new User(name, email, dateJoined, hashedPassword, gamesPlayed, gamesWon, elo, admin);
+		
+		return user;
 	}
 
 }
