@@ -99,12 +99,12 @@ public class MultiplayerClient {
 	public boolean addGame(GameListing game) throws Exception{
 		if(token == null)
 			throw new Exception("No authentication! You need to connect first!");
-		JSONObject jsonReponse = Unirest.post(apiURL + "games")
+		JSONObject jsonResponse = Unirest.post(apiURL + "games")
 				.header("Content-Type", "application/json")
 				.header("token", token)
 				.body(game.toJSONObject())
 				.asJson().getBody().getObject();
-		return jsonReponse.getBoolean("error");
+		return jsonResponse.getBoolean("error");
 	}
 	
 	public User getUserByID(String userID) throws Exception{
@@ -133,6 +133,14 @@ public class MultiplayerClient {
 		User user = new User(name, email, dateJoined, hashedPassword, gamesPlayed, gamesWon, elo, admin);
 		
 		return user;
+	}
+	
+	public boolean registerNewUser(User user) throws UnirestException{
+		JSONObject jsonResponse = Unirest.post(apiURL + "users")
+				.header("Content-Type", "application/json")
+				.body(user.getJSONforRegister())
+				.asJson().getBody().getObject();
+		return jsonResponse.getBoolean("error");
 	}
 
 }

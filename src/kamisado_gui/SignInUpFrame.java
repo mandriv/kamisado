@@ -6,6 +6,8 @@ import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -26,14 +28,23 @@ public class SignInUpFrame extends JFrame {
 	
 	MultiplayerClient mpClient;
 	
-	JTextField passField;
-	JTextField nameField;
+	JPanel loginPanel;
+	JTextField loginNameField;
+	JTextField loginPassField;
+
+	JPanel registerPanel;
+	JTextField registerNameField;
+	JTextField emailField;
+	JTextField registerPassField;
 	
-	JFrame parentFrame;
+	JFrame mainMenuFrame;
 
 	public SignInUpFrame(JFrame parent) {
 		
 		super("Log in");
+		
+		mpClient = new MultiplayerClient();
+		mainMenuFrame = parent;
 		
 		JTabbedPane tabbedPane = new JTabbedPane();
 		tabbedPane.addTab("Log in", getLoginPanel());
@@ -46,47 +57,47 @@ public class SignInUpFrame extends JFrame {
 		this.setVisible(true);
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 		this.setLocation(dim.width / 2 - this.getSize().width / 2, dim.height / 2 - this.getSize().height / 2);
-		
-		mpClient = new MultiplayerClient();
-		parentFrame = parent;
 	}
 	
 	private JPanel getLoginPanel(){
-		JPanel panel = new MenuPanel(new MigLayout("flowy, align center"));
+		loginPanel = new MenuPanel(new MigLayout("flowy, align center"));
 		JLabel nameLabel = new MenuLabel("Username:");
-		panel.add(nameLabel, "sg");
-		nameField = new MenuTextField();
-		panel.add(nameField, "sg");
+		loginPanel.add(nameLabel, "sg");
+		loginNameField = new MenuTextField("");	
+		loginPanel.add(loginNameField, "sg");
 		JLabel passwordLabel = new MenuLabel("Password:");
-		panel.add(passwordLabel, "sg");
-		passField = new MenuPasswordField();
-		panel.add(passField, "sg");
+		loginPanel.add(passwordLabel, "sg");
+		loginPassField = new MenuPasswordField("");
+		loginPanel.add(loginPassField, "sg");
 		JButton loginBtn = new MenuButton("Sing in");
-		loginBtn.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				System.out.println(passField.getText());
-				if(mpClient.connectToAPI(nameField.getText(), passField.getText())){
-					MultiplayerMenu mpMenu = new MultiplayerMenu(mpClient, parentFrame);
-					parentFrame.setVisible(false);
-					dispose();
-				} else {
-					JOptionPane.showMessageDialog(parentFrame,
-						    "Invalid username or password",
-						    "Login error",
-						    JOptionPane.ERROR_MESSAGE);
-				}
-			}
-			
-		});
-		panel.add(loginBtn, "sg");
-		return panel;
+		loginPanel.add(loginBtn, "sg");
+		loginBtn.addActionListener(new LoginActionListener(loginNameField, loginPassField, mainMenuFrame, this, mpClient));
+		loginNameField.addActionListener(new LoginActionListener(loginNameField, loginPassField, mainMenuFrame, this, mpClient));
+		loginPassField.addActionListener(new LoginActionListener(loginNameField, loginPassField, mainMenuFrame, this, mpClient));
+		return loginPanel;
 	}
 	
 	private JPanel getRegisterPanel(){
-		JPanel panel = new JPanel();
-		return panel;
+		registerPanel = new MenuPanel(new MigLayout("flowy, align center"));
+		JLabel nameLabel = new MenuLabel("Username:");
+		registerPanel.add(nameLabel, "sg");
+		registerNameField = new MenuTextField("");	
+		registerPanel.add(registerNameField, "sg");
+		JLabel emailLabel = new MenuLabel("E-mail:");
+		registerPanel.add(emailLabel, "sg");
+		emailField = new MenuTextField("");	
+		registerPanel.add(emailField, "sg");
+		JLabel passwordLabel = new MenuLabel("Password:");
+		registerPanel.add(passwordLabel, "sg");
+		registerPassField = new MenuPasswordField("");
+		registerPanel.add(registerPassField, "sg");
+		JButton registerBtn = new MenuButton("Register");
+		registerPanel.add(registerBtn, "sg");
+		registerNameField.addActionListener(new RegisterActionListener(registerNameField, emailField, registerPassField, mainMenuFrame, this, mpClient));
+		emailField.addActionListener(new RegisterActionListener(registerNameField, emailField, registerPassField, mainMenuFrame, this, mpClient));
+		registerPassField.addActionListener(new RegisterActionListener(registerNameField, emailField, registerPassField, mainMenuFrame, this, mpClient));
+		registerBtn.addActionListener(new RegisterActionListener(registerNameField, emailField, registerPassField, mainMenuFrame, this, mpClient));
+		return registerPanel;
 	}
 	
 }

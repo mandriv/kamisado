@@ -9,8 +9,8 @@ public class MenuTextField extends JTextField {
 	
 	private static final long serialVersionUID = 1L;
 
-	public MenuTextField() {
-		super();
+	public MenuTextField(String text) {
+		super(text);
 		this.setFont(new Font("Tahoma", Font.BOLD, 12));
 		this.setCaretColor(new Color(200, 200, 200));
 		this.setForeground(new Color(200, 200, 200));

@@ -24,7 +24,6 @@ public class MultiplayerMenu extends MenuPanel {
 	private JFrame frame;
 	private JPanel contentPanel;
 	private JPanel gameList;
-	private JPanel homePanel;
 	private CardLayout cards;	
 	
 	private User user;
@@ -102,15 +101,6 @@ public class MultiplayerMenu extends MenuPanel {
 		MigLayout layout = new MigLayout("flowy, align center");
 		JPanel btnPanel = new MenuPanel(layout);
 		btnPanel.setPreferredSize(new Dimension(playerPanel.getPreferredSize().width, 630));
-		JButton homeBtn = new MenuButton("Kamisado Home");
-		homeBtn.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				cards.show(contentPanel, "home");
-			}
-		});
-		btnPanel.add(homeBtn, "sg");
 		JButton gameBrowserBtn = new MenuButton("Game Browser");
 		gameBrowserBtn.addActionListener(new ActionListener() {
 			
@@ -140,20 +130,14 @@ public class MultiplayerMenu extends MenuPanel {
 		btnPanel.add(returnBtn, "sg");
 		this.add(btnPanel);
 		
-		refreshHomePanel();
 		refreshGameList();
 		
 		cards = new CardLayout(); 
 		contentPanel = new JPanel(cards);
 		contentPanel.setPreferredSize(new Dimension(750, 630));
-		contentPanel.add(homePanel,"home");
 		contentPanel.add(gameList, "games");
 
 		this.add(contentPanel);
-	}
-	
-	private void refreshHomePanel(){
-		homePanel = new MenuPanel();
 	}
 	
 	private void refreshGameList(){
