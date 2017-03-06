@@ -1,11 +1,13 @@
 package kamisado_gui;
 
+import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Image;
+import java.awt.LayoutManager;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -29,10 +31,15 @@ public class MainMenu extends JPanel {
 
 	private SoundTrack soundTrack;
 
+	private CardLayout cards;
+	private JPanel container;
 	private JPanel btnPanel;
 	private JPanel settingsPanel;
 
 	JFrame frame;
+	
+	MenuCheckBox soundCB;
+	JButton startBtn;
 
 	public MainMenu(SoundTrack st) {
 
@@ -44,7 +51,15 @@ public class MainMenu extends JPanel {
 
 		// Adds menu buttons to this panel
 		this.setLayout(new GridBagLayout());
+		cards = new CardLayout();
+		container =  new JPanel(cards);
+		this.add(container);
 		UIManager.put("Button.focusInputMap", new UIDefaults.LazyInputMap(new
+				Object[] {
+				    "ENTER", "pressed",
+				    "released ENTER", "released"
+				}));
+		UIManager.put("CheckBox.focusInputMap", new UIDefaults.LazyInputMap(new
 				Object[] {
 				    "ENTER", "pressed",
 				    "released ENTER", "released"
@@ -78,7 +93,7 @@ public class MainMenu extends JPanel {
 		btnPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
 
 		// Add buttons
-		JButton startBtn = new MenuButton("New game");
+		startBtn = new MenuButton("New game");
 		startBtn.addActionListener(new ActionListener() {
 
 			@Override
@@ -109,8 +124,8 @@ public class MainMenu extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				btnPanel.setVisible(false);
-				settingsPanel.setVisible(true);
+				cards.show(container, "settings");
+				soundCB.requestFocusInWindow();
 			}
 		});
 		btnPanel.add(settingsBtn);
@@ -125,18 +140,16 @@ public class MainMenu extends JPanel {
 		});
 		btnPanel.add(exitBtn);
 
-		// Add buttons panel to the centre of frame's container
-		this.add(btnPanel);
+		container.add(btnPanel, "main");
 	}
 
 	public void addSettingsButtons() {
 		// Create a new panel for settings
 		settingsPanel = new JPanel(new GridLayout(0, 1, 10, 10));
-		settingsPanel.setVisible(false);
 		settingsPanel.setBackground(new Color(20, 20, 20));
 		settingsPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
 
-		MenuCheckBox soundCB = new MenuCheckBox("Sounds", false);
+		soundCB = new MenuCheckBox("Sounds", false);
 		soundCB.addActionListener(new ActionListener() {
 
 			@Override
@@ -164,14 +177,14 @@ public class MainMenu extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				settingsPanel.setVisible(false);
-				btnPanel.setVisible(true);
+				cards.show(container, "main");
+				startBtn.requestFocusInWindow();
 			}
 		});
 		settingsPanel.add(returnBtn);
 
 		// Add settings panel to the centre of frame's container
-		this.add(settingsPanel);
+		container.add(settingsPanel, "settings");
 	}
 
 }

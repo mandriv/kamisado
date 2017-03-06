@@ -19,7 +19,6 @@ public class MenuCheckBox extends JCheckBox {
 		this.setFont(new Font("Tahoma", Font.BOLD, 12));
 		this.setForeground(new Color(200, 200, 200));
 		this.setBackground(new Color(31, 31, 31));
-		this.setFocusable(false);
 		this.setHorizontalTextPosition(SwingConstants.LEFT);
 		this.setHorizontalAlignment(SwingConstants.CENTER);
 		this.setBorderPainted(true);
@@ -41,13 +40,12 @@ public class MenuCheckBox extends JCheckBox {
 
 			@Override
 			public void mouseExited(MouseEvent e) {
-				setBackground(new Color(31, 31, 31));
 
 			}
 
 			@Override
 			public void mouseEntered(MouseEvent e) {
-				setBackground(new Color(53, 53, 53));
+				requestFocus();
 			}
 
 			@Override
