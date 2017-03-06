@@ -14,6 +14,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.UIDefaults;
+import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 
 import kamisado_util.SinglePlayerGame;
@@ -37,12 +39,16 @@ public class MainMenu extends JPanel {
 		soundTrack = st;
 
 		// Sets the background and dimensions
-		menuBackground = new ImageIcon(getClass().getResource("/kamisado_media/frameBackgrounds/mainmenu.png"))
-				.getImage();
+		menuBackground = new ImageIcon(getClass().getResource("/kamisado_media/frameBackgrounds/mainmenu.png")).getImage();
 		this.setPreferredSize(new Dimension(menuBackground.getWidth(null), menuBackground.getHeight(null)));
 
 		// Adds menu buttons to this panel
 		this.setLayout(new GridBagLayout());
+		UIManager.put("Button.focusInputMap", new UIDefaults.LazyInputMap(new
+				Object[] {
+				    "ENTER", "pressed",
+				    "released ENTER", "released"
+				}));
 		addMenuButtons();
 		addSettingsButtons();
 
@@ -94,8 +100,6 @@ public class MainMenu extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				@SuppressWarnings("unused")
 				SignInUpFrame signInUpFrame = new SignInUpFrame(frame);
-				//frame.dispose();
-				//MultiplayerMenu mpMenu = new MultiplayerMenu();
 			}
 		});
 		btnPanel.add(onlineBtn);
