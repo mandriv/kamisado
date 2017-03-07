@@ -46,14 +46,14 @@ public class RegisterActionListener implements ActionListener{
 			try {
 				if(!mpClient.registerNewUser(user)){
 					JOptionPane.showMessageDialog(signInUpFrame,
-							"Register success",
-							"You can now log in",
+							mpClient.getLastMessage(),
+							"Registered successful",
 							JOptionPane.INFORMATION_MESSAGE);
 					
 				} else {
 					JOptionPane.showMessageDialog(signInUpFrame,
-						    "Problem",
-						    "Register problem",
+							mpClient.getLastMessage(),
+						    "Register unsuccessful",
 						    JOptionPane.ERROR_MESSAGE);
 				}
 			} catch (UnirestException e1) {

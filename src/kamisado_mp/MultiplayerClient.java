@@ -17,10 +17,12 @@ public class MultiplayerClient {
 	private static final String apiURL = "https://kamisado-cs207.herokuapp.com/";
 	private String token;
 	public String userID;
+	private String lastMessage;
 
 	public MultiplayerClient() {
 		token = null;
 		userID = null;
+		lastMessage = "";
 	}
 
 	public boolean connectToAPI(String username, String password) {
@@ -50,6 +52,7 @@ public class MultiplayerClient {
 				.asJson();
 
 		JSONObject jsonResponse = response.getBody().getObject();
+		lastMessage = jsonResponse.getString("message");
 		if (jsonResponse.getBoolean("error"))
 			return false;
 		System.out.println("Got results:\n" + jsonResponse.toString());
@@ -78,6 +81,7 @@ public class MultiplayerClient {
 		}
 		
 		JSONArray jsonGamesArray = jsonResponse.getJSONArray("message");
+		lastMessage = jsonGamesArray.toString();
 		for(int i=0; i<jsonGamesArray.length(); i++){
 			JSONObject jsonGame = jsonGamesArray.getJSONObject(i);
 			String gameName = jsonGame.getString("name");
@@ -104,6 +108,7 @@ public class MultiplayerClient {
 				.header("token", token)
 				.body(game.toJSONObject())
 				.asJson().getBody().getObject();
+		lastMessage = jsonResponse.getString("message");
 		return jsonResponse.getBoolean("error");
 	}
 	
@@ -116,6 +121,7 @@ public class MultiplayerClient {
 				.header("token", token)
 				.asJson();
 		JSONObject jsonResponse = response.getBody().getObject().getJSONObject("message");
+		lastMessage = jsonResponse.toString();
 		
 		System.out.println("Got results:\n" + jsonResponse.toString());
 		
@@ -140,7 +146,12 @@ public class MultiplayerClient {
 				.header("Content-Type", "application/json")
 				.body(user.getJSONforRegister())
 				.asJson().getBody().getObject();
+		lastMessage = jsonResponse.getString("message");
 		return jsonResponse.getBoolean("error");
+	}
+	
+	public String getLastMessage() {
+		return lastMessage;
 	}
 
 }

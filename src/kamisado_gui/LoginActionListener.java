@@ -29,20 +29,18 @@ public class LoginActionListener implements ActionListener{
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if(nameField.getText().isEmpty() || passField.getText().isEmpty()){
-			JOptionPane.showMessageDialog(signInUpFrame, "Field cannot be empty!", "Login error", JOptionPane.ERROR_MESSAGE);
-		} else {
+
 			if(mpClient.connectToAPI(nameField.getText(), passField.getText())){
 				MultiplayerMenu mpMenu = new MultiplayerMenu(mpClient, mainMenuFrame);
 				mainMenuFrame.setVisible(false);
 				signInUpFrame.dispose();
 			} else {
 				JOptionPane.showMessageDialog(signInUpFrame,
-					    "Invalid username or password",
+					    mpClient.getLastMessage(),
 					    "Login error",
 					    JOptionPane.ERROR_MESSAGE);
 			}
-		}
+		
 	}
 
 }
