@@ -1,4 +1,4 @@
-package kamisado_gui;
+package kamisado_GUI_frames;
 
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -20,6 +20,8 @@ import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 
+import kamisado_GUI_components.MenuButton;
+import kamisado_GUI_components.MenuCheckBox;
 import kamisado_util.SinglePlayerGame;
 import kamisado_util.SoundTrack;
 

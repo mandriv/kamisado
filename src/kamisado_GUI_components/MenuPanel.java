@@ -1,4 +1,4 @@
-package kamisado_gui;
+package kamisado_GUI_components;
 
 import java.awt.Color;
 import java.awt.LayoutManager;

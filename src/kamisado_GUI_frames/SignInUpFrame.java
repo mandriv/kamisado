@@ -1,8 +1,9 @@
-package kamisado_gui;
+package kamisado_GUI_frames;
 
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.HeadlessException;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,8 +19,17 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 
+import com.mashape.unirest.http.exceptions.UnirestException;
+
+import kamisado_GUI_components.MenuButton;
+import kamisado_GUI_components.MenuLabel;
+import kamisado_GUI_components.MenuPanel;
+import kamisado_GUI_components.MenuPasswordField;
+import kamisado_GUI_components.MenuTextField;
+import kamisado_GUI_frames.MultiplayerMenu;
+import kamisado_GUI_listeners.LoginActionListener;
+import kamisado_GUI_listeners.RegisterActionListener;
 import kamisado_mp.MultiplayerClient;
-import kamisado_gui.MultiplayerMenu;
 import net.miginfocom.swing.MigLayout;
 
 public class SignInUpFrame extends JFrame {
@@ -28,11 +38,9 @@ public class SignInUpFrame extends JFrame {
 	
 	MultiplayerClient mpClient;
 	
-	JPanel loginPanel;
 	JTextField loginNameField;
 	JTextField loginPassField;
 
-	JPanel registerPanel;
 	JTextField registerNameField;
 	JTextField emailField;
 	JTextField registerPassField;
@@ -49,9 +57,10 @@ public class SignInUpFrame extends JFrame {
 		JTabbedPane tabbedPane = new JTabbedPane();
 		tabbedPane.addTab("Log in", getLoginPanel());
 		tabbedPane.addTab("Register", getRegisterPanel());
+		tabbedPane.addTab("Reset password", getResetPasswordPanel());
 		
 		this.add(tabbedPane);
-		this.setPreferredSize(new Dimension(300, 300));
+		this.setPreferredSize(new Dimension(400, 400));
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		this.pack();
 		this.setVisible(true);
@@ -60,14 +69,14 @@ public class SignInUpFrame extends JFrame {
 	}
 	
 	private JPanel getLoginPanel(){
-		loginPanel = new MenuPanel(new MigLayout("flowy, align center"));
+		JPanel loginPanel = new MenuPanel(new MigLayout("flowy, align center"));
 		JLabel nameLabel = new MenuLabel("Username:");
 		loginPanel.add(nameLabel, "sg");
-		loginNameField = new MenuTextField("");	
+		loginNameField = new MenuTextField("admin");	
 		loginPanel.add(loginNameField, "sg");
 		JLabel passwordLabel = new MenuLabel("Password:");
 		loginPanel.add(passwordLabel, "sg");
-		loginPassField = new MenuPasswordField("");
+		loginPassField = new MenuPasswordField("nicely-tall-pen");
 		loginPanel.add(loginPassField, "sg");
 		JButton loginBtn = new MenuButton("Sing in");
 		loginPanel.add(loginBtn, "sg");
@@ -78,7 +87,7 @@ public class SignInUpFrame extends JFrame {
 	}
 	
 	private JPanel getRegisterPanel(){
-		registerPanel = new MenuPanel(new MigLayout("flowy, align center"));
+		JPanel registerPanel = new MenuPanel(new MigLayout("flowy, align center"));
 		JLabel nameLabel = new MenuLabel("Username:");
 		registerPanel.add(nameLabel, "sg");
 		registerNameField = new MenuTextField("");	
@@ -98,6 +107,33 @@ public class SignInUpFrame extends JFrame {
 		registerPassField.addActionListener(new RegisterActionListener(registerNameField, emailField, registerPassField, mainMenuFrame, this, mpClient));
 		registerBtn.addActionListener(new RegisterActionListener(registerNameField, emailField, registerPassField, mainMenuFrame, this, mpClient));
 		return registerPanel;
+	}
+	
+	private JPanel getResetPasswordPanel(){
+		JPanel resetPasswordPanel = new MenuPanel(new MigLayout("flowy, align center"));
+		JLabel emailLabel = new MenuLabel("Enter e-mail address connected to your account");
+		resetPasswordPanel.add(emailLabel, "sg");
+		JTextField emailField = new MenuTextField("");
+		resetPasswordPanel.add(emailField, "sg");
+		JButton submitBtn = new MenuButton("Reset password");
+		submitBtn.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try {
+					if(mpClient.resetPassword(emailField.getText()))
+							JOptionPane.showMessageDialog(null, mpClient.getLastMessage(), "Password reset", JOptionPane.INFORMATION_MESSAGE);
+					else
+						JOptionPane.showMessageDialog(null, mpClient.getLastMessage(), "Password reset", JOptionPane.ERROR_MESSAGE);
+				} catch (HeadlessException | UnirestException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				
+			}
+		});
+		resetPasswordPanel.add(submitBtn, "sg");
+		return resetPasswordPanel;
 	}
 	
 }

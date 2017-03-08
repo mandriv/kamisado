@@ -1,6 +1,6 @@
 package kamisado_util;
 
-import kamisado_gui.BoardGui;
+import kamisado_GUI_frames.BoardGui;
 import kamisado_logic.BoardGrid;
 
 public class SinglePlayerGame {

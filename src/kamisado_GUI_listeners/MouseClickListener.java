@@ -1,8 +1,9 @@
-package kamisado_gui;
+package kamisado_GUI_listeners;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+import kamisado_GUI_frames.BoardGui;
 import kamisado_logic.BoardGrid;
 import kamisado_logic.Square;
 

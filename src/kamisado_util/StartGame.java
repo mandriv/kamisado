@@ -1,6 +1,6 @@
 package kamisado_util;
 
-import kamisado_gui.MainMenu;
+import kamisado_GUI_frames.MainMenu;
 
 public class StartGame implements Runnable {
 

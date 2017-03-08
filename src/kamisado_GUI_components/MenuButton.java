@@ -1,27 +1,26 @@
-package kamisado_gui;
+package kamisado_GUI_components;
 
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 import javax.swing.BorderFactory;
-import javax.swing.JCheckBox;
-import javax.swing.SwingConstants;
+import javax.swing.JButton;
 
-public class MenuCheckBox extends JCheckBox {
+public class MenuButton extends JButton {
 
-	private static final long serialVersionUID = 1192333479756669469L;
+	private static final long serialVersionUID = 1L;
 
-	public MenuCheckBox(String label, boolean selected) {
-		super(label.toUpperCase(), selected);
+	public MenuButton(String label) {
+		super(label.toUpperCase());
 		this.setFont(new Font("Tahoma", Font.BOLD, 12));
 		this.setForeground(new Color(200, 200, 200));
 		this.setBackground(new Color(31, 31, 31));
-		this.setHorizontalTextPosition(SwingConstants.LEFT);
-		this.setHorizontalAlignment(SwingConstants.CENTER);
-		this.setBorderPainted(true);
+		this.setFocusPainted(false);
 		this.setBorder(BorderFactory.createLineBorder(new Color(138, 53, 57, 128)));
 		this.setPreferredSize(new Dimension(200, 50));
 		this.addMouseListener(new MouseListener() {
@@ -34,7 +33,7 @@ public class MenuCheckBox extends JCheckBox {
 
 			@Override
 			public void mousePressed(MouseEvent e) {
-				// TODO Auto-generated method stub
+				//setBackground(new Color(43, 43, 43));
 
 			}
 
@@ -52,6 +51,18 @@ public class MenuCheckBox extends JCheckBox {
 			public void mouseClicked(MouseEvent e) {
 				// TODO Auto-generated method stub
 
+			}
+		});
+		this.addFocusListener(new FocusListener() {
+			
+			@Override
+			public void focusLost(FocusEvent e) {
+				setBackground(new Color(31, 31, 31));
+			}
+			
+			@Override
+			public void focusGained(FocusEvent e) {
+				setBackground(new Color(53, 53, 53));
 			}
 		});
 	}

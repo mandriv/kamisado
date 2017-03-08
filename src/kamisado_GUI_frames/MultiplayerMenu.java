@@ -1,4 +1,4 @@
-package kamisado_gui;
+package kamisado_GUI_frames;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -10,6 +10,9 @@ import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
 
+import kamisado_GUI_components.MenuButton;
+import kamisado_GUI_components.MenuLabel;
+import kamisado_GUI_components.MenuPanel;
 import kamisado_mp.GameListing;
 import kamisado_mp.MultiplayerClient;
 import kamisado_mp.User;
@@ -23,7 +26,7 @@ public class MultiplayerMenu extends MenuPanel {
 	
 	private JFrame frame;
 	private JPanel contentPanel;
-	private JPanel gameList;
+	private JPanel gamePanel;
 	private CardLayout cards;	
 	
 	private User user;
@@ -32,6 +35,8 @@ public class MultiplayerMenu extends MenuPanel {
 	private int gamesPlayed;
 	private int gamesWon;
 	private int rank;
+	
+	private ArrayList<GameListing> games;
 
 
 	public MultiplayerMenu(MultiplayerClient client, JFrame previousFrame) {
@@ -52,6 +57,13 @@ public class MultiplayerMenu extends MenuPanel {
 		gamesWon = user.gamesWon;
 		rank = user.elo;
 		
+		try {
+			games = mpClient.getGames();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		
 		this.setLayout(new MigLayout("insets 0 0 0 0"));
 		
@@ -61,7 +73,6 @@ public class MultiplayerMenu extends MenuPanel {
 		// create and show frame
 		frame = new JFrame("Kamisado Online");
 		frame.setResizable(false);
-		//frame.setPreferredSize(new Dimension(1000, 800));
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setContentPane(this);
 		frame.pack();
@@ -107,7 +118,7 @@ public class MultiplayerMenu extends MenuPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				cards.show(contentPanel, "games");
-				refreshGameList();
+				createContentForGamePanel();
 			}
 		});
 		btnPanel.add(gameBrowserBtn, "sg");
@@ -130,31 +141,40 @@ public class MultiplayerMenu extends MenuPanel {
 		btnPanel.add(returnBtn, "sg");
 		this.add(btnPanel);
 		
-		refreshGameList();
-		
 		cards = new CardLayout(); 
 		contentPanel = new JPanel(cards);
 		contentPanel.setPreferredSize(new Dimension(750, 630));
-		contentPanel.add(gameList, "games");
+		
+		MigLayout gamePanelLayout = new MigLayout("");
+		gamePanel = new MenuPanel(gamePanelLayout);
+		createContentForGamePanel();
+
+		contentPanel.add(gamePanel, "games");
+		
 
 		this.add(contentPanel);
 	}
 	
-	private void refreshGameList(){
-		gameList = new MenuPanel(new MigLayout("fillx, wrap 15"));
-		gameList.setPreferredSize(new Dimension(750, 630));
-		JLabel nameGameLabel = new MenuLabel("Name");
-		gameList.add(nameGameLabel, "span 7");
-		JLabel modeLabel = new MenuLabel("Mode");
-		gameList.add(modeLabel, "span 2");
-		JLabel rankGameLabel = new MenuLabel("Rank");
-		gameList.add(rankGameLabel, "span 2");
-		JLabel statusLabel = new MenuLabel("status");
-		gameList.add(statusLabel, "span 2");
-		JLabel emptyLabel = new MenuLabel("");
-		gameList.add(emptyLabel, "span 2");
-		try {
-			for(GameListing game: mpClient.getGames()){
+	private void createContentForGamePanel(){
+
+		JPanel gameList = new MenuPanel(new MigLayout("fillx, wrap 15"));
+		
+		if (games.isEmpty()){
+			JLabel emptyGameListLabel = new MenuLabel("There are currently no available games, create your own");
+			gameList.add(emptyGameListLabel, "span 15, align center");
+		} else {		
+			JLabel nameGameLabel = new MenuLabel("Name");
+			gameList.add(nameGameLabel, "span 7");
+			JLabel modeLabel = new MenuLabel("Mode");
+			gameList.add(modeLabel, "span 2");
+			JLabel rankGameLabel = new MenuLabel("Rank");
+			gameList.add(rankGameLabel, "span 2");
+			JLabel statusLabel = new MenuLabel("status");
+			gameList.add(statusLabel, "span 2");
+			JLabel emptyLabel = new MenuLabel("");
+			gameList.add(emptyLabel, "span 2");
+			
+			for(GameListing game: games){
 				JLabel gameNameLabel = new MenuLabel(game.getName());
 				gameList.add(gameNameLabel, "span 6");
 				JLabel protectedLabel = new MenuLabel("");
@@ -164,16 +184,60 @@ public class MultiplayerMenu extends MenuPanel {
 				gameList.add(protectedLabel);
 				JLabel gameModeLabel = new MenuLabel(game.getMode());
 				gameList.add(gameModeLabel, "span 2");
-				JLabel gameRankLabel = new MenuLabel(game.getRank());
+				JLabel gameRankLabel = new MenuLabel(game.getRank()+"");
 				gameList.add(gameRankLabel, "span 2");
 				JLabel gameStatusLabel = new MenuLabel(game.getStatus());
 				gameList.add(gameStatusLabel, "span 2");
 				JButton joinBtn = new MenuButton("Join");
+				joinBtn.setPreferredSize(new Dimension(100, 20));
 				gameList.add(joinBtn, "span 2");
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		}	
+		JButton newGameBtn = new MenuButton("New game");
+		newGameBtn.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				NewGameFrame frame = new NewGameFrame(mpClient, user);
+				
+			}
+		});
+		JButton refreshBtn = new MenuButton("Refresh game list");
+		refreshBtn.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try {
+					games = mpClient.getGames();
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				gamePanel.removeAll();
+				createContentForGamePanel();
+				gamePanel.revalidate();
+				gamePanel.repaint();
+			}
+		});
+		
+		JScrollPane gameListSP = new JScrollPane(gameList, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+	            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		gameListSP.setBorder(null);
+		
+		Dimension d = gameList.getPreferredSize();
+		gameList.setPreferredSize(new Dimension(750, d.height));
+		
+		gamePanel.add(gameListSP, "wrap");
+		
+		JPanel bottomBtnsPanel = new MenuPanel();
+		bottomBtnsPanel.add(newGameBtn);
+		bottomBtnsPanel.add(refreshBtn);
+		gamePanel.add(bottomBtnsPanel, "align center");
+	}
+	
+	private void createAccountPanel(){
+		JPanel accountPanel = new MenuPanel();
+		
 	}
 
 }

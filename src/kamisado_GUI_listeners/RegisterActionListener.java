@@ -1,4 +1,4 @@
-package kamisado_gui;
+package kamisado_GUI_listeners;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

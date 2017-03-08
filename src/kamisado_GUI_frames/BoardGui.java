@@ -1,4 +1,4 @@
-package kamisado_gui;
+package kamisado_GUI_frames;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -12,6 +12,8 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import kamisado_GUI_listeners.KeyPressListener;
+import kamisado_GUI_listeners.MouseClickListener;
 import kamisado_logic.BoardGrid;
 import kamisado_logic.Square;
 

@@ -18,6 +18,7 @@ public class MultiplayerClient {
 	private String token;
 	public String userID;
 	private String lastMessage;
+	private User user;
 
 	public MultiplayerClient() {
 		token = null;
@@ -39,7 +40,6 @@ public class MultiplayerClient {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 		System.out.println("authentication passed, got token");
 		return true;
 	}
@@ -84,16 +84,18 @@ public class MultiplayerClient {
 		lastMessage = jsonGamesArray.toString();
 		for(int i=0; i<jsonGamesArray.length(); i++){
 			JSONObject jsonGame = jsonGamesArray.getJSONObject(i);
-			String gameName = jsonGame.getString("name");
-			String gameMode = jsonGame.getString("mode");
-			String gameP1id = jsonGame.getString("player1_ID");
-			String gameP2id = jsonGame.getString("player2_ID");
+			String name = jsonGame.getString("name");
+			String mode = jsonGame.getString("mode");
+			String p1id = jsonGame.getString("player1_ID");
+			String p2id = jsonGame.getString("player2_ID");
 			String password = jsonGame.getString("password");
 			String status = jsonGame.getString("status");
 			int p1score = jsonGame.getInt("P1score");
 			int p2score = jsonGame.getInt("P2score");
 			int time = jsonGame.getInt("time");
-			GameListing game = new GameListing(gameName, gameMode, gameP1id, gameP2id, password, status, p1score, p2score, time);
+			int pointsLimit = jsonGame.getInt("pointLimit");
+			int rank = jsonGame.getInt("rank");
+			GameListing game = new GameListing(name, mode, p1id, p2id, password, status, p1score, p2score, time, pointsLimit, rank);
 			list.add(game);
 		}
 		
@@ -103,12 +105,15 @@ public class MultiplayerClient {
 	public boolean addGame(GameListing game) throws Exception{
 		if(token == null)
 			throw new Exception("No authentication! You need to connect first!");
+		System.out.println("POST on /games...");
+		System.out.println("Trying to POST: "+game.toJSONObject().toString());
 		JSONObject jsonResponse = Unirest.post(apiURL + "games")
 				.header("Content-Type", "application/json")
 				.header("token", token)
 				.body(game.toJSONObject())
 				.asJson().getBody().getObject();
 		lastMessage = jsonResponse.getString("message");
+		System.out.println("Got results:\n" + jsonResponse.toString());
 		return jsonResponse.getBoolean("error");
 	}
 	
@@ -154,4 +159,15 @@ public class MultiplayerClient {
 		return lastMessage;
 	}
 
+	public boolean resetPassword(String email) throws UnirestException{
+		JSONObject body = new JSONObject();
+		body.put("email", email);
+		
+		JSONObject jsonResponse = Unirest.post(apiURL + "users/resetPassword")
+				.header("Content-Type", "application/json")
+				.body(body)
+				.asJson().getBody().getObject();
+		lastMessage = jsonResponse.getString("message");
+		return jsonResponse.getBoolean("error");
+	}
 }

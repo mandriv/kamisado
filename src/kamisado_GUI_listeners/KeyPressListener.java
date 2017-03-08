@@ -1,8 +1,9 @@
-package kamisado_gui;
+package kamisado_GUI_listeners;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
+import kamisado_GUI_frames.BoardGui;
 import kamisado_logic.BoardGrid;
 
 public class KeyPressListener implements KeyListener {

@@ -1,4 +1,4 @@
-package kamisado_gui;
+package kamisado_GUI_listeners;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -7,6 +7,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
+import kamisado_GUI_frames.MultiplayerMenu;
 import kamisado_mp.MultiplayerClient;
 
 public class LoginActionListener implements ActionListener{
