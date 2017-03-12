@@ -76,7 +76,7 @@ public class SignInUpFrame extends JFrame {
 		loginPanel.add(loginNameField, "sg");
 		JLabel passwordLabel = new MenuLabel("Password:");
 		loginPanel.add(passwordLabel, "sg");
-		loginPassField = new MenuPasswordField("nicely-tall-pen");
+		loginPassField = new MenuPasswordField("admin");
 		loginPanel.add(loginPassField, "sg");
 		JButton loginBtn = new MenuButton("Sing in");
 		loginPanel.add(loginBtn, "sg");

@@ -18,7 +18,6 @@ public class MultiplayerClient {
 	private String token;
 	public String userID;
 	private String lastMessage;
-	private User user;
 
 	public MultiplayerClient() {
 		token = null;
@@ -132,15 +131,13 @@ public class MultiplayerClient {
 		
 		String name = jsonResponse.getString("name");
 		String email = jsonResponse.getString("email");
-		String hashedPassword = jsonResponse.getString("password");
 		String dateJoined = jsonResponse.getString("dateJoined");
 		int gamesPlayed = jsonResponse.getInt("gamesPlayed");
 		int gamesWon = jsonResponse.getInt("gamesWon");
 		int elo = jsonResponse.getInt("eloRating");
-		String avatarPath = jsonResponse.getString("avatar");
-		boolean admin = jsonResponse.getBoolean("admin");
+		int avatarNum = jsonResponse.getInt("avatarNum");
 		
-		User user = new User(name, email, hashedPassword, dateJoined, gamesPlayed, gamesWon, elo, avatarPath, admin);
+		User user = new User(name, email, dateJoined, gamesPlayed, gamesWon, elo, avatarNum);
 		
 		return user;
 	}
@@ -158,7 +155,7 @@ public class MultiplayerClient {
 		return lastMessage;
 	}
 
-	public boolean resetPassword(String email) throws UnirestException{
+	public boolean resetPassword(String email) throws UnirestException {
 		JSONObject body = new JSONObject();
 		body.put("email", email);
 		
@@ -170,10 +167,61 @@ public class MultiplayerClient {
 		return jsonResponse.getBoolean("error");
 	}
 	
-	public boolean changeAvatar(String avatar) {
+	public boolean changeAvatar(int avatar) throws UnirestException {
 		JSONObject body = new JSONObject();
 		body.put("avatar", avatar);
 		
+		System.out.println("PUTting on users with "+body.toString());
+		
 		JSONObject jsonResponse = Unirest.put(apiURL + "users/" + userID)  
+				.header("Content-Type", "application/json")
+				.header("token", token)
+				.body(body)
+				.asJson().getBody().getObject();
+		
+		lastMessage = jsonResponse.getString("message");
+		
+		System.out.println("Got response"+jsonResponse.toString());
+		
+		return jsonResponse.getBoolean("error");
+	}
+	
+	public boolean changeEmail(String newEmail) throws UnirestException {
+		JSONObject body = new JSONObject();
+		body.put("email", newEmail);
+		
+		System.out.println("PUTting on users with "+body.toString());
+		
+		JSONObject jsonResponse = Unirest.put(apiURL+ "users/" + userID)
+				.header("Content-Type", "application/json")
+				.header("token", token)
+				.body(body)
+				.asJson().getBody().getObject();
+		
+		lastMessage = jsonResponse.getString("message");
+		
+		System.out.println("Got response"+jsonResponse.toString());
+		
+		return jsonResponse.getBoolean("error");
+	}
+	
+	public boolean changePassword(String oldPassword, String newPassword) throws UnirestException {
+		JSONObject body = new JSONObject();
+		body.put("oldPassword", oldPassword);
+		body.put("newPassword", newPassword);
+		
+		System.out.println("PUTting on users with "+body.toString());
+		
+		JSONObject jsonResponse = Unirest.put(apiURL+ "users/" + userID)
+				.header("Content-Type", "application/json")
+				.header("token", token)
+				.body(body)
+				.asJson().getBody().getObject();
+		
+		lastMessage = jsonResponse.getString("message");
+		
+		System.out.println("Got response"+jsonResponse.toString());
+		
+		return jsonResponse.getBoolean("error");
 	}
 }

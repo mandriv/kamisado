@@ -12,6 +12,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JToggleButton;
+
+import com.mashape.unirest.http.exceptions.UnirestException;
+
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -20,6 +23,8 @@ import kamisado_GUI_components.AvatarButton;
 import kamisado_GUI_components.MenuButton;
 import kamisado_GUI_components.MenuLabel;
 import kamisado_GUI_components.MenuPanel;
+import kamisado_mp.MultiplayerClient;
+import kamisado_mp.User;
 import net.miginfocom.swing.MigLayout;
 
 public class AvatarChangeFrame extends JFrame{
@@ -27,16 +32,19 @@ public class AvatarChangeFrame extends JFrame{
 	private static final long serialVersionUID = 1L;
 	
 	private ImageIcon currentAvatar;
-	JLabel currentAvatarLabel;
+	private JLabel currentAvatarLabel;
+	private MultiplayerClient mpClient;
 
-	public AvatarChangeFrame(ImageIcon currentAvatar) {
+	public AvatarChangeFrame(User user, MultiplayerClient mpClient, MultiplayerMenu menu) {
 		super("Change avatar");
 	
-		this.currentAvatar = currentAvatar;
+		currentAvatar = user.avatar;
+		this.mpClient = mpClient;
 		
 		List<ImageIcon> avatars = new ArrayList<>();
 		for(int i = 1 ; i <= 108 ; i++) {
 			ImageIcon avatar = new ImageIcon(getClass().getResource("/kamisado_media/multiplayer/TCP/avatar"+i+".jpg"));
+			avatar.setDescription(i+"");
 			avatars.add(avatar);
 		}
 		
@@ -64,7 +72,29 @@ public class AvatarChangeFrame extends JFrame{
 		JPanel btnPanel = new MenuPanel(new MigLayout());
 		currentAvatarLabel = new MenuLabel(currentAvatar);
 		JButton okBtn = new MenuButton("OK");
+		okBtn.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				ImageIcon newAvatar = (ImageIcon) currentAvatarLabel.getIcon();
+				try {
+					mpClient.changeAvatar(Integer.parseInt(newAvatar.getDescription()));
+					menu.updateAvatar(newAvatar);
+					dispose();
+				} catch (NumberFormatException | UnirestException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
 		JButton cancelBtn = new MenuButton("Cancel");
+		cancelBtn.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				dispose();
+			}
+		});
 		btnPanel.add(currentAvatarLabel);
 		btnPanel.add(okBtn);
 		btnPanel.add(cancelBtn);

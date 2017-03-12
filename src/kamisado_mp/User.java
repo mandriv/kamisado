@@ -20,16 +20,14 @@ public class User {
 	public int gamesWon;
 	public int elo;
 	public ImageIcon avatar;
-	public boolean admin;
 	
 	
 	
-	public User(String name, String email, String password, String dateJoinedString, int gamesPlayed, int gamesWon, int elo,
-			String avatarPath, boolean admin) {
+	public User(String name, String email, String dateJoinedString, int gamesPlayed, int gamesWon, int elo,
+			int avatarNum) {
 		super();
 		this.name = name;
 		this.email = email;
-		this.password = password;
 		
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 		df.setTimeZone(TimeZone.getTimeZone("UTC"));
@@ -43,8 +41,7 @@ public class User {
 		this.gamesPlayed = gamesPlayed;
 		this.gamesWon = gamesWon;
 		this.elo = elo;
-		avatar = new ImageIcon(getClass().getResource("/kamisado_media/multiplayer/TCP/avatar"+avatarPath+".jpg"));;
-		this.admin = admin;
+		avatar = new ImageIcon(getClass().getResource("/kamisado_media/multiplayer/TCP/avatar"+avatarNum+".jpg"));;
 	}
 
 	public User(String name, String email, String password){

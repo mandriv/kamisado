@@ -88,7 +88,7 @@ public class MainMenu extends JPanel {
 		g.drawImage(this.menuBackground, 0, 0, null);
 	}
 
-	public void addMenuButtons() {
+	private void addMenuButtons() {
 		// Create a new panel for buttons
 		btnPanel = new JPanel(new GridLayout(0, 1, 10, 10));
 		btnPanel.setBackground(new Color(20, 20, 20));

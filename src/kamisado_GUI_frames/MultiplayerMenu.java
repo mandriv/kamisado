@@ -5,7 +5,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
-import net.miginfocom.*;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
@@ -33,6 +32,8 @@ public class MultiplayerMenu extends MenuPanel {
 	private JPanel profilePanel;
 	
 	private User user;
+	JLabel avatarLabel;
+	JLabel profilePanelAvatar;
 	
 	private ArrayList<GameListing> games;
 
@@ -81,7 +82,7 @@ public class MultiplayerMenu extends MenuPanel {
 		JLabel nameLabel = new MenuLabel(user.name, 20);
 		nameLabel.setFont(new Font("Tahoma", Font.BOLD, 20));
 		playerPanel.add(nameLabel, "span 2, wrap, align center");
-		JLabel avatarLabel = new MenuLabel(user.avatar);
+		avatarLabel = new MenuLabel(user.avatar);
 		playerPanel.add(avatarLabel, "");
 		
 		JPanel playerQuickStatsPanel = new MenuPanel();
@@ -198,6 +199,7 @@ public class MultiplayerMenu extends MenuPanel {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				@SuppressWarnings("unused")
 				NewGameFrame frame = new NewGameFrame(mpClient, user);
 				
 			}
@@ -240,7 +242,7 @@ public class MultiplayerMenu extends MenuPanel {
 		profilePanel = new MenuPanel(layout);
 		
 		JLabel profileLabel = new MenuLabel("Player's information");
-		JLabel avatarLabel = new MenuLabel(user.avatar);
+		profilePanelAvatar = new MenuLabel(user.avatar);
 
 		JPanel infoPanel = new MenuPanel(new MigLayout("flowy, align center"));
 		JLabel usernameLabel = new MenuLabel("Username: "+user.name);
@@ -251,19 +253,18 @@ public class MultiplayerMenu extends MenuPanel {
 		infoPanel.add(rankLabel);
 		
 		JButton avatarBtn = new GUIButton("Avatar");
-		JButton settingsBtn = new GUIButton("Settings");
 		JButton emailBtn = new GUIButton("E-mail");
 		JButton passwordBtn = new GUIButton("Password");
 		
 		profilePanel.add(profileLabel, "span 4, align center");
-		profilePanel.add(avatarLabel);
+		profilePanel.add(profilePanelAvatar);
 		profilePanel.add(infoPanel, "span 3");
+		
 		profilePanel.add(avatarBtn);
-		profilePanel.add(settingsBtn);
 		profilePanel.add(emailBtn);
 		profilePanel.add(passwordBtn);
 		
-		AvatarChangeFrame avatarFrame = new AvatarChangeFrame(user.avatar);
+		AvatarChangeFrame avatarFrame = new AvatarChangeFrame(user, mpClient, this);
 		avatarBtn.addActionListener(new ActionListener() {
 			
 			@Override
@@ -271,6 +272,32 @@ public class MultiplayerMenu extends MenuPanel {
 				avatarFrame.setVisible(true);
 			}
 		});
+		
+		EmailChangeFrame emailFrame = new EmailChangeFrame(user, mpClient);
+		emailBtn.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				emailFrame.setVisible(true);
+				
+			}
+		});
+		
+		PasswordChangeFrame passFrame = new PasswordChangeFrame(mpClient);
+		passwordBtn.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				passFrame.setVisible(true);
+			}
+		});
 	}
+	
+	public void updateAvatar(ImageIcon newAvatar) {
+		user.avatar = newAvatar;
+		avatarLabel.setIcon(user.avatar);
+		profilePanelAvatar.setIcon(user.avatar);
+	}
+	
 
 }
