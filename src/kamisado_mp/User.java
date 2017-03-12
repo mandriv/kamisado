@@ -1,6 +1,12 @@
 package kamisado_mp;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
+
+import javax.swing.ImageIcon;
 
 import org.json.JSONObject;
 
@@ -8,24 +14,39 @@ public class User {
 	
 	public String name;
 	public String email;
-	public Date dateJoined;
 	public String password;
+	public Date dateJoined;
 	public int gamesPlayed;
 	public int gamesWon;
 	public int elo;
+	public ImageIcon avatar;
 	public boolean admin;
 	
-	public User(String name, String email, Date dateJoined, String hashedPassword, int gamesPlayed, int gamesWon, int elo, boolean admin) {
+	
+	
+	public User(String name, String email, String password, String dateJoinedString, int gamesPlayed, int gamesWon, int elo,
+			String avatarPath, boolean admin) {
+		super();
 		this.name = name;
 		this.email = email;
-		this.dateJoined = dateJoined;
-		password = hashedPassword;
+		this.password = password;
+		
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+		df.setTimeZone(TimeZone.getTimeZone("UTC"));
+		try {
+			dateJoined = df.parse(dateJoinedString);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		this.gamesPlayed = gamesPlayed;
 		this.gamesWon = gamesWon;
 		this.elo = elo;
+		avatar = new ImageIcon(getClass().getResource("/kamisado_media/multiplayer/TCP/avatar"+avatarPath+".jpg"));;
 		this.admin = admin;
 	}
-	
+
 	public User(String name, String email, String password){
 		this.name = name;
 		this.email = email;
@@ -38,6 +59,11 @@ public class User {
 		json.put("email", email);
 		json.put("password", password);
 		return json;
+	}
+	
+	public String getJoinedDateFormattedString() {
+		DateFormat df = new SimpleDateFormat("dd MMMM yyyy");
+		return df.format(dateJoined);
 	}
 	
 

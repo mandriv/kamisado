@@ -132,16 +132,15 @@ public class MultiplayerClient {
 		
 		String name = jsonResponse.getString("name");
 		String email = jsonResponse.getString("email");
-		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-		df.setTimeZone(TimeZone.getTimeZone("UTC"));
-		Date dateJoined = df.parse(jsonResponse.getString("dateJoined"));
 		String hashedPassword = jsonResponse.getString("password");
+		String dateJoined = jsonResponse.getString("dateJoined");
 		int gamesPlayed = jsonResponse.getInt("gamesPlayed");
 		int gamesWon = jsonResponse.getInt("gamesWon");
 		int elo = jsonResponse.getInt("eloRating");
+		String avatarPath = jsonResponse.getString("avatar");
 		boolean admin = jsonResponse.getBoolean("admin");
 		
-		User user = new User(name, email, dateJoined, hashedPassword, gamesPlayed, gamesWon, elo, admin);
+		User user = new User(name, email, hashedPassword, dateJoined, gamesPlayed, gamesWon, elo, avatarPath, admin);
 		
 		return user;
 	}
@@ -169,5 +168,12 @@ public class MultiplayerClient {
 				.asJson().getBody().getObject();
 		lastMessage = jsonResponse.getString("message");
 		return jsonResponse.getBoolean("error");
+	}
+	
+	public boolean changeAvatar(String avatar) {
+		JSONObject body = new JSONObject();
+		body.put("avatar", avatar);
+		
+		JSONObject jsonResponse = Unirest.put(apiURL + "users/" + userID)  
 	}
 }

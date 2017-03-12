@@ -10,6 +10,7 @@ import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
 
+import kamisado_GUI_components.GUIButton;
 import kamisado_GUI_components.MenuButton;
 import kamisado_GUI_components.MenuLabel;
 import kamisado_GUI_components.MenuPanel;
@@ -26,15 +27,12 @@ public class MultiplayerMenu extends MenuPanel {
 	
 	private JFrame frame;
 	private JPanel contentPanel;
-	private JPanel gamePanel;
 	private CardLayout cards;	
 	
+	private JPanel gameListPanel;
+	private JPanel profilePanel;
+	
 	private User user;
-	private String name;
-	private ImageIcon avatar;
-	private int gamesPlayed;
-	private int gamesWon;
-	private int rank;
 	
 	private ArrayList<GameListing> games;
 
@@ -50,12 +48,6 @@ public class MultiplayerMenu extends MenuPanel {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-		name = user.name;
-		avatar = new ImageIcon(getClass().getResource("/kamisado_media/multiplayer/TCP/TCP-Human-1.jpg"));
-		gamesPlayed = user.gamesPlayed;
-		gamesWon = user.gamesWon;
-		rank = user.elo;
 		
 		try {
 			games = mpClient.getGames();
@@ -86,19 +78,19 @@ public class MultiplayerMenu extends MenuPanel {
 	private void generateUI(){
 		JPanel playerPanel = new MenuPanel();
 		playerPanel.setLayout(new MigLayout());
-		JLabel nameLabel = new MenuLabel(name, 20);
+		JLabel nameLabel = new MenuLabel(user.name, 20);
 		nameLabel.setFont(new Font("Tahoma", Font.BOLD, 20));
 		playerPanel.add(nameLabel, "span 2, wrap, align center");
-		JLabel avatarLabel = new MenuLabel(avatar);
+		JLabel avatarLabel = new MenuLabel(user.avatar);
 		playerPanel.add(avatarLabel, "");
 		
 		JPanel playerQuickStatsPanel = new MenuPanel();
 		playerQuickStatsPanel.setLayout(new MigLayout());
-		JLabel gamesPlayedLabel = new MenuLabel("Games played: "+gamesPlayed);
+		JLabel gamesPlayedLabel = new MenuLabel("Games played: "+user.gamesPlayed);
 		playerQuickStatsPanel.add(gamesPlayedLabel, "wrap");
-		JLabel gamesWonLabel = new MenuLabel("Games won: "+gamesWon);
+		JLabel gamesWonLabel = new MenuLabel("Games won: "+user.gamesWon);
 		playerQuickStatsPanel.add(gamesWonLabel, "wrap");
-		JLabel rankLabel = new MenuLabel("Rank: "+rank);
+		JLabel rankLabel = new MenuLabel("Rank: "+user.elo);
 		playerQuickStatsPanel.add(rankLabel, "wrap");
 		
 		playerPanel.add(playerQuickStatsPanel);		
@@ -118,12 +110,18 @@ public class MultiplayerMenu extends MenuPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				cards.show(contentPanel, "games");
-				createContentForGamePanel();
 			}
 		});
 		btnPanel.add(gameBrowserBtn, "sg");
-		JButton settingsBtn = new MenuButton("Account settings");
-		btnPanel.add(settingsBtn, "sg");
+		JButton profileBtn = new MenuButton("My Profile");
+		profileBtn.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				cards.show(contentPanel, "profile");
+			}
+		});
+		btnPanel.add(profileBtn, "sg");
 		JButton laddersBtn = new MenuButton("Ladders");
 		btnPanel.add(laddersBtn, "sg");
 		JButton chatBtn = new MenuButton("Chat");
@@ -146,10 +144,13 @@ public class MultiplayerMenu extends MenuPanel {
 		contentPanel.setPreferredSize(new Dimension(750, 630));
 		
 		MigLayout gamePanelLayout = new MigLayout("");
-		gamePanel = new MenuPanel(gamePanelLayout);
+		gameListPanel = new MenuPanel(gamePanelLayout);
+		
 		createContentForGamePanel();
+		createContentForProfilePanel();
 
-		contentPanel.add(gamePanel, "games");
+		contentPanel.add(gameListPanel, "games");
+		contentPanel.add(profilePanel, "profile");
 		
 
 		this.add(contentPanel);
@@ -188,12 +189,11 @@ public class MultiplayerMenu extends MenuPanel {
 				gameList.add(gameRankLabel, "span 2");
 				JLabel gameStatusLabel = new MenuLabel(game.getStatus());
 				gameList.add(gameStatusLabel, "span 2");
-				JButton joinBtn = new MenuButton("Join");
-				joinBtn.setPreferredSize(new Dimension(100, 20));
+				JButton joinBtn = new GUIButton("Join");
 				gameList.add(joinBtn, "span 2");
 			}
 		}	
-		JButton newGameBtn = new MenuButton("New game");
+		JButton newGameBtn = new MenuButton("Host game");
 		newGameBtn.addActionListener(new ActionListener() {
 			
 			@Override
@@ -213,10 +213,10 @@ public class MultiplayerMenu extends MenuPanel {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-				gamePanel.removeAll();
+				gameListPanel.removeAll();
 				createContentForGamePanel();
-				gamePanel.revalidate();
-				gamePanel.repaint();
+				gameListPanel.revalidate();
+				gameListPanel.repaint();
 			}
 		});
 		
@@ -227,17 +227,50 @@ public class MultiplayerMenu extends MenuPanel {
 		Dimension d = gameList.getPreferredSize();
 		gameList.setPreferredSize(new Dimension(750, d.height));
 		
-		gamePanel.add(gameListSP, "wrap");
+		gameListPanel.add(gameListSP, "wrap");
 		
 		JPanel bottomBtnsPanel = new MenuPanel();
 		bottomBtnsPanel.add(newGameBtn);
 		bottomBtnsPanel.add(refreshBtn);
-		gamePanel.add(bottomBtnsPanel, "align center");
+		gameListPanel.add(bottomBtnsPanel, "align center");
 	}
 	
-	private void createAccountPanel(){
-		JPanel accountPanel = new MenuPanel();
+	private void createContentForProfilePanel() {
+		LayoutManager layout = new MigLayout("wrap 4, align center");
+		profilePanel = new MenuPanel(layout);
 		
+		JLabel profileLabel = new MenuLabel("Player's information");
+		JLabel avatarLabel = new MenuLabel(user.avatar);
+
+		JPanel infoPanel = new MenuPanel(new MigLayout("flowy, align center"));
+		JLabel usernameLabel = new MenuLabel("Username: "+user.name);
+		JLabel joinedLabel = new MenuLabel("Member since: "+user.getJoinedDateFormattedString());
+		JLabel rankLabel = new MenuLabel("Current elo rating: "+user.elo);
+		infoPanel.add(usernameLabel);
+		infoPanel.add(joinedLabel);
+		infoPanel.add(rankLabel);
+		
+		JButton avatarBtn = new GUIButton("Avatar");
+		JButton settingsBtn = new GUIButton("Settings");
+		JButton emailBtn = new GUIButton("E-mail");
+		JButton passwordBtn = new GUIButton("Password");
+		
+		profilePanel.add(profileLabel, "span 4, align center");
+		profilePanel.add(avatarLabel);
+		profilePanel.add(infoPanel, "span 3");
+		profilePanel.add(avatarBtn);
+		profilePanel.add(settingsBtn);
+		profilePanel.add(emailBtn);
+		profilePanel.add(passwordBtn);
+		
+		AvatarChangeFrame avatarFrame = new AvatarChangeFrame(user.avatar);
+		avatarBtn.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				avatarFrame.setVisible(true);
+			}
+		});
 	}
 
 }
