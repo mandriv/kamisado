@@ -27,12 +27,12 @@ import kamisado_mp.MultiplayerClient;
 import kamisado_mp.User;
 import net.miginfocom.swing.MigLayout;
 
-public class NewGameFrame extends JFrame{
+public class NewMpHostFrame extends JFrame{
 	
 	MultiplayerClient mpClient;
 	User user;
 	
-	public NewGameFrame(MultiplayerClient mpClient, User user) {
+	public NewMpHostFrame(MultiplayerClient mpClient, User user) {
 		
 		super("Create new game");
 		

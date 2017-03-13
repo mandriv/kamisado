@@ -217,7 +217,7 @@ public class MultiplayerMenu extends MenuPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				@SuppressWarnings("unused")
-				NewGameFrame frame = new NewGameFrame(mpClient, user);
+				NewMpHostFrame frame = new NewMpHostFrame(mpClient, user);
 				
 			}
 		});

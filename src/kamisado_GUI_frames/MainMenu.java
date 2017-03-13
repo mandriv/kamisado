@@ -113,9 +113,7 @@ public class MainMenu extends JPanel {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				PreGameMenu preGame = new PreGameMenu();
-				System.out.println("izda");
-				
+
 			}
 		});
 		btnPanel.add(loadBtn);
