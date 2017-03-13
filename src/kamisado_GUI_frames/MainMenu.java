@@ -100,14 +100,24 @@ public class MainMenu extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				frame.dispose();
-				@SuppressWarnings("unused")
-				SinglePlayerGame game = new SinglePlayerGame();
+				//frame.dispose();
+				//@SuppressWarnings("unused")
+				PreGameMenu preGame = new PreGameMenu();
+				//SinglePlayerGame game = new SinglePlayerGame();
 			}
 		});
 		btnPanel.add(startBtn);
 
 		JButton loadBtn = new MenuButton("Load game");
+		loadBtn.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				PreGameMenu preGame = new PreGameMenu();
+				System.out.println("izda");
+				
+			}
+		});
 		btnPanel.add(loadBtn);
 
 		JButton onlineBtn = new MenuButton("Play Online");
