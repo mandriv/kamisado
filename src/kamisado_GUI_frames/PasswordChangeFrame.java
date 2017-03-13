@@ -21,13 +21,13 @@ import kamisado_GUI_components.GUIButton;
 import kamisado_GUI_components.MenuLabel;
 import kamisado_GUI_components.MenuPanel;
 import kamisado_GUI_components.MenuPasswordField;
-import kamisado_GUI_components.MenuTextField;
 import kamisado_mp.MultiplayerClient;
-import kamisado_mp.User;
 import net.miginfocom.swing.MigLayout;
 
 public class PasswordChangeFrame extends JFrame{
 	
+	private static final long serialVersionUID = 1L;
+
 	public PasswordChangeFrame(MultiplayerClient mpClient) {
 		super("Change password");
 		JPanel content = new MenuPanel(new MigLayout("wrap 3, align center, gap 20px 20px"));

@@ -13,15 +13,19 @@ import kamisado_GUI_components.GUIButton;
 import kamisado_GUI_components.MenuButton;
 import kamisado_GUI_components.MenuLabel;
 import kamisado_GUI_components.MenuPanel;
+import kamisado_GUI_components.MenuTextField;
+import kamisado_mp.ChatController;
 import kamisado_mp.GameListing;
 import kamisado_mp.MultiplayerClient;
 import kamisado_mp.User;
+import kamisado_mp.WebSocketsHandler;
 
 public class MultiplayerMenu extends MenuPanel {
 
 	private static final long serialVersionUID = 1L;
 
 	private MultiplayerClient mpClient;
+	private WebSocketsHandler sockHandler;
 	private JFrame previousFrame;
 	
 	private JFrame frame;
@@ -30,6 +34,8 @@ public class MultiplayerMenu extends MenuPanel {
 	
 	private JPanel gameListPanel;
 	private JPanel profilePanel;
+	private JPanel chatPanel;
+	private JTextArea conversationArea;
 	
 	private User user;
 	JLabel avatarLabel;
@@ -62,6 +68,7 @@ public class MultiplayerMenu extends MenuPanel {
 		
 		generateUI();
 		
+		sockHandler = new WebSocketsHandler(new ChatController(conversationArea));
 		
 		// create and show frame
 		frame = new JFrame("Kamisado Online");
@@ -126,12 +133,20 @@ public class MultiplayerMenu extends MenuPanel {
 		JButton laddersBtn = new MenuButton("Ladders");
 		btnPanel.add(laddersBtn, "sg");
 		JButton chatBtn = new MenuButton("Chat");
+		chatBtn.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				cards.show(contentPanel, "chat");
+			}
+		});
 		btnPanel.add(chatBtn, "sg");
 		JButton returnBtn = new MenuButton("Return to main menu");
 		returnBtn.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				sockHandler.closeConnection();
 				frame.dispose();
 				previousFrame.setVisible(true);
 				
@@ -147,17 +162,19 @@ public class MultiplayerMenu extends MenuPanel {
 		MigLayout gamePanelLayout = new MigLayout("");
 		gameListPanel = new MenuPanel(gamePanelLayout);
 		
-		createContentForGamePanel();
-		createContentForProfilePanel();
+		createGameContent();
+		createProfileContent();
+		createChatContent();
 
 		contentPanel.add(gameListPanel, "games");
 		contentPanel.add(profilePanel, "profile");
+		contentPanel.add(chatPanel, "chat");
 		
 
 		this.add(contentPanel);
 	}
 	
-	private void createContentForGamePanel(){
+	private void createGameContent(){
 
 		JPanel gameList = new MenuPanel(new MigLayout("fillx, wrap 15"));
 		
@@ -216,7 +233,7 @@ public class MultiplayerMenu extends MenuPanel {
 					e1.printStackTrace();
 				}
 				gameListPanel.removeAll();
-				createContentForGamePanel();
+				createGameContent();
 				gameListPanel.revalidate();
 				gameListPanel.repaint();
 			}
@@ -237,7 +254,7 @@ public class MultiplayerMenu extends MenuPanel {
 		gameListPanel.add(bottomBtnsPanel, "align center");
 	}
 	
-	private void createContentForProfilePanel() {
+	private void createProfileContent() {
 		LayoutManager layout = new MigLayout("wrap 4, align center");
 		profilePanel = new MenuPanel(layout);
 		
@@ -292,12 +309,44 @@ public class MultiplayerMenu extends MenuPanel {
 			}
 		});
 	}
+
+	private void createChatContent() {
+		chatPanel = new MenuPanel(new BorderLayout());
+		
+		conversationArea = new JTextArea();
+		conversationArea.setForeground(new Color(200, 200, 200));
+		conversationArea.setBackground(new Color(31, 31, 31));
+		conversationArea.setLineWrap(true);
+		conversationArea.setEditable(false);
+		conversationArea.setBorder(BorderFactory.createLineBorder(new Color(138, 53, 57, 128)));
+		conversationArea.setFont(new Font("Tahoma", Font.BOLD, 12));
+		JScrollPane convoScroll = new JScrollPane(conversationArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+	            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		convoScroll.setBorder(null);
+		JTextField chatInput = new MenuTextField("");
+		
+		chatPanel.add(convoScroll, BorderLayout.CENTER);
+		chatPanel.add(chatInput, BorderLayout.PAGE_END);
+		
+		chatInput.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(!chatInput.getText().isEmpty()){
+					sockHandler.sendChatMessage(user.name, chatInput.getText());
+					chatInput.setText("");
+				}
+			}
+		});
+	}
 	
 	public void updateAvatar(ImageIcon newAvatar) {
 		user.avatar = newAvatar;
 		avatarLabel.setIcon(user.avatar);
 		profilePanelAvatar.setIcon(user.avatar);
 	}
+	
+	
 	
 
 }

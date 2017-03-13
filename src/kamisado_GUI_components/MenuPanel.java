@@ -3,6 +3,7 @@ package kamisado_GUI_components;
 import java.awt.Color;
 import java.awt.LayoutManager;
 
+import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
 public class MenuPanel extends JPanel{
