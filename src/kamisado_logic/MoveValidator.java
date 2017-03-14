@@ -12,15 +12,9 @@ public class MoveValidator {
 
 	public ArrayList<Square> getPossibleMoveSquares() {
 		ArrayList<Square> list = new ArrayList<>();
-		// first move, no focused
+		// first move
 		if (boardGrid.getCurrentPlayerValue() == PlayerColor.WHITE && boardGrid.getCurrentPlayerMoveCount() == 0) {
-			if (!boardGrid.hasFocusedSquare()) {
-				for (int i = 1; i < 8; i++) {
-					for (int j = 0; j < 8; j++) {
-						list.add(boardGrid.getSquare(i, j));
-					}
-				}
-			} else {
+			if (boardGrid.hasFocusedSquare()) {
 				Square focused = boardGrid.getFocusedSquare();
 				int col = boardGrid.getSquareColCoord(focused);
 				int row = boardGrid.getSquareRowCoord(focused);
@@ -49,7 +43,7 @@ public class MoveValidator {
 		}
 		// next moves
 		else {
-			Square moveSquare = boardGrid.getCurrentMovableTower();
+			Square moveSquare = boardGrid.getCurrentMovableSquare();
 			int col = boardGrid.getSquareColCoord(moveSquare);
 			int row = boardGrid.getSquareRowCoord(moveSquare);
 			// black moves
@@ -127,21 +121,20 @@ public class MoveValidator {
 		return true;
 	}
 
+	//fixme
 	public boolean isDeadlock() {
 		return getPossibleMoveSquares().isEmpty();
 	}
 
+	
 	public boolean isGameEnd() {
-		if (boardGrid.getCurrentPlayerMoveCount() != 0) {
 			// check if any of white towers is at the end of grid
-			for (Square square : boardGrid.getOccupiedTilesAsList()) {
-				if (boardGrid.getSquareRowCoord(square) == 0 && square.getTower().getOwner() == PlayerColor.WHITE)
-					return true;
-				if (boardGrid.getSquareRowCoord(square) == 7 && square.getTower().getOwner() == PlayerColor.BLACK)
-					return true;
+		for (Square square : boardGrid.getOccupiedTilesAsList()) {
+			if (boardGrid.getSquareRowCoord(square) == 0 && square.getTower().getOwner() == PlayerColor.WHITE)
+				return true;
+			if (boardGrid.getSquareRowCoord(square) == 7 && square.getTower().getOwner() == PlayerColor.BLACK)
+				return true;
 
-			}
-			return false;
 		}
 		return false;
 	}

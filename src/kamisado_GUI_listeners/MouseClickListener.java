@@ -28,16 +28,24 @@ public class MouseClickListener implements MouseListener {
 
 		if (!hasFocused && clickedSquare.isOccupied()) {
 			// check if the right player is clicking
-			if (clickedSquare.getTower().getOwner() == boardGrid.getGameState().getWhoseTurn())
+			if (boardGrid.isFirstRound())
 				clickedSquare.setFocused();
-		} else if (hasFocused && !clickedSquare.isOccupied()) {
-			if (boardGrid.makeMove(focusedSquare, clickedSquare))
-				focusedSquare.defocus();
 		} else if (hasFocused && clickedSquare.isOccupied()) {
-			focusedSquare.defocus();
-			clickedSquare.setFocused();
-		}
-
+			if (boardGrid.isFirstRound()) {
+				focusedSquare.defocus();
+				clickedSquare.setFocused();
+			}
+		} else if (hasFocused && !clickedSquare.isOccupied()) {
+			if (boardGrid.makeMove(focusedSquare, clickedSquare)) {
+				focusedSquare.defocus();
+				if(!boardGrid.isFirstRound())
+					boardGrid.getCurrentMovableSquare().setFocused();
+			}
+				
+		} 
+		
+		System.out.println(boardGrid.isFirstRound());
+		
 		boardGrid.markPossibleMoves();
 		gui.repaint();
 	}

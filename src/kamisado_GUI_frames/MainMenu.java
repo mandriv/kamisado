@@ -102,8 +102,8 @@ public class MainMenu extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				//frame.dispose();
 				//@SuppressWarnings("unused")
-				PreGameMenu preGame = new PreGameMenu();
-				//SinglePlayerGame game = new SinglePlayerGame();
+				//PreGameMenu preGame = new PreGameMenu();
+				SinglePlayerGame game = new SinglePlayerGame();
 			}
 		});
 		btnPanel.add(startBtn);

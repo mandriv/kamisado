@@ -112,7 +112,7 @@ public class BoardGrid {
 		return null;
 	}
 
-	public Square getCurrentMovableTower() {
+	public Square getCurrentMovableSquare() {
 		for (Square square : getOccupiedTilesAsList()) {
 			if (square.getTower().getColorValue() == getCurrentTowerColorValue()
 					&& square.getTower().getOwner() == getCurrentPlayerValue())
@@ -141,6 +141,10 @@ public class BoardGrid {
 
 	public int getCurrentPlayerMoveCount() {
 		return moveCount[gameState.getWhoseTurn()];
+	}
+	
+	public boolean isFirstRound() {
+		return (moveCount[gameState.getWhoseTurn()] == 0 && getCurrentPlayerValue() == PlayerColor.WHITE);
 	}
 
 	public int getCurrentPlayerValue() {
@@ -211,7 +215,6 @@ public class BoardGrid {
 		moveCount[PlayerColor.WHITE] = 0;
 		moveCount[PlayerColor.BLACK] = 0;
 		validator = new MoveValidator(this);
-		markPossibleMoves();
 	}
 
 }
