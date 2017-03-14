@@ -7,6 +7,8 @@ import java.awt.Graphics;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 
 import javax.swing.*;
 
@@ -70,6 +72,35 @@ public class PreGameMenu extends MenuPanel{
 		JTextField nameField2 = new MenuTextField("Enter your name");
 		nameField1.setVisible(false);
 		nameField2.setVisible(false);
+		nameField1.addFocusListener(new FocusListener() {
+			
+			@Override
+			public void focusLost(FocusEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void focusGained(FocusEvent e) {
+				nameField1.setText("");
+				
+			}
+		});
+		
+		nameField2.addFocusListener(new FocusListener() {
+			
+			@Override
+			public void focusLost(FocusEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void focusGained(FocusEvent e) {
+				nameField2.setText("");
+				
+			}
+		});
 		
 		JButton startGameBtn = new GUIButton("START GAME");
 		
