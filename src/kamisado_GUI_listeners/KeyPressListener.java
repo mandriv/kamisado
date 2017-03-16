@@ -3,15 +3,15 @@ package kamisado_GUI_listeners;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-import kamisado_GUI_frames.BoardGui;
-import kamisado_logic.BoardGrid;
+import kamisado_GUI_frames.BoardGUI;
+import kamisado_logic.Board;
 
 public class KeyPressListener implements KeyListener {
 
-	private BoardGui gui;
-	private BoardGrid boardGrid;
+	private BoardGUI gui;
+	private Board boardGrid;
 
-	public KeyPressListener(BoardGui gui) {
+	public KeyPressListener(BoardGUI gui) {
 		this.gui = gui;
 		boardGrid = gui.boardGrid;
 	}

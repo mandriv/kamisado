@@ -1,23 +1,29 @@
 package kamisado_GUI_frames;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Toolkit;
 
 import javax.swing.ImageIcon;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import kamisado_GUI_components.MenuLabel;
+import kamisado_GUI_components.MenuPanel;
 import kamisado_GUI_listeners.KeyPressListener;
 import kamisado_GUI_listeners.MouseClickListener;
-import kamisado_logic.BoardGrid;
+import kamisado_logic.Board;
+import kamisado_logic.PlayerColor;
 import kamisado_logic.Square;
+import net.miginfocom.swing.MigLayout;
 
-public class BoardGui extends JComponent {
+public class BoardGUI extends MenuPanel {
 
 	private static final long serialVersionUID = 1505365109891735935L;
 	private static final int MARGIN_LEFT = 270;
@@ -29,41 +35,57 @@ public class BoardGui extends JComponent {
 	private final Image focusedTileImage;
 	private final Image boardBackground;
 
-	public BoardGrid boardGrid;
+	public Board boardGrid;
+	
+	public JLabel nameLabel1;
+	public JLabel scoreLabel1;
+	public JLabel nameLabel2;
+	public JLabel scoreLabel2;
+	public JLabel roundLabel;
 
-	public BoardGui(BoardGrid bg) {
+	public BoardGUI(Board bg) {
 
 		boardGrid = bg;
 
 		// Loads possible / focused square ring image
-		possibleTileImage = new ImageIcon(getClass().getResource("/kamisado_media/tiles/possibleTileOverlay.png"))
-				.getImage();
-		focusedTileImage = new ImageIcon(getClass().getResource("/kamisado_media/tiles/focusedTileOverlay.png"))
-				.getImage();
+		possibleTileImage = new ImageIcon(getClass().getResource("/kamisado_media/tiles/possibleTileOverlay.png")).getImage();
+		focusedTileImage = new ImageIcon(getClass().getResource("/kamisado_media/tiles/focusedTileOverlay.png")).getImage();
 		// Set background image and frame container dimensions
-		boardBackground = new ImageIcon(getClass().getResource("/kamisado_media/frameBackgrounds/board.png"))
-				.getImage();
+		boardBackground = new ImageIcon(getClass().getResource("/kamisado_media/frameBackgrounds/board.png")).getImage();
 		this.setPreferredSize(new Dimension(boardBackground.getWidth(null), boardBackground.getHeight(null)));
-
+		this.setLayout(new MigLayout("insets 0"));
+		
 		// Set mouse click and key press listeners
 		this.addMouseListener(new MouseClickListener(this));
 		this.addKeyListener(new KeyPressListener(this));
 
-		JPanel panel = new JPanel();
-		panel.setLayout(new GridBagLayout());
-		panel.setBackground(new Color(31, 31, 31));
-		panel.add(this);
-
+		JPanel sidePanel = new MenuPanel(new MigLayout("wrap 2, fillx, insets 0","[align center][align center]","100[]200[]200[]"));
+		nameLabel2 = new MenuLabel(boardGrid.getPlayerNames(PlayerColor.BLACK));
+		scoreLabel2 = new MenuLabel(boardGrid.getPlayerScore(PlayerColor.BLACK)+"");
+		roundLabel = new MenuLabel("Round " + boardGrid.getRoundNumber());
+		nameLabel1 = new MenuLabel(boardGrid.getPlayerNames(PlayerColor.WHITE));
+		scoreLabel1 = new MenuLabel(boardGrid.getPlayerScore(PlayerColor.WHITE)+"");
+		
+		sidePanel.add(nameLabel2);
+		sidePanel.add(scoreLabel2);
+		sidePanel.add(roundLabel, "span 2");
+		sidePanel.add(nameLabel1);
+		sidePanel.add(scoreLabel1);
+		sidePanel.setOpaque(false);
+		
+		
+		this.add(sidePanel, "width 215px, height 800px");
+		
 		// create and show frame
 		JFrame frame = new JFrame("Kamisado");
-		frame.setFocusable(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.add(panel);
+		frame.setContentPane(this);
 		frame.pack();
 		frame.setVisible(true);
 
 		// Enable keyboard focus
-		this.requestFocus();
+		//frame.setFocusable(true);
+		//this.requestFocus();
 
 		// Centre the frame
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
@@ -97,6 +119,11 @@ public class BoardGui extends JComponent {
 				}
 			}
 		}
+		nameLabel2.setText(boardGrid.getPlayerNames(PlayerColor.BLACK));
+		scoreLabel2.setText(boardGrid.getPlayerScore(PlayerColor.BLACK)+"");
+		roundLabel.setText("Round " + boardGrid.getRoundNumber());
+		nameLabel1.setText(boardGrid.getPlayerNames(PlayerColor.WHITE));
+		scoreLabel1.setText(boardGrid.getPlayerScore(PlayerColor.WHITE)+"");
 	}
 
 }

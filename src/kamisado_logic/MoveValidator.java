@@ -4,105 +4,84 @@ import java.util.ArrayList;
 
 public class MoveValidator {
 
-	private BoardGrid boardGrid;
+	private Board boardGrid;
 
-	public MoveValidator(BoardGrid bg) {
+	public MoveValidator(Board bg) {
 		boardGrid = bg;
 	}
 
 	public ArrayList<Square> getPossibleMoveSquares() {
 		ArrayList<Square> list = new ArrayList<>();
-		// first move
-		if (boardGrid.getCurrentPlayerValue() == PlayerColor.WHITE && boardGrid.getCurrentPlayerMoveCount() == 0) {
-			if (boardGrid.hasFocusedSquare()) {
-				Square focused = boardGrid.getFocusedSquare();
-				int col = boardGrid.getSquareColCoord(focused);
-				int row = boardGrid.getSquareRowCoord(focused);
-				// forward moves (white)
-				for (int i = row - 1; i >= 1; i--) {
-					list.add(boardGrid.getSquare(i, col));
-				}
-				// skew moves left
-				int j = col - 1;
-				for (int i = row - 1; i >= 1; i--) {
-					if (j < 0)
-						break;
-					list.add(boardGrid.getSquare(i, j));
-					j--;
-				}
-				// skew moves right
-				j = col + 1;
-				for (int i = row - 1; i >= 1; i--) {
-					if (j > 7)
-						break;
-					list.add(boardGrid.getSquare(i, j));
-					j++;
-				}
-			}
-
+		
+		Square moveSquare = boardGrid.getCurrentMovableSquare();
+		
+		//if this is first move
+		if(moveSquare == null) {
+			//if player clicked already in first move
+			if(boardGrid.hasFocusedSquare())
+				moveSquare = boardGrid.getFocusedSquare();
+			else
+				return list;
 		}
-		// next moves
-		else {
-			Square moveSquare = boardGrid.getCurrentMovableSquare();
-			int col = boardGrid.getSquareColCoord(moveSquare);
-			int row = boardGrid.getSquareRowCoord(moveSquare);
-			// black moves
-			if (moveSquare.getTower().getOwner() == PlayerColor.BLACK) {
-				// moves down
-				for (int i = row + 1; i <= 7; i++) {
-					if (boardGrid.getSquare(i, col).isOccupied())
-						break;
-					list.add(boardGrid.getSquare(i, col));
-				}
-				// skew moves left down
-				int j = col - 1;
-				for (int i = row + 1; i <= 7; i++) {
-					if (j < 0)
-						break;
-					if (boardGrid.getSquare(i, j).isOccupied())
-						break;
-					list.add(boardGrid.getSquare(i, j));
-					j--;
-				}
-				// skew moves right down
-				j = col + 1;
-				for (int i = row + 1; i <= 7; i++) {
-					if (j > 7)
-						break;
-					if (boardGrid.getSquare(i, j).isOccupied())
-						break;
-					list.add(boardGrid.getSquare(i, j));
-					j++;
-				}
+		
+		int col = boardGrid.getSquareColCoord(moveSquare);
+		int row = boardGrid.getSquareRowCoord(moveSquare);
+		// black moves
+		if (moveSquare.getTower().getOwner() == PlayerColor.BLACK) {
+			// moves down
+			for (int i = row + 1; i <= 7; i++) {
+				if (boardGrid.getSquare(i, col).isOccupied())
+					break;
+				list.add(boardGrid.getSquare(i, col));
 			}
-			// white moves
-			else {
-				// forward moves
-				for (int i = row - 1; i >= 0; i--) {
-					if (boardGrid.getSquare(i, col).isOccupied())
-						break;
-					list.add(boardGrid.getSquare(i, col));
-				}
-				// skew moves left forward
-				int j = col - 1;
-				for (int i = row - 1; i >= 0; i--) {
-					if (j < 0)
-						break;
-					if (boardGrid.getSquare(i, j).isOccupied())
-						break;
-					list.add(boardGrid.getSquare(i, j));
-					j--;
-				}
-				// skew moves right forward
-				j = col + 1;
-				for (int i = row - 1; i >= 0; i--) {
-					if (j > 7)
-						break;
-					if (boardGrid.getSquare(i, j).isOccupied())
-						break;
-					list.add(boardGrid.getSquare(i, j));
-					j++;
-				}
+			// skew moves left down
+			int j = col - 1;
+			for (int i = row + 1; i <= 7; i++) {
+				if (j < 0)
+					break;
+				if (boardGrid.getSquare(i, j).isOccupied())
+					break;
+				list.add(boardGrid.getSquare(i, j));
+				j--;
+			}
+			// skew moves right down
+			j = col + 1;
+			for (int i = row + 1; i <= 7; i++) {
+				if (j > 7)
+					break;
+				if (boardGrid.getSquare(i, j).isOccupied())
+					break;
+				list.add(boardGrid.getSquare(i, j));
+				j++;
+			}
+		}
+		// white moves
+		else {
+			// forward moves
+			for (int i = row - 1; i >= 0; i--) {
+				if (boardGrid.getSquare(i, col).isOccupied())
+					break;
+				list.add(boardGrid.getSquare(i, col));
+			}
+			// skew moves left forward
+			int j = col - 1;
+			for (int i = row - 1; i >= 0; i--) {
+				if (j < 0)
+					break;
+				if (boardGrid.getSquare(i, j).isOccupied())
+					break;
+				list.add(boardGrid.getSquare(i, j));
+				j--;
+			}
+			// skew moves right forward
+			j = col + 1;
+			for (int i = row - 1; i >= 0; i--) {
+				if (j > 7)
+					break;
+				if (boardGrid.getSquare(i, j).isOccupied())
+					break;
+				list.add(boardGrid.getSquare(i, j));
+				j++;
 			}
 		}
 		return list;

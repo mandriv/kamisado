@@ -3,16 +3,16 @@ package kamisado_GUI_listeners;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-import kamisado_GUI_frames.BoardGui;
-import kamisado_logic.BoardGrid;
+import kamisado_GUI_frames.BoardGUI;
+import kamisado_logic.Board;
 import kamisado_logic.Square;
 
 public class MouseClickListener implements MouseListener {
 
-	private BoardGui gui;
-	private BoardGrid boardGrid;
+	private BoardGUI gui;
+	private Board boardGrid;
 
-	public MouseClickListener(BoardGui gui) {
+	public MouseClickListener(BoardGUI gui) {
 		this.gui = gui;
 		boardGrid = gui.boardGrid;
 	}
@@ -26,25 +26,30 @@ public class MouseClickListener implements MouseListener {
 		Square focusedSquare = boardGrid.getFocusedSquare();
 		Square clickedSquare = findTileByCoords(x, y);
 
-		if (!hasFocused && clickedSquare.isOccupied()) {
-			// check if the right player is clicking
-			if (boardGrid.isFirstRound())
-				clickedSquare.setFocused();
-		} else if (hasFocused && clickedSquare.isOccupied()) {
-			if (boardGrid.isFirstRound()) {
-				focusedSquare.defocus();
-				clickedSquare.setFocused();
-			}
-		} else if (hasFocused && !clickedSquare.isOccupied()) {
+		//if second click (1. On tower 2. On Empty space
+		if (hasFocused && !clickedSquare.isOccupied() ) {
 			if (boardGrid.makeMove(focusedSquare, clickedSquare)) {
 				focusedSquare.defocus();
-				if(!boardGrid.isFirstRound())
-					boardGrid.getCurrentMovableSquare().setFocused();
+			}
+		}
+		
+		Square movableSquare = boardGrid.getCurrentMovableSquare();
+		
+		//if not first move
+		if(movableSquare != null) {
+			movableSquare.setFocused();
+		} else {
+			if(clickedSquare.isOccupied()) {
+				if(hasFocused) {
+					focusedSquare.defocus();
+					clickedSquare.setFocused();
+				} else {
+					clickedSquare.setFocused();
+				}
 			}
 				
-		} 
-		
-		System.out.println(boardGrid.isFirstRound());
+					
+		}
 		
 		boardGrid.markPossibleMoves();
 		gui.repaint();

@@ -2,15 +2,19 @@ package kamisado_logic;
 
 import java.util.ArrayList;
 
-public class BoardGrid {
+public class Board {
 
 	private Square[][] board;
 	private PlayerColor gameState;
 	private GameColor currentTowerColor;
 	private int[] moveCount;
 	private MoveValidator validator;
+	private GameTimer timer;
+	private String[] name;
+	private int[] score;
+	private int round;
 
-	public BoardGrid() {
+	public Board(boolean isSpeedMode) {
 		board = new Square[8][8];
 
 		for (int i = 0; i < 8; i++)
@@ -46,7 +50,19 @@ public class BoardGrid {
 		moveCount[PlayerColor.BLACK] = 0;
 		validator = new MoveValidator(this);
 		markPossibleMoves();
-
+		
+		if(isSpeedMode){
+			timer = new GameTimer(5);
+		}
+		name = new String[2];
+		name[PlayerColor.WHITE] = "Jerry";
+		name[PlayerColor.BLACK] = "Tom";
+		
+		score = new int[2];
+		score[PlayerColor.WHITE] = 0;
+		score[PlayerColor.BLACK] = 0;
+		
+		round = 1;
 	}
 
 	public Square getSquare(int row, int column) {
@@ -142,10 +158,6 @@ public class BoardGrid {
 	public int getCurrentPlayerMoveCount() {
 		return moveCount[gameState.getWhoseTurn()];
 	}
-	
-	public boolean isFirstRound() {
-		return (moveCount[gameState.getWhoseTurn()] == 0 && getCurrentPlayerValue() == PlayerColor.WHITE);
-	}
 
 	public int getCurrentPlayerValue() {
 		return gameState.getWhoseTurn();
@@ -157,26 +169,37 @@ public class BoardGrid {
 		Tower t = srcSq.getTower();
 		srcSq.clearSquare();
 		destSq.setTower(t);
-		moveCount[gameState.getWhoseTurn()]++;
 		currentTowerColor.setValue(destSq.getColor());
-		gameState.changePlayer();
+		switchSide();
 		if (validator.isGameEnd())
-			handleEndGame();
+			handleEndRound();
 		if (validator.isDeadlock())
 			handleDeadLock();
 		return true;
 	}
-
-	public void handleDeadLock() {
+	
+	public void switchSide() {
 		moveCount[gameState.getWhoseTurn()]++;
 		gameState.changePlayer();
 	}
 
-	public void handleEndGame() {
-		if (validator.getWinnigPlayerValue() == PlayerColor.BLACK)
-			System.out.println("Hurray! Black player wins!");
-		if (validator.getWinnigPlayerValue() == PlayerColor.WHITE)
+	//TO-DO
+	public void handleDeadLock() {
+		
+	}
+
+	public void handleEndRound() {
+		if (validator.getWinnigPlayerValue() == PlayerColor.WHITE){
+			score[PlayerColor.WHITE]++;
 			System.out.println("Hurray! White player wins!");
+			
+		} else {
+			score[PlayerColor.BLACK]++;
+			System.out.println("Hurray! Black player wins!");
+		}
+		
+		round++;
+			
 		resetGrid();
 	}
 
@@ -217,4 +240,15 @@ public class BoardGrid {
 		validator = new MoveValidator(this);
 	}
 
+	public int getRoundNumber() {
+		return round;
+	}
+	
+	public String getPlayerNames(int color) {
+		return name[color];
+	}
+	
+	public int getPlayerScore(int color) {
+		return score[color];
+	}
 }
