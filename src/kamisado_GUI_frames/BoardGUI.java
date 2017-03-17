@@ -8,12 +8,17 @@ import java.awt.Graphics;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.Timer;
 
+import kamisado_GUI_components.GUIButton;
 import kamisado_GUI_components.MenuLabel;
 import kamisado_GUI_components.MenuPanel;
 import kamisado_GUI_listeners.KeyPressListener;
@@ -21,9 +26,10 @@ import kamisado_GUI_listeners.MouseClickListener;
 import kamisado_logic.Board;
 import kamisado_logic.PlayerColor;
 import kamisado_logic.Square;
+import kamisado_logic.State;
 import net.miginfocom.swing.MigLayout;
 
-public class BoardGUI extends MenuPanel {
+public class BoardGUI extends MenuPanel implements ActionListener{
 
 	private static final long serialVersionUID = 1505365109891735935L;
 	private static final int MARGIN_LEFT = 270;
@@ -37,29 +43,33 @@ public class BoardGUI extends MenuPanel {
 
 	public Board boardGrid;
 	
-	public JLabel nameLabel1;
-	public JLabel scoreLabel1;
-	public JLabel nameLabel2;
-	public JLabel scoreLabel2;
-	public JLabel roundLabel;
+	private JLabel nameLabel1;
+	private JLabel scoreLabel1;
+	private JLabel nameLabel2;
+	private JLabel scoreLabel2;
+	private JLabel roundLabel;
+	
+	private Timer refresherTimer;
 
 	public BoardGUI(Board bg) {
 
 		boardGrid = bg;
 
+		refresherTimer = new Timer(100, this);
+		refresherTimer.start();
 		// Loads possible / focused square ring image
 		possibleTileImage = new ImageIcon(getClass().getResource("/kamisado_media/tiles/possibleTileOverlay.png")).getImage();
 		focusedTileImage = new ImageIcon(getClass().getResource("/kamisado_media/tiles/focusedTileOverlay.png")).getImage();
 		// Set background image and frame container dimensions
 		boardBackground = new ImageIcon(getClass().getResource("/kamisado_media/frameBackgrounds/board.png")).getImage();
 		this.setPreferredSize(new Dimension(boardBackground.getWidth(null), boardBackground.getHeight(null)));
-		this.setLayout(new MigLayout("insets 0"));
+		this.setLayout(new MigLayout("insets 0, fillx"));
 		
 		// Set mouse click and key press listeners
 		this.addMouseListener(new MouseClickListener(this));
 		this.addKeyListener(new KeyPressListener(this));
 
-		JPanel sidePanel = new MenuPanel(new MigLayout("wrap 2, fillx, insets 0","[align center][align center]","100[]200[]200[]"));
+		JPanel sidePanel = new MenuPanel(new MigLayout("wrap 2, fillx, insets 0, al center center","[align center][align center]","[]20%[]20%[]"));
 		nameLabel2 = new MenuLabel(boardGrid.getPlayerNames(PlayerColor.BLACK));
 		scoreLabel2 = new MenuLabel(boardGrid.getPlayerScore(PlayerColor.BLACK)+"");
 		roundLabel = new MenuLabel("Round " + boardGrid.getRoundNumber());
@@ -74,7 +84,26 @@ public class BoardGUI extends MenuPanel {
 		sidePanel.setOpaque(false);
 		
 		
-		this.add(sidePanel, "width 215px, height 800px");
+		this.add(sidePanel, "width 215px, height 800px, dock west");
+		
+		JPanel rightBtnPanel = new MenuPanel(new MigLayout("insets 0, fillx, flowy, al center center","[align center]","[][]"));
+		JButton xBtn = new GUIButton("Test");
+		JButton xxBtn = new GUIButton("Test 2");
+		
+		xBtn.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				State s = new State(boardGrid);
+				s.saveToFile();
+			}
+		});
+		
+		rightBtnPanel.add(xBtn, "sg");
+		rightBtnPanel.add(xxBtn, "sg");
+		rightBtnPanel.setOpaque(false);
+		
+		this.add(rightBtnPanel, "width 215px, height 800px, dock east");
 		
 		// create and show frame
 		JFrame frame = new JFrame("Kamisado");
@@ -125,5 +154,14 @@ public class BoardGUI extends MenuPanel {
 		nameLabel1.setText(boardGrid.getPlayerNames(PlayerColor.WHITE));
 		scoreLabel1.setText(boardGrid.getPlayerScore(PlayerColor.WHITE)+"");
 	}
+
+	@Override
+	public void actionPerformed(ActionEvent ev) {
+		if(ev.getSource()==refresherTimer){
+		      repaint();// this will call at every 0.1 second
+		    }
+	}
+	
+	
 
 }

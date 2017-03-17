@@ -96,6 +96,12 @@ public class MainMenu extends JPanel {
 
 		// Add buttons
 		startBtn = new MenuButton("New game");
+		JButton loadBtn = new MenuButton("Load game");
+		JButton onlineBtn = new MenuButton("Play Online");
+		JButton settingsBtn = new MenuButton("Settings");
+		JButton helpBtn = new MenuButton("Help");
+		JButton exitBtn = new MenuButton("Exit");
+		
 		startBtn.addActionListener(new ActionListener() {
 
 			@Override
@@ -106,9 +112,6 @@ public class MainMenu extends JPanel {
 				SinglePlayerGame game = new SinglePlayerGame();
 			}
 		});
-		btnPanel.add(startBtn);
-
-		JButton loadBtn = new MenuButton("Load game");
 		loadBtn.addActionListener(new ActionListener() {
 			
 			@Override
@@ -116,9 +119,6 @@ public class MainMenu extends JPanel {
 
 			}
 		});
-		btnPanel.add(loadBtn);
-
-		JButton onlineBtn = new MenuButton("Play Online");
 		onlineBtn.addActionListener(new ActionListener() {
 
 			@Override
@@ -127,9 +127,6 @@ public class MainMenu extends JPanel {
 				SignInUpFrame signInUpFrame = new SignInUpFrame(frame);
 			}
 		});
-		btnPanel.add(onlineBtn);
-
-		JButton settingsBtn = new MenuButton("Settings");
 		settingsBtn.addActionListener(new ActionListener() {
 
 			@Override
@@ -138,9 +135,14 @@ public class MainMenu extends JPanel {
 				soundCB.requestFocusInWindow();
 			}
 		});
-		btnPanel.add(settingsBtn);
-
-		JButton exitBtn = new MenuButton("Exit");
+		helpBtn.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 		exitBtn.addActionListener(new ActionListener() {
 
 			@Override
@@ -148,6 +150,12 @@ public class MainMenu extends JPanel {
 				System.exit(0);
 			}
 		});
+		
+		btnPanel.add(startBtn);	
+		btnPanel.add(loadBtn);		
+		btnPanel.add(onlineBtn);		
+		btnPanel.add(settingsBtn);	
+		btnPanel.add(helpBtn);
 		btnPanel.add(exitBtn);
 
 		container.add(btnPanel, "main");
@@ -159,7 +167,7 @@ public class MainMenu extends JPanel {
 		settingsPanel.setBackground(new Color(20, 20, 20));
 		settingsPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
 
-		soundCB = new MenuCheckBox("Sounds", false);
+		soundCB = new MenuCheckBox("Music", false);
 		soundCB.addActionListener(new ActionListener() {
 
 			@Override

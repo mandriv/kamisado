@@ -34,6 +34,10 @@ public class Tower {
 		return player.getWhoseTurn();
 	}
 
+	public GameColor getColor() {
+		return color;
+	}
+	
 	public int getColorValue() {
 		return color.getValue();
 	}

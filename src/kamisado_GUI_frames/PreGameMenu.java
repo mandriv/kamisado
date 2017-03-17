@@ -56,7 +56,7 @@ public class PreGameMenu extends MenuPanel{
 		JLabel modeLabel = new MenuLabel("Mode");
 		
 		String[] difficulties = { "Easy", "Hard"};
-		String[] rounds = {"1", "3", "5"};
+		String[] rounds = {"Single round - 1", "Standard - 3", "Long - 7", "Marathon - 15"};
 		String[] modes = {"Normal", "SPEED"};
 		
 		JComboBox<String> difficultyBox1 = new JComboBox<>(difficulties);
