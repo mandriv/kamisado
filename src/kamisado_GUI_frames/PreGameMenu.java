@@ -7,6 +7,8 @@ import java.awt.Graphics;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 
@@ -17,18 +19,20 @@ import kamisado_GUI_components.IconToggleButton;
 import kamisado_GUI_components.MenuLabel;
 import kamisado_GUI_components.MenuPanel;
 import kamisado_GUI_components.MenuTextField;
+import kamisado_util.GameFactory;
 import net.miginfocom.swing.MigLayout;
 
 public class PreGameMenu extends MenuPanel{
 
 	private static final long serialVersionUID = 1L;
 	private final Image background;
-	private  ImageIcon computer;
+	private final ImageIcon computer;
 	private final ImageIcon human;
 	private final ImageIcon computerSelected;
 	private final ImageIcon humanSelected;
+	private JFrame frame;
 	
-	public PreGameMenu() {
+	public PreGameMenu(JFrame parent) {
 		UIManager.put("Button.focusInputMap", new UIDefaults.LazyInputMap(new
 				Object[] {
 				    "ENTER", "pressed",
@@ -68,8 +72,8 @@ public class PreGameMenu extends MenuPanel{
 		JComboBox<String> roundsBox = new JComboBox<>(rounds);
 		JComboBox<String> modesBox = new JComboBox<>(modes);
 		
-		JTextField nameField1 = new MenuTextField("Enter your name");
-		JTextField nameField2 = new MenuTextField("Enter your name");
+		JTextField nameField1 = new MenuTextField("Jack");
+		JTextField nameField2 = new MenuTextField("Tom");
 		nameField1.setVisible(false);
 		nameField2.setVisible(false);
 		nameField1.addFocusListener(new FocusListener() {
@@ -113,7 +117,8 @@ public class PreGameMenu extends MenuPanel{
 		JToggleButton human2TgBtn = new IconToggleButton(human, humanSelected, nameField2);
 		
 		human1TgBtn.setSelected(true);
-		computer2TgBtn.setSelected(true);
+		human2TgBtn.setSelected(true);
+		roundsBox.setSelectedIndex(1);
 		
 		bg1.add(computer1TgBtn);
 		bg1.add(human1TgBtn);
@@ -134,11 +139,34 @@ public class PreGameMenu extends MenuPanel{
 		content.add(modesBox, "skip, wrap, align center");
 		content.add(startGameBtn, "growx, skip, span 3, align center");
 		
-		
+		startGameBtn.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(human1TgBtn.isSelected() && human2TgBtn.isSelected()) {
+					String name1 = nameField1.getText();
+					String name2 = nameField2.getText();
+					int limit = 1;
+					switch(roundsBox.getSelectedIndex()){
+						case 0: limit = 1;  break;
+						case 1: limit = 3;  break;
+						case 2: limit = 7;  break;
+						case 3: limit = 15; break;
+					}
+					if (modesBox.getSelectedIndex() == 1) {
+						GameFactory.createPlayerVsPlayerSpeedLocalGame(name1, name2, limit);
+					} else {
+						GameFactory.createPlayerVsPlayerNormalLocalGame(name1, name2, limit);
+					}
+					parent.dispose();
+					frame.dispose();
+				}
+			}
+		});
 		
 		this.add(content);
 		
-		JFrame frame = new JFrame("New game");
+		frame = new JFrame("New game");
 		frame.setResizable(false);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.add(this);

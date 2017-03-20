@@ -1,21 +1,16 @@
 package kamisado_logic;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.io.Writer;
 
 public class State {
 	
 	private String tokenizedBoard; 
-	private Board board;
+	private Board savedBoard;
 	
 	public State(Board board) {
-		this.board = board;
+		savedBoard = new Board(board);
 		
 		StringBuilder builder = new StringBuilder();
 		for(int i = 0; i <=7 ; i++){
@@ -44,15 +39,24 @@ public class State {
 		return tokenizedBoard;
 	}
 	
-	public void saveToFile() {
-		String path = System.getProperty("user.home") + File.separator + "Kamisado Saves" + File.separator + "save1.txt";
+	public void saveToFile(String fileName) {
+		String path = System.getProperty("user.home") + File.separator + "Kamisado Saves" + File.separator + fileName + ".txt";
 		File file = new File(path);
 		
 		try {
 			file.getParentFile().mkdirs(); 
 			file.createNewFile();
 		    PrintWriter writer = new PrintWriter(file);
-		    writer.print(tokenizedBoard);
+		    writer.println(tokenizedBoard);
+		    writer.println(savedBoard.getCurrentPlayerValue());
+		    writer.println(savedBoard.getCurrentTowerColorValue());
+		    writer.println(savedBoard.getMoveCount(PlayerColor.WHITE));
+		    writer.println(savedBoard.getMoveCount(PlayerColor.BLACK));
+		    writer.println(savedBoard.getPlayerNames(PlayerColor.WHITE));
+		    writer.println(savedBoard.getPlayerNames(PlayerColor.BLACK));
+		    writer.println(savedBoard.getScore(PlayerColor.WHITE));
+		    writer.println(savedBoard.getScore(PlayerColor.BLACK));
+		    writer.println(savedBoard.getRoundNumber());
 		    writer.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -62,7 +66,7 @@ public class State {
 	}
 	
 	public Board getBoard() {
-		return board;
+		return savedBoard;
 	}
 
 }

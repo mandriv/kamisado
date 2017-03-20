@@ -27,8 +27,8 @@ import kamisado_GUI_components.MenuPanel;
 import kamisado_GUI_components.MenuPasswordField;
 import kamisado_GUI_components.MenuTextField;
 import kamisado_GUI_frames.MultiplayerMenu;
-import kamisado_GUI_listeners.LoginActionListener;
-import kamisado_GUI_listeners.RegisterActionListener;
+import kamisado_control.LoginActionListener;
+import kamisado_control.RegisterActionListener;
 import kamisado_mp.MultiplayerClient;
 import net.miginfocom.swing.MigLayout;
 

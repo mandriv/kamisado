@@ -9,11 +9,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.activity.InvalidActivityException;
+
 import kamisado_GUI_frames.EndRoundFrame;
 
 public class Board {
 
-	private Square[][] board;
+	public Square[][] boardArray;
 	private PlayerColor gameState;
 	private GameColor currentTowerColor;
 	private int[] moveCount;
@@ -22,7 +24,9 @@ public class Board {
 	private String[] name;
 	private int[] score;
 	private int round;
-
+	private int roundLimit;
+	private boolean speedMode;
+	public boolean endRound;
 	/*
 	 * __BOARD COORDS______________________________
 	 * |0,0|0,1|0,2|0,3|0,4|0,5|0,6|0,7|
@@ -36,17 +40,18 @@ public class Board {
 	 * --------------------------------
 	*/
 	
-	public Board(boolean isSpeedMode) {
-		board = new Square[8][8];
+	//Normal constructor
+	public Board(String name1, String name2, int limit, boolean speed) {
+		boardArray = new Square[8][8];
 		
 		createSquares();
 		
 		for (int i = 0; i < 8; i++) {
-			Square square = board[0][i];
+			Square square = boardArray[0][i];
 			square.setTower(new Tower(GameColor.ORANGE + i, PlayerColor.BLACK));
 		}
 		for (int i = 0; i < 8; i++) {
-			Square square = board[7][i];
+			Square square = boardArray[7][i];
 			square.setTower(new Tower(GameColor.BROWN - i, PlayerColor.WHITE));			
 		}
 		
@@ -58,31 +63,33 @@ public class Board {
 		validator = new MoveValidator(this);
 		markPossibleMoves();
 		
-		if(isSpeedMode){
-			timer = new GameTimer(5);
-		}
 		name = new String[2];
-		name[PlayerColor.WHITE] = "Jerry";
-		name[PlayerColor.BLACK] = "Tom";
+		name[PlayerColor.WHITE] = name1;
+		name[PlayerColor.BLACK] = name2;
 		
 		score = new int[2];
 		score[PlayerColor.WHITE] = 0;
 		score[PlayerColor.BLACK] = 0;
 		
 		round = 1;
+		roundLimit = limit;
+		
+		speedMode = speed;
+
 	}
 	
+	//Saved from file game constructor
 	public Board(String saveName) throws IOException {
 		String path = System.getProperty("user.home") + File.separator + "Kamisado Saves" + File.separator + saveName;
 		File file = new File(path);
 		String tokenizedState;
 		BufferedReader br = new BufferedReader(new FileReader(file));
 		tokenizedState = br.readLine();
-		br.close();
+		
 		
 		System.out.println(tokenizedState);
 		
-		board = new Square[8][8];
+		boardArray = new Square[8][8];
 
 		createSquares();
 		
@@ -90,7 +97,7 @@ public class Board {
 		int l = 0;
 		for(int i = 0; i <= 7 ; i++) {
 			for(int j = 0; j <= 7 ; j ++) {
-				Square sq = board[i][j];
+				Square sq = boardArray[i][j];
 				if (!tokens[l].equals("xx")){
 					System.out.println("adding "+tokens[l]);
 					int playerColor;
@@ -106,44 +113,86 @@ public class Board {
 			}
 		}
 
-		gameState = new PlayerColor(PlayerColor.WHITE);
-		currentTowerColor = new GameColor(GameColor.ANY);
+		gameState = new PlayerColor(Integer.parseInt(br.readLine()));
+		currentTowerColor = new GameColor(Integer.parseInt(br.readLine()));
 		moveCount = new int[2];
-		moveCount[PlayerColor.WHITE] = 0;
-		moveCount[PlayerColor.BLACK] = 0;
+		moveCount[PlayerColor.WHITE] = Integer.parseInt(br.readLine());
+		moveCount[PlayerColor.BLACK] = Integer.parseInt(br.readLine());
 		validator = new MoveValidator(this);
 		markPossibleMoves();
 
 		name = new String[2];
-		name[PlayerColor.WHITE] = "Jerry";
-		name[PlayerColor.BLACK] = "Tom";
+		name[PlayerColor.WHITE] = br.readLine();
+		name[PlayerColor.BLACK] = br.readLine();
 		
 		score = new int[2];
-		score[PlayerColor.WHITE] = 0;
-		score[PlayerColor.BLACK] = 0;
+		score[PlayerColor.WHITE] = Integer.parseInt(br.readLine());
+		score[PlayerColor.BLACK] = Integer.parseInt(br.readLine());
 		
-		round = 1;
+		round =  Integer.parseInt(br.readLine());
+		
+		br.close();
+		
 	}
 	
-	private void createSquares() {
+	//Copy  constructor (for history)
+	public Board(Board original) {
+		boardArray = new Square[8][8];
+		
+		createSquares();
+
+		//tower positions
+		for(int i = 0; i <= 7 ; i++) {
+			for(int j = 0 ; j <=7 ; j++) {
+				Square sq = original.getSquare(i, j);
+				if(sq.isOccupied()) {
+					Tower originalTower = sq.getTower();
+					Tower t = new Tower(originalTower.getColorValue(), originalTower.getOwner());
+					getSquare(i, j).setTower(t);
+				}
+			}
+		}
+		
+		gameState = new PlayerColor(original.getCurrentPlayerValue());
+		currentTowerColor = new GameColor(original.getCurrentTowerColorValue());
+		moveCount = new int[2];
+		moveCount[PlayerColor.WHITE] = original.getMoveCount(PlayerColor.WHITE);
+		moveCount[PlayerColor.BLACK] = original.getMoveCount(PlayerColor.BLACK);
+		validator = new MoveValidator(this);
+		
+		name = new String[2];
+		name[PlayerColor.WHITE] = original.getPlayerNames(PlayerColor.WHITE);
+		name[PlayerColor.BLACK] = original.getPlayerNames(PlayerColor.BLACK);
+		
+		score = new int[2];
+		score[PlayerColor.WHITE] = original.getScore(PlayerColor.WHITE);
+		score[PlayerColor.BLACK] = original.getScore(PlayerColor.BLACK);
+		
+		round = original.getRoundNumber();
+		roundLimit = original.getRoundLimit();
+		
+		speedMode = original.speedMode;
+	}
+	
+	public void createSquares() {
 		
 		int a = 0, b = 1, c = 2, d = 3, e = 4, f = 5, g = 6, h = 7;
 		for (int i = 0; i <= 7; i++) {
-			board[i][a] = new Square(GameColor.ORANGE);
+			boardArray[i][a] = new Square(GameColor.ORANGE);
 			a = (a + 1) % 8;
-			board[i][b] = new Square(GameColor.BLUE);
+			boardArray[i][b] = new Square(GameColor.BLUE);
 			b = (b + 11) % 8;
-			board[i][c] = new Square(GameColor.PURPLE);
+			boardArray[i][c] = new Square(GameColor.PURPLE);
 			c = (c + 5) % 8;
-			board[i][d] = new Square(GameColor.PINK);
+			boardArray[i][d] = new Square(GameColor.PINK);
 			d = (d + 7) % 8;
-			board[i][e] = new Square(GameColor.YELLOW);
+			boardArray[i][e] = new Square(GameColor.YELLOW);
 			e = (e + 1) % 8;
-			board[i][f] = new Square(GameColor.RED);
+			boardArray[i][f] = new Square(GameColor.RED);
 			f = (f + 3) % 8;
-			board[i][g] = new Square(GameColor.GREEN);
+			boardArray[i][g] = new Square(GameColor.GREEN);
 			g = (g + 5) % 8;
-			board[i][h] = new Square(GameColor.BROWN);
+			boardArray[i][h] = new Square(GameColor.BROWN);
 			h = (h + 7) % 8;
 
 		}
@@ -152,14 +201,23 @@ public class Board {
 
 	public Square getSquare(int row, int column) {
 		if (row >= 0 && row <= 7 && column >= 0 && column <= 7)
-			return board[row][column];
+			return boardArray[row][column];
+		return null;
+	}
+	
+	public Square findSquareByCoords(int x, int y) {
+		for (Square tile : getSquaresAsList()) {
+			if (tile.getX() <= x && tile.getX() + tile.getImage().getWidth(null) >= x && tile.getY() <= y
+					&& tile.getY() + tile.getImage().getHeight(null) >= y)
+				return tile;
+		}
 		return null;
 	}
 
 	public int getSquareRowCoord(Square square) {
 		for (int x = 0; x < 8; x++) {
 			for (int y = 0; y < 8; y++) {
-				if (board[x][y].equals(square))
+				if (boardArray[x][y].equals(square))
 					return x;
 			}
 		}
@@ -169,14 +227,14 @@ public class Board {
 	public int getSquareColCoord(Square square) {
 		for (int x = 0; x < 8; x++) {
 			for (int y = 0; y < 8; y++) {
-				if (board[x][y].equals(square))
+				if (boardArray[x][y].equals(square))
 					return y;
 			}
 		}
 		return -1;
 	}
 
-	public ArrayList<Square> getTilesAsList() {
+	public ArrayList<Square> getSquaresAsList() {
 		ArrayList<Square> tiles = new ArrayList<>();
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 8; j++) {
@@ -186,7 +244,7 @@ public class Board {
 		return tiles;
 	}
 
-	public ArrayList<Square> getOccupiedTilesAsList() {
+	public ArrayList<Square> getOccupiedSquaresAsList() {
 		ArrayList<Square> tiles = new ArrayList<>();
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 8; j++) {
@@ -198,7 +256,7 @@ public class Board {
 	}
 
 	public boolean hasFocusedSquare() {
-		for (Square square : getTilesAsList()) {
+		for (Square square : getSquaresAsList()) {
 			if (square.isFocused())
 				return true;
 		}
@@ -206,7 +264,7 @@ public class Board {
 	}
 
 	public Square getFocusedSquare() {
-		for (Square square : getTilesAsList()) {
+		for (Square square : getSquaresAsList()) {
 			if (square.isFocused())
 				return square;
 		}
@@ -214,7 +272,7 @@ public class Board {
 	}
 
 	public Square getCurrentMovableSquare() {
-		for (Square square : getOccupiedTilesAsList()) {
+		for (Square square : getOccupiedSquaresAsList()) {
 			if (square.getTower().getColorValue() == getCurrentTowerColorValue()
 					&& square.getTower().getOwner() == getCurrentPlayerValue())
 				return square;
@@ -224,7 +282,7 @@ public class Board {
 
 	public void markPossibleMoves() {
 		// Set false to all tiles
-		for (Square sq : getTilesAsList()) {
+		for (Square sq : getSquaresAsList()) {
 			sq.setPossible(false);
 		}
 		for (Square sq : validator.getPossibleMoveSquares()) {
@@ -243,11 +301,39 @@ public class Board {
 	public int getCurrentPlayerMoveCount() {
 		return moveCount[gameState.getWhoseTurn()];
 	}
+	
+	public String getCurrentPlayerName() {
+		return name[getCurrentPlayerValue()];
+	}
+	
+	public int getMoveCount(int playerColor) {
+		return moveCount[playerColor];
+	}
 
 	public int getCurrentPlayerValue() {
 		return gameState.getWhoseTurn();
 	}
 
+	public int getRoundNumber() {
+		return round;
+	}
+	
+	public int getRoundLimit() {
+		return roundLimit;
+	}
+	
+	public String getPlayerNames(int color) {
+		return name[color];
+	}
+	
+	public int getScore(int playerColor) {
+		return score[playerColor];
+	}
+	
+	public boolean isSpeedMode() {
+		return speedMode;
+	}
+	
 	public boolean makeMove(Square srcSq, Square destSq) {
 		if (!validator.isLegalMove(srcSq, destSq))
 			return false;
@@ -255,89 +341,32 @@ public class Board {
 		srcSq.clearSquare();
 		destSq.setTower(t);
 		currentTowerColor.setValue(destSq.getColor());
-		switchSide();
 		if (validator.isGameEnd())
-			handleEndRound();
+			endRound = true;
+		else {
+			moveCount[gameState.getWhoseTurn()]++;
+			switchSide();
+		}
+			
+		/*
 		if (validator.isDeadlock())
 			handleDeadLock();
+			*/
 		return true;
 	}
 	
 	public void switchSide() {
-		moveCount[gameState.getWhoseTurn()]++;
 		gameState.changePlayer();
 	}
-
-	//TO-DO
-	public void handleDeadLock() {
+	
+	public void nextRound() {
 		
-	}
-
-	public void handleEndRound() {
-		if (validator.getWinnigPlayerValue() == PlayerColor.WHITE){
-			score[PlayerColor.WHITE]++;
-			System.out.println("Hurray! White player wins!");
-			
-		} else {
-			score[PlayerColor.BLACK]++;
-			System.out.println("Hurray! Black player wins!");
-		}
-		
-		round++;
-			
-		EndRoundFrame endRoundFrame = new EndRoundFrame(this, getPlayerNames(getCurrentPlayerValue()));
-		
-		//resetGrid();
-	}
-
-	public void resetGrid() {
-		
-		board = new Square[8][8];
-
-		for (int i = 0; i < 8; i++)
-			board[0][i] = new Square(GameColor.ORANGE + i, new Tower(GameColor.ORANGE + i, PlayerColor.BLACK));
-
-		int a = 0, b = 1, c = 2, d = 3, e = 4, f = 5, g = 6, h = 7;
-		for (int i = 1; i < 7; i++) {
-			board[i][a] = new Square(GameColor.RED);
-			a = (a + 3) % 8;
-			board[i][b] = new Square(GameColor.ORANGE);
-			b = (b + 1) % 8;
-			board[i][c] = new Square(GameColor.PINK);
-			c = (c + 7) % 8;
-			board[i][d] = new Square(GameColor.GREEN);
-			d = (d + 5) % 8;
-			board[i][e] = new Square(GameColor.BLUE);
-			e = (e + 11) % 8;
-			board[i][f] = new Square(GameColor.YELLOW);
-			f = (f + 1) % 8;
-			board[i][g] = new Square(GameColor.BROWN);
-			g = (g + 7) % 8;
-			board[i][h] = new Square(GameColor.PURPLE);
-			h = (h + 5) % 8;
-		}
-
-		for (int i = 0; i < 8; i++)
-			board[7][i] = new Square(GameColor.BROWN - i, new Tower(GameColor.BROWN - i, PlayerColor.WHITE));
-		
-		gameState = new PlayerColor(PlayerColor.WHITE);
-		currentTowerColor = new GameColor(GameColor.ANY);
-		moveCount = new int[2];
-		moveCount[PlayerColor.WHITE] = 0;
+		currentTowerColor.setValue(GameColor.ANY);
 		moveCount[PlayerColor.BLACK] = 0;
-		validator = new MoveValidator(this);
-	}
-
-	public int getRoundNumber() {
-		return round;
-	}
-	
-	public String getPlayerNames(int color) {
-		return name[color];
-	}
-	
-	public int getPlayerScore(int color) {
-		return score[color];
+		moveCount[PlayerColor.WHITE] = 0;
+		score[getCurrentPlayerValue()]++;
+		round++;
+		switchSide();
 	}
 	
 	public void fillFromLeft() {
@@ -413,4 +442,5 @@ public class Board {
 		}
 		
 	}
+
 }

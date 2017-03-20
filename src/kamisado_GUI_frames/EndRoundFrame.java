@@ -4,6 +4,8 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -13,15 +15,17 @@ import kamisado_GUI_components.GUIButton;
 import kamisado_GUI_components.MenuLabel;
 import kamisado_GUI_components.MenuPanel;
 import kamisado_GUI_components.MenuRadioButton;
+import kamisado_control.GameController;
 import kamisado_logic.Board;
+import kamisado_logic.State;
 import net.miginfocom.swing.MigLayout;
 
 public class EndRoundFrame extends JFrame{
 
 	private static final long serialVersionUID = 1L;
 
-	public EndRoundFrame(Board board, String winnerPlayer) {
-		super("End round");
+	public EndRoundFrame(GameController control, String winnerPlayer) {
+		super("End round");	
 		
 		JPanel container = new MenuPanel(new MigLayout("align center center","","[][align center][]"));
 		JPanel middlePanel = new MenuPanel(new MigLayout());
@@ -64,21 +68,25 @@ public class EndRoundFrame extends JFrame{
 			}
 		});
 		
-		leftRadio.addChangeListener(new ChangeListener() {
+		leftRadio.addItemListener(new ItemListener() {
 			
 			@Override
-			public void stateChanged(ChangeEvent e) {
-				if(leftRadio.isSelected())
-					board.fillFromLeft();
+			public void itemStateChanged(ItemEvent e) {
+				if(leftRadio.isSelected()) {
+					control.syncBoard();
+					control.board.fillFromLeft();
+				}
 			}
 		});
 		
-		rightRadio.addChangeListener(new ChangeListener() {
+		rightRadio.addItemListener(new ItemListener() {
 			
 			@Override
-			public void stateChanged(ChangeEvent e) {
-				if(rightRadio.isSelected())
-					board.fillFromRight();
+			public void itemStateChanged(ItemEvent e) {
+				if(rightRadio.isSelected()) {
+					control.syncBoard();
+					control.board.fillFromRight();
+				}
 			}
 		});
 		
@@ -88,6 +96,8 @@ public class EndRoundFrame extends JFrame{
 			public void actionPerformed(ActionEvent e) {
 				if(leftRadio.isSelected() || rightRadio.isSelected()){
 					dispose();
+					control.board.endRound = false;
+					control.board.nextRound();
 				} else {
 					JOptionPane.showMessageDialog(null, "Please select fill side", "Problem", JOptionPane.ERROR_MESSAGE);
 				}

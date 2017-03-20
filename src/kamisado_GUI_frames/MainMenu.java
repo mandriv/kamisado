@@ -22,7 +22,6 @@ import javax.swing.border.EmptyBorder;
 
 import kamisado_GUI_components.MenuButton;
 import kamisado_GUI_components.MenuCheckBox;
-import kamisado_util.SinglePlayerGame;
 import kamisado_util.SoundTrack;
 
 public class MainMenu extends JPanel {
@@ -106,10 +105,8 @@ public class MainMenu extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				//frame.dispose();
-				//@SuppressWarnings("unused")
-				//PreGameMenu preGame = new PreGameMenu();
-				SinglePlayerGame game = new SinglePlayerGame();
+				@SuppressWarnings("unused")
+				PreGameMenu preGame = new PreGameMenu(frame);
 			}
 		});
 		loadBtn.addActionListener(new ActionListener() {
