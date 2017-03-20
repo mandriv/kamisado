@@ -8,8 +8,11 @@ public class IconToggleButton extends JToggleButton{
 
 	private static final long serialVersionUID = 1L;
 	
+	@SuppressWarnings("unused")
 	private Icon icon;
+	@SuppressWarnings("unused")
 	private Icon selectedIcon;
+	@SuppressWarnings("unused")
 	private JComponent componentVisibleIfSelected;
 
 	public IconToggleButton(Icon icon, Icon selectedIcon, JComponent componentVisibleIfSelected) {

@@ -1,17 +1,15 @@
 package kamisado_GUI_frames;
 
 import java.awt.Dimension;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
+
 import java.awt.HeadlessException;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+
 
 import javax.swing.JButton;
-import javax.swing.JComponent;
+
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -26,7 +24,7 @@ import kamisado_GUI_components.MenuLabel;
 import kamisado_GUI_components.MenuPanel;
 import kamisado_GUI_components.MenuPasswordField;
 import kamisado_GUI_components.MenuTextField;
-import kamisado_GUI_frames.MultiplayerMenu;
+
 import kamisado_control.LoginActionListener;
 import kamisado_control.RegisterActionListener;
 import kamisado_mp.MultiplayerClient;

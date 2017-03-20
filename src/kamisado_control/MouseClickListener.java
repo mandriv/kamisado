@@ -3,13 +3,8 @@ package kamisado_control;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-import kamisado_GUI_frames.BoardGUI;
-import kamisado_logic.Board;
-import kamisado_logic.Square;
-
 public class MouseClickListener implements MouseListener {
 
-	private BoardGUI gui;
 	private GameController control;
 
 	public MouseClickListener(GameController gc) {

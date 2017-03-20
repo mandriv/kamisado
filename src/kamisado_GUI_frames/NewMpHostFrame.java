@@ -12,7 +12,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JSpinner;
-import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.SpinnerListModel;
 
@@ -29,6 +28,7 @@ import net.miginfocom.swing.MigLayout;
 
 public class NewMpHostFrame extends JFrame{
 	
+	private static final long serialVersionUID = 1L;
 	MultiplayerClient mpClient;
 	User user;
 	

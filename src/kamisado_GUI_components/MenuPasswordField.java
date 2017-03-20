@@ -7,6 +7,8 @@ import javax.swing.JPasswordField;
 
 public class MenuPasswordField extends JPasswordField{
 	
+	private static final long serialVersionUID = 1L;
+
 	public MenuPasswordField(String text) {
 		super(text);
 		this.setFont(new Font("Tahoma", Font.BOLD, 12));

@@ -5,7 +5,6 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import com.mashape.unirest.http.exceptions.UnirestException;

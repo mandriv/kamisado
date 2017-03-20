@@ -2,13 +2,14 @@ package kamisado_GUI_components;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Font;
 
 import javax.swing.JSpinner;
 import javax.swing.SpinnerModel;
 
 public class MenuSpinner extends JSpinner{
 	
+	private static final long serialVersionUID = 1L;
+
 	public MenuSpinner(SpinnerModel model) {
 		super(model);
 		Component c = this.getEditor().getComponent(0);

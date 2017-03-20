@@ -32,6 +32,7 @@ public class LoginActionListener implements ActionListener{
 	public void actionPerformed(ActionEvent e) {
 
 			if(mpClient.connectToAPI(nameField.getText(), passField.getText())){
+				@SuppressWarnings("unused")
 				MultiplayerMenu mpMenu = new MultiplayerMenu(mpClient, mainMenuFrame);
 				mainMenuFrame.setVisible(false);
 				signInUpFrame.dispose();

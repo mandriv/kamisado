@@ -1,11 +1,14 @@
 package kamisado_control;
 
 import javax.activity.InvalidActivityException;
+import javax.swing.JFrame;
 import javax.swing.JProgressBar;
 
+import kamisado_GUI_frames.EndGameFrame;
 import kamisado_GUI_frames.EndRoundFrame;
 import kamisado_logic.Board;
 import kamisado_logic.GameTimer;
+import kamisado_logic.PlayerColor;
 import kamisado_logic.Square;
 import kamisado_logic.State;
 import kamisado_logic.StateHistory;
@@ -13,15 +16,19 @@ import kamisado_logic.StateHistory;
 public class GameController {
 	
 	public final int speedModeTime = 5; //seconds
-
+	
+	@SuppressWarnings("unused")
+	private EndRoundFrame endRoundFrame;
 	public Board board;
 	public StateHistory history;
 	private GameTimer timer;
-	private EndRoundFrame endFrame;
 	private JProgressBar progressBar;
+	private JFrame guiFrame;
+	private JFrame menuFrame;
 
-	public GameController(Board board) {
+	public GameController(Board board, JFrame menuFrame) {
 		this.board = board;
+		this.menuFrame = menuFrame;
 		history = new StateHistory();
 		addCurrentStateToHistory();
 		timer = new GameTimer(speedModeTime, this, progressBar);
@@ -104,17 +111,20 @@ public class GameController {
 	}
 
 	public void handleEndRound() {
-		timer.cancel();
-		resetProgressBar();
-		if(board.getRoundNumber() == board.getRoundLimit()) {
+		if(board.isSpeedMode()) {
+			timer.cancel();
+			resetProgressBar();
+		}
+		if(board.getScore(board.getCurrentPlayerValue()) + 1 == board.getPointsLimit()) {
 			handleEndGame();
 		} else {
-			endFrame = new EndRoundFrame(this, board.getCurrentPlayerName());
+			endRoundFrame = new EndRoundFrame(this, board.getCurrentPlayerName());
 		}
 	}
 	
 	private void handleEndGame() {
-		System.out.println("end");
+		@SuppressWarnings("unused")
+		EndGameFrame endGameFrame = new EndGameFrame(board.getCurrentPlayerName(), this);
 	}
 	
 	public void restartTimer() {
@@ -128,12 +138,29 @@ public class GameController {
 		this.progressBar = progressBar;
 	}
 	
+	public void setGUIframe(JFrame frame) {
+		guiFrame = frame;
+	}
+	
+	public JFrame getGUIframe() {
+		return guiFrame;
+	}
+	
+	public JFrame getMenuFrame() {
+		return menuFrame;
+	}
+	
 	public void resetProgressBar() {
 		progressBar.setValue(0);
 	}
 	
 	public void syncBoard() {
 		board = new Board(history.getCurrentState().getBoard());
+	}
+	
+	public void resetBoard() {
+		board = new Board(board.getPlayerNames(PlayerColor.WHITE),
+				          board.getPlayerNames(PlayerColor.BLACK), board.getPointsLimit(), board.isSpeedMode());
 	}
 
 }

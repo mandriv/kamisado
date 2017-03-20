@@ -1,7 +1,5 @@
 package kamisado_util;
 
-import kamisado_mp.MultiplayerClient;
-
 public class ThreadDriver {
 
 	public static void main(String[] args) {

@@ -8,7 +8,6 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.activity.InvalidActivityException;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -42,8 +41,8 @@ public class BoardGUI extends MenuPanel implements ActionListener{
 	private final Image focusedTileImage;
 	private final Image boardBackground;
 
-	public Board boardGrid;
-	GameController gc;
+	private Board board;
+	private GameController control;
 	
 	private JLabel nameLabel1;
 	private JLabel scoreLabel1;
@@ -52,14 +51,15 @@ public class BoardGUI extends MenuPanel implements ActionListener{
 	private JLabel roundLabel;
 	private MenuPanel blackPlayerPanel;
 	private MenuPanel whitePlayerPanel;
+	private JFrame frame;
 	
 	private Timer refresherTimer;
 
 
 	public BoardGUI(GameController gc) {
 
-		this.gc =gc;
-		boardGrid = gc.board;
+		this.control =gc;
+		board = gc.board;
 		
 		refresherTimer = new Timer(100, this);
 		refresherTimer.start();
@@ -73,17 +73,17 @@ public class BoardGUI extends MenuPanel implements ActionListener{
 		
 		// Set mouse click and key press listeners
 		this.addMouseListener(new MouseClickListener(gc));
-		this.addKeyListener(new KeyPressListener(this));
+		this.addKeyListener(new KeyPressListener());
 
 		JPanel sidePanel = new MenuPanel(new MigLayout("flowy, fillx, insets 0, al center","15px[align center]15px","10%[]13%[]20%[]20%[]"));
 		JProgressBar progressBar = new GameTimeProgressBar(gc.speedModeTime);
 		blackPlayerPanel = new MenuPanel(new MigLayout());
 		whitePlayerPanel = new MenuPanel(new MigLayout());
-		nameLabel2 = new MenuLabel(boardGrid.getPlayerNames(PlayerColor.BLACK));
-		scoreLabel2 = new MenuLabel(boardGrid.getScore(PlayerColor.BLACK)+"");
-		roundLabel = new MenuLabel("Round " + boardGrid.getRoundNumber());
-		nameLabel1 = new MenuLabel(boardGrid.getPlayerNames(PlayerColor.WHITE));
-		scoreLabel1 = new MenuLabel(boardGrid.getScore(PlayerColor.WHITE)+"");
+		nameLabel2 = new MenuLabel(board.getPlayerNames(PlayerColor.BLACK));
+		scoreLabel2 = new MenuLabel(board.getScore(PlayerColor.BLACK)+"");
+		roundLabel = new MenuLabel("Round " + board.getRoundNumber());
+		nameLabel1 = new MenuLabel(board.getPlayerNames(PlayerColor.WHITE));
+		scoreLabel1 = new MenuLabel(board.getScore(PlayerColor.WHITE)+"");
 		
 		blackPlayerPanel.add(nameLabel2);
 		blackPlayerPanel.add(scoreLabel2);
@@ -113,15 +113,26 @@ public class BoardGUI extends MenuPanel implements ActionListener{
 		rightBtnPanel.add(resignButton);
 		rightBtnPanel.setOpaque(false);
 		
+		resignButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				gc.getMenuFrame().setVisible(true);
+				frame.dispose();
+			}
+		});
+		
 		this.add(rightBtnPanel, "width 215px, height 800px, dock east");
 		
 		// create and show frame
-		JFrame frame = new JFrame("Kamisado");
+		frame = new JFrame("Kamisado");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setContentPane(this);
 		frame.pack();
 		frame.setVisible(true);
 
+		gc.setGUIframe(frame);
+		
 		// Enable keyboard focus
 		//frame.setFocusable(true);
 		//this.requestFocus();
@@ -138,7 +149,7 @@ public class BoardGUI extends MenuPanel implements ActionListener{
 		g.drawImage(this.boardBackground, 0, 0, null);
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 8; j++) {
-				Square square = boardGrid.getSquare(i, j);
+				Square square = board.getSquare(i, j);
 				// coordinates of tiles and towers
 				int x = MARGIN_LEFT + TILE_LENGTH * j + TILE_OFFSET * j;
 				int y = MARGIN_TOP + TILE_LENGTH * i + TILE_OFFSET * i;
@@ -154,30 +165,30 @@ public class BoardGUI extends MenuPanel implements ActionListener{
 					g.drawImage(focusedTileImage, x, y, null);
 				}
 				// draw towers
-				if (boardGrid.getSquare(i, j).isOccupied()) {
+				if (board.getSquare(i, j).isOccupied()) {
 					g.drawImage(square.getTower().getImage(), x, y, null);
 				}
 			}
 		}
-		nameLabel2.setText(boardGrid.getPlayerNames(PlayerColor.BLACK));
-		scoreLabel2.setText(boardGrid.getScore(PlayerColor.BLACK)+"");
-		roundLabel.setText("Round " + boardGrid.getRoundNumber());
-		nameLabel1.setText(boardGrid.getPlayerNames(PlayerColor.WHITE));
-		scoreLabel1.setText(boardGrid.getScore(PlayerColor.WHITE)+"");
+		nameLabel2.setText(board.getPlayerNames(PlayerColor.BLACK));
+		scoreLabel2.setText(board.getScore(PlayerColor.BLACK)+"");
+		roundLabel.setText("Round " + board.getRoundNumber());
+		nameLabel1.setText(board.getPlayerNames(PlayerColor.WHITE));
+		scoreLabel1.setText(board.getScore(PlayerColor.WHITE)+"");
 		
-		if(boardGrid.getCurrentPlayerValue() == PlayerColor.BLACK) {
+		if(board.getCurrentPlayerValue() == PlayerColor.BLACK) {
 			blackPlayerPanel.setBorder(BorderFactory.createLineBorder(new Color(138, 53, 57, 128),5));
-			whitePlayerPanel.setBorder(null);
+			whitePlayerPanel.setBorder(BorderFactory.createLineBorder(new Color(40, 40, 40, 128),5));
 		} else {
 			whitePlayerPanel.setBorder(BorderFactory.createLineBorder(new Color(138, 53, 57, 128),5));
-			blackPlayerPanel.setBorder(null);
+			blackPlayerPanel.setBorder(BorderFactory.createLineBorder(new Color(40, 40, 40, 128),5));
 		}
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent ev) {
 		if(ev.getSource()==refresherTimer){
-			boardGrid = gc.board;
+			board = control.board;
 			repaint();// this will call at every 0.1 second
 		}
 	}

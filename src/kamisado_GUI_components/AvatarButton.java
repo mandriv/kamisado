@@ -9,6 +9,8 @@ import javax.swing.JToggleButton;
 
 public class AvatarButton extends JToggleButton{
 
+	private static final long serialVersionUID = 1L;
+
 	public AvatarButton(Icon icon) {
 		super(icon);
 		this.setPreferredSize(new Dimension(90, 90));

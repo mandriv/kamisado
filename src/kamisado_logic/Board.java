@@ -2,16 +2,12 @@ package kamisado_logic;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
+
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import javax.activity.InvalidActivityException;
-
-import kamisado_GUI_frames.EndRoundFrame;
 
 public class Board {
 
@@ -20,11 +16,10 @@ public class Board {
 	private GameColor currentTowerColor;
 	private int[] moveCount;
 	private MoveValidator validator;
-	private GameTimer timer;
 	private String[] name;
 	private int[] score;
 	private int round;
-	private int roundLimit;
+	private int pointsLimit;
 	private boolean speedMode;
 	public boolean endRound;
 	/*
@@ -72,7 +67,7 @@ public class Board {
 		score[PlayerColor.BLACK] = 0;
 		
 		round = 1;
-		roundLimit = limit;
+		pointsLimit = limit;
 		
 		speedMode = speed;
 
@@ -169,7 +164,7 @@ public class Board {
 		score[PlayerColor.BLACK] = original.getScore(PlayerColor.BLACK);
 		
 		round = original.getRoundNumber();
-		roundLimit = original.getRoundLimit();
+		pointsLimit = original.getPointsLimit();
 		
 		speedMode = original.speedMode;
 	}
@@ -318,8 +313,8 @@ public class Board {
 		return round;
 	}
 	
-	public int getRoundLimit() {
-		return roundLimit;
+	public int getPointsLimit() {
+		return pointsLimit;
 	}
 	
 	public String getPlayerNames(int color) {

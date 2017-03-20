@@ -8,16 +8,12 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import kamisado_GUI_components.GUIButton;
 import kamisado_GUI_components.MenuLabel;
 import kamisado_GUI_components.MenuPanel;
 import kamisado_GUI_components.MenuRadioButton;
 import kamisado_control.GameController;
-import kamisado_logic.Board;
-import kamisado_logic.State;
 import net.miginfocom.swing.MigLayout;
 
 public class EndRoundFrame extends JFrame{

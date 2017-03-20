@@ -1,10 +1,9 @@
 package kamisado_GUI_frames;
-import java.awt.BorderLayout;
-import java.awt.Color;
+
 import java.awt.ComponentOrientation;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.GridBagLayout;
+
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -154,11 +153,11 @@ public class PreGameMenu extends MenuPanel{
 						case 3: limit = 15; break;
 					}
 					if (modesBox.getSelectedIndex() == 1) {
-						GameFactory.createPlayerVsPlayerSpeedLocalGame(name1, name2, limit);
+						GameFactory.createPlayerVsPlayerSpeedLocalGame(name1, name2, limit, parent);
 					} else {
-						GameFactory.createPlayerVsPlayerNormalLocalGame(name1, name2, limit);
+						GameFactory.createPlayerVsPlayerNormalLocalGame(name1, name2, limit, parent);
 					}
-					parent.dispose();
+					parent.setVisible(false);
 					frame.dispose();
 				}
 			}

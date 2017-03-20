@@ -33,6 +33,7 @@ public class AvatarChangeFrame extends JFrame{
 	
 	private ImageIcon currentAvatar;
 	private JLabel currentAvatarLabel;
+	@SuppressWarnings("unused")
 	private MultiplayerClient mpClient;
 
 	public AvatarChangeFrame(User user, MultiplayerClient mpClient, MultiplayerMenu menu) {

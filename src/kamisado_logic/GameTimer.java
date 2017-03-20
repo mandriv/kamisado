@@ -5,7 +5,6 @@ import java.util.TimerTask;
 
 import javax.swing.JProgressBar;
 
-import kamisado_GUI_components.GUIButton;
 import kamisado_control.GameController;
 
 public class GameTimer {
