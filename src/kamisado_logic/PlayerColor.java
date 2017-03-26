@@ -20,12 +20,8 @@ public class PlayerColor {
 		return "black";
 	}
 
-	public int getWhoseTurn() {
+	public int value() {
 		return player;
-	}
-
-	public void changePlayer() {
-		player = (player + 1) % 2;
 	}
 
 }

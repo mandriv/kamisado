@@ -3,7 +3,9 @@ package kamisado_control;
 import javax.activity.InvalidActivityException;
 import javax.swing.JFrame;
 import javax.swing.JProgressBar;
+import javax.swing.plaf.SliderUI;
 
+import kamisado_GUI_frames.BoardGUI;
 import kamisado_GUI_frames.EndGameFrame;
 import kamisado_GUI_frames.EndRoundFrame;
 import kamisado_logic.Board;
@@ -25,6 +27,9 @@ public class GameController {
 	private JProgressBar progressBar;
 	private JFrame guiFrame;
 	private JFrame menuFrame;
+	private BoardGUI boardGUI;
+	private boolean focusOnBtns;
+	private int i = 1;
 
 	public GameController(Board board, JFrame menuFrame) {
 		this.board = board;
@@ -32,6 +37,7 @@ public class GameController {
 		history = new StateHistory();
 		addCurrentStateToHistory();
 		timer = new GameTimer(speedModeTime, this, progressBar);
+		focusOnBtns = false;
 	}
 
 	public void addCurrentStateToHistory() {
@@ -60,14 +66,96 @@ public class GameController {
 		board.markPossibleMoves();
 	}
 	
-	public void mouseAction(int x, int y) {
+	public void mouseAction(int x, int y, boolean isClicked) {
+		Square square = board.findSquareByCoords(x, y);
+		if(square != null) {
+			if(isClicked)
+				action(square);
+			else
+				hover(square);
+		}
+
+	}
+	
+	public void keyAction(String key) {
+		switch(key) {
+		case "LEFT": case "RIGHT":
+		case "UP"  : case "DOWN":
+			hover(key);
+			break;
+		case "ENTER": case "SPACE":
+			action(board.getHoveredSquare());
+			break;
+		}
+	}
+	
+	private void hover(String dir) {
+		if(board.hasHoveredSquare()) {
+			int row = board.getSquareRowCoord(board.getHoveredSquare());
+			int col = board.getSquareColCoord(board.getHoveredSquare());
+			if(dir.equals("LEFT") && col!=0) {
+				board.getHoveredSquare().setHovered(false);
+				hover(board.boardArray[row][col-1]);
+			}
+			if(dir.equals("UP") && row!=0) {
+				board.getHoveredSquare().setHovered(false);
+				hover(board.boardArray[row-1][col]);
+			}
+			if(dir.equals("DOWN") && row!=7) {
+				board.getHoveredSquare().setHovered(false);
+				hover(board.boardArray[row+1][col]);
+			}
+			if(dir.equals("RIGHT")) {
+				if(col == 7) {
+					focusOnBtns = true;
+					boardGUI.focusOnFirstButton();
+					board.getHoveredSquare().setHovered(false);
+				} else {
+					board.getHoveredSquare().setHovered(false);
+					hover(board.boardArray[row][col+1]);				
+				}
+			}
+		} else {
+			if(!focusOnBtns) {
+				if(board.getCurrentMovableSquare() == null) {
+					if(board.getCurrentPlayerValue() == PlayerColor.BLACK) {
+						hover(board.boardArray[0][0]);
+					} else {
+						hover(board.boardArray[7][0]);
+					}
+				}
+			} else {
+				if(dir.equals("LEFT")) {
+					focusOnBtns = false;
+					hover(board.boardArray[4][7]);
+					boardGUI.exitBtns();
+				}
+				if(dir.equals("UP")) {
+
+				}
+				if(dir.equals("DOWN")) {
+
+				}
+			}
+		}
+	}
+	
+	private void hover(Square square) {
+		if(board.hasHoveredSquare())
+			board.getHoveredSquare().setHovered(false);
+		square.setHovered(true);
+		board.markPossibleMoves();
+		focusOnBtns = false;
+		boardGUI.requestFocusInWindow();
+	}
+	
+	private void action(Square desiredSquare) {
 		boolean hasFocused = board.hasFocusedSquare();
 		Square focusedSquare = board.getFocusedSquare();
-		Square clickedSquare = board.findSquareByCoords(x, y);
 
 		//if second click (1. On tower 2. On Empty space
-		if (hasFocused && !clickedSquare.isOccupied() ) {
-			requestMove(focusedSquare, clickedSquare);
+		if (hasFocused && !desiredSquare.isOccupied() ) {
+			requestMove(focusedSquare, desiredSquare);
 		}
 		
 		Square movableSquare = board.getCurrentMovableSquare();
@@ -76,14 +164,14 @@ public class GameController {
 		if(movableSquare != null) {
 			movableSquare.setFocused();
 		} else {
-			if(clickedSquare.isOccupied()) {
+			if(desiredSquare.isOccupied()) {
 				if(hasFocused) {
 					focusedSquare.defocus();
-					if (clickedSquare.getTower().getOwner() == board.getCurrentPlayerValue())
-						clickedSquare.setFocused();
+					if (desiredSquare.getTower().getOwnerColorValue() == board.getCurrentPlayerValue())
+						desiredSquare.setFocused();
 				} else {
-					if (clickedSquare.getTower().getOwner() == board.getCurrentPlayerValue())
-						clickedSquare.setFocused();
+					if (desiredSquare.getTower().getOwnerColorValue() == board.getCurrentPlayerValue())
+						desiredSquare.setFocused();
 				}
 			}
 				
@@ -91,7 +179,6 @@ public class GameController {
 		}
 		
 		board.markPossibleMoves();
-		
 	}
 	
 	private boolean requestMove(Square srcSq, Square dstSq) {
@@ -115,7 +202,7 @@ public class GameController {
 			timer.cancel();
 			resetProgressBar();
 		}
-		if(board.getScore(board.getCurrentPlayerValue()) + 1 == board.getPointsLimit()) {
+		if(board.getCurrentPlayerScore() + 1 == board.getPointsLimit()) {
 			handleEndGame();
 		} else {
 			endRoundFrame = new EndRoundFrame(this, board.getCurrentPlayerName());
@@ -146,6 +233,10 @@ public class GameController {
 		return guiFrame;
 	}
 	
+	public void setGUI(BoardGUI gui) {
+		boardGUI = gui;
+	}
+	
 	public JFrame getMenuFrame() {
 		return menuFrame;
 	}
@@ -159,8 +250,7 @@ public class GameController {
 	}
 	
 	public void resetBoard() {
-		board = new Board(board.getPlayerNames(PlayerColor.WHITE),
-				          board.getPlayerNames(PlayerColor.BLACK), board.getPointsLimit(), board.isSpeedMode());
+		board = new Board(board.player1, board.player2, board.getPointsLimit(), board.isSpeedMode());
 	}
 
 }

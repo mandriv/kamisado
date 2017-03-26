@@ -15,7 +15,7 @@ public class MouseClickListener implements MouseListener {
 	public void mouseClicked(MouseEvent e) {
 		int x = e.getX();
 		int y = e.getY();
-		control.mouseAction(x, y);
+		control.mouseAction(x, y, true);
 	}
 
 	@Override

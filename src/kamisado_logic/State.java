@@ -17,7 +17,7 @@ public class State {
 			for(int j = 0; j <= 7 ; j++) {
 				Square s = board.getSquare(i, j);
 				if(s.isOccupied()) {
-					if(s.getTower().getOwner() == PlayerColor.BLACK) {
+					if(s.getTower().getOwnerColorValue() == PlayerColor.BLACK) {
 						builder.append("b");
 					} else {
 						builder.append("w");
@@ -50,12 +50,12 @@ public class State {
 		    writer.println(tokenizedBoard);
 		    writer.println(savedBoard.getCurrentPlayerValue());
 		    writer.println(savedBoard.getCurrentTowerColorValue());
-		    writer.println(savedBoard.getMoveCount(PlayerColor.WHITE));
-		    writer.println(savedBoard.getMoveCount(PlayerColor.BLACK));
-		    writer.println(savedBoard.getPlayerNames(PlayerColor.WHITE));
-		    writer.println(savedBoard.getPlayerNames(PlayerColor.BLACK));
-		    writer.println(savedBoard.getScore(PlayerColor.WHITE));
-		    writer.println(savedBoard.getScore(PlayerColor.BLACK));
+		    writer.println(savedBoard.player1.getMoveCount());
+		    writer.println(savedBoard.player2.getMoveCount());
+		    writer.println(savedBoard.player1.getName());
+		    writer.println(savedBoard.player2.getName());
+		    writer.println(savedBoard.player1.getScore());
+		    writer.println(savedBoard.player2.getScore());
 		    writer.println(savedBoard.getRoundNumber());
 		    writer.close();
 		} catch (IOException e) {

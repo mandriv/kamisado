@@ -12,12 +12,11 @@ import java.util.List;
 public class Board {
 
 	public Square[][] boardArray;
-	private PlayerColor gameState;
 	private GameColor currentTowerColor;
-	private int[] moveCount;
 	private MoveValidator validator;
-	private String[] name;
-	private int[] score;
+	private Player currentPlayer;
+	public Player player1;
+	public Player player2;
 	private int round;
 	private int pointsLimit;
 	private boolean speedMode;
@@ -36,7 +35,7 @@ public class Board {
 	*/
 	
 	//Normal constructor
-	public Board(String name1, String name2, int limit, boolean speed) {
+	public Board(Player whitePlayer, Player blackPlayer, int limit, boolean speed) {
 		boardArray = new Square[8][8];
 		
 		createSquares();
@@ -50,29 +49,18 @@ public class Board {
 			square.setTower(new Tower(GameColor.BROWN - i, PlayerColor.WHITE));			
 		}
 		
-		gameState = new PlayerColor(PlayerColor.WHITE);
+		currentPlayer = whitePlayer;
 		currentTowerColor = new GameColor(GameColor.ANY);
-		moveCount = new int[2];
-		moveCount[PlayerColor.WHITE] = 0;
-		moveCount[PlayerColor.BLACK] = 0;
 		validator = new MoveValidator(this);
-		markPossibleMoves();
-		
-		name = new String[2];
-		name[PlayerColor.WHITE] = name1;
-		name[PlayerColor.BLACK] = name2;
-		
-		score = new int[2];
-		score[PlayerColor.WHITE] = 0;
-		score[PlayerColor.BLACK] = 0;
-		
+		player1 = whitePlayer;
+		player2 = blackPlayer;	
 		round = 1;
 		pointsLimit = limit;
-		
 		speedMode = speed;
 
+		markPossibleMoves();
 	}
-	
+	/*
 	//Saved from file game constructor
 	public Board(String saveName) throws IOException {
 		String path = System.getProperty("user.home") + File.separator + "Kamisado Saves" + File.separator + saveName;
@@ -129,6 +117,7 @@ public class Board {
 		br.close();
 		
 	}
+	*/
 	
 	//Copy  constructor (for history)
 	public Board(Board original) {
@@ -142,30 +131,19 @@ public class Board {
 				Square sq = original.getSquare(i, j);
 				if(sq.isOccupied()) {
 					Tower originalTower = sq.getTower();
-					Tower t = new Tower(originalTower.getColorValue(), originalTower.getOwner());
+					Tower t = new Tower(originalTower.getColorValue(), originalTower.getOwnerColorValue());
 					getSquare(i, j).setTower(t);
 				}
 			}
 		}
-		
-		gameState = new PlayerColor(original.getCurrentPlayerValue());
+
+		currentPlayer = original.currentPlayer;
 		currentTowerColor = new GameColor(original.getCurrentTowerColorValue());
-		moveCount = new int[2];
-		moveCount[PlayerColor.WHITE] = original.getMoveCount(PlayerColor.WHITE);
-		moveCount[PlayerColor.BLACK] = original.getMoveCount(PlayerColor.BLACK);
 		validator = new MoveValidator(this);
-		
-		name = new String[2];
-		name[PlayerColor.WHITE] = original.getPlayerNames(PlayerColor.WHITE);
-		name[PlayerColor.BLACK] = original.getPlayerNames(PlayerColor.BLACK);
-		
-		score = new int[2];
-		score[PlayerColor.WHITE] = original.getScore(PlayerColor.WHITE);
-		score[PlayerColor.BLACK] = original.getScore(PlayerColor.BLACK);
-		
+		player1 = original.player1;
+		player2 = original.player2;		
 		round = original.getRoundNumber();
-		pointsLimit = original.getPointsLimit();
-		
+		pointsLimit = original.getPointsLimit();	
 		speedMode = original.speedMode;
 	}
 	
@@ -265,11 +243,28 @@ public class Board {
 		}
 		return null;
 	}
+	
+	public boolean hasHoveredSquare() {
+		for (Square square : getSquaresAsList()) {
+			if (square.isHovered())
+				return true;
+		}
+		return false;
+	}
+
+	public Square getHoveredSquare() {
+		for (Square square : getSquaresAsList()) {
+			if (square.isHovered())
+				return square;
+		}
+		return null;
+	}
+	
 
 	public Square getCurrentMovableSquare() {
 		for (Square square : getOccupiedSquaresAsList()) {
 			if (square.getTower().getColorValue() == getCurrentTowerColorValue()
-					&& square.getTower().getOwner() == getCurrentPlayerValue())
+					&& square.getTower().getOwnerColorValue() == currentPlayer.getColorValue())
 				return square;
 		}
 		return null;
@@ -285,28 +280,8 @@ public class Board {
 		}
 	}
 
-	public PlayerColor getGameState() {
-		return gameState;
-	}
-
 	public int getCurrentTowerColorValue() {
 		return currentTowerColor.getValue();
-	}
-
-	public int getCurrentPlayerMoveCount() {
-		return moveCount[gameState.getWhoseTurn()];
-	}
-	
-	public String getCurrentPlayerName() {
-		return name[getCurrentPlayerValue()];
-	}
-	
-	public int getMoveCount(int playerColor) {
-		return moveCount[playerColor];
-	}
-
-	public int getCurrentPlayerValue() {
-		return gameState.getWhoseTurn();
 	}
 
 	public int getRoundNumber() {
@@ -317,12 +292,20 @@ public class Board {
 		return pointsLimit;
 	}
 	
-	public String getPlayerNames(int color) {
-		return name[color];
+	public int getCurrentPlayerValue() {
+		return currentPlayer.getColorValue();
 	}
 	
-	public int getScore(int playerColor) {
-		return score[playerColor];
+	public int getCurrentPlayerScore() {
+		return currentPlayer.getScore();
+	}
+	
+	public String getCurrentPlayerName() {
+		return currentPlayer.getName();
+	}
+	
+	public int getScore(Player player) {
+		return player.getScore();
 	}
 	
 	public boolean isSpeedMode() {
@@ -339,7 +322,7 @@ public class Board {
 		if (validator.isGameEnd())
 			endRound = true;
 		else {
-			moveCount[gameState.getWhoseTurn()]++;
+			currentPlayer.incrementMoveCount();
 			switchSide();
 		}
 			
@@ -351,15 +334,18 @@ public class Board {
 	}
 	
 	public void switchSide() {
-		gameState.changePlayer();
+		if(currentPlayer == player1)
+			currentPlayer = player2;
+		else
+			currentPlayer = player1;
 	}
 	
 	public void nextRound() {
 		
 		currentTowerColor.setValue(GameColor.ANY);
-		moveCount[PlayerColor.BLACK] = 0;
-		moveCount[PlayerColor.WHITE] = 0;
-		score[getCurrentPlayerValue()]++;
+		player1.resetMoveCount();
+		player2.resetMoveCount();
+		currentPlayer.incrementScore();
 		round++;
 		switchSide();
 	}
@@ -373,7 +359,7 @@ public class Board {
 			for(int j = 0 ; j <= 7 ; j++) {
 				if(getSquare(i, j).isOccupied()) {
 					Tower t = getSquare(i, j).getTower();
-					if(t.getOwner() == PlayerColor.WHITE) {
+					if(t.getOwnerColorValue() == PlayerColor.WHITE) {
 						whiteTowers.add(t);
 						getSquare(i, j).clearSquare();
 					} 
@@ -386,7 +372,7 @@ public class Board {
 			for(int j = 0 ; j <= 7 ; j++) {
 				if(getSquare(i, j).isOccupied()) {
 					Tower t = getSquare(i, j).getTower();
-					if(t.getOwner() == PlayerColor.BLACK) {
+					if(t.getOwnerColorValue() == PlayerColor.BLACK) {
 						blackTowers.add(t);
 						getSquare(i, j).clearSquare();
 					} 
@@ -410,7 +396,7 @@ public class Board {
 			for(int j = 7 ; j >= 0 ; j--) {
 				if(getSquare(i, j).isOccupied()) {
 					Tower t = getSquare(i, j).getTower();
-					if(t.getOwner() == PlayerColor.WHITE) {
+					if(t.getOwnerColorValue() == PlayerColor.WHITE) {
 						whiteTowers.add(t);
 						getSquare(i, j).clearSquare();
 					} 
@@ -423,7 +409,7 @@ public class Board {
 			for(int j = 7 ; j >= 0 ; j--) {
 				if(getSquare(i, j).isOccupied()) {
 					Tower t = getSquare(i, j).getTower();
-					if(t.getOwner() == PlayerColor.BLACK) {
+					if(t.getOwnerColorValue() == PlayerColor.BLACK) {
 						blackTowers.add(t);
 						getSquare(i, j).clearSquare();
 					} 

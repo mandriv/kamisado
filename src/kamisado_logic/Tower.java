@@ -30,8 +30,8 @@ public class Tower {
 						.getImage();
 	}
 
-	public int getOwner() {
-		return player.getWhoseTurn();
+	public int getOwnerColorValue() {
+		return player.value();
 	}
 
 	public GameColor getColor() {

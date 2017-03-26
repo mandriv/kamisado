@@ -4,10 +4,12 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.RenderingHints.Key;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.print.attribute.standard.RequestingUserName;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -23,6 +25,7 @@ import kamisado_GUI_components.MenuPanel;
 import kamisado_control.GameController;
 import kamisado_control.KeyPressListener;
 import kamisado_control.MouseClickListener;
+import kamisado_control.MouseListener;
 import kamisado_logic.Board;
 import kamisado_logic.GameTimeProgressBar;
 import kamisado_logic.PlayerColor;
@@ -39,6 +42,7 @@ public class BoardGUI extends MenuPanel implements ActionListener{
 
 	private final Image possibleTileImage;
 	private final Image focusedTileImage;
+	private final Image hoveredTileImage;
 	private final Image boardBackground;
 
 	private Board board;
@@ -49,6 +53,7 @@ public class BoardGUI extends MenuPanel implements ActionListener{
 	private JLabel nameLabel2;
 	private JLabel scoreLabel2;
 	private JLabel roundLabel;
+	private JButton resignButton;
 	private MenuPanel blackPlayerPanel;
 	private MenuPanel whitePlayerPanel;
 	private JFrame frame;
@@ -61,29 +66,34 @@ public class BoardGUI extends MenuPanel implements ActionListener{
 		this.control =gc;
 		board = gc.board;
 		
+		gc.setGUI(this);
+		
 		refresherTimer = new Timer(100, this);
 		refresherTimer.start();
 		// Loads possible / focused square ring image
 		possibleTileImage = new ImageIcon(getClass().getResource("/kamisado_media/tiles/possibleTileOverlay.png")).getImage();
 		focusedTileImage = new ImageIcon(getClass().getResource("/kamisado_media/tiles/focusedTileOverlay.png")).getImage();
+		hoveredTileImage = new ImageIcon(getClass().getResource("/kamisado_media/tiles/hoveredTileOverlay.png")).getImage();
 		// Set background image and frame container dimensions
 		boardBackground = new ImageIcon(getClass().getResource("/kamisado_media/frameBackgrounds/board.png")).getImage();
 		this.setPreferredSize(new Dimension(boardBackground.getWidth(null), boardBackground.getHeight(null)));
 		this.setLayout(new MigLayout("insets 0, fillx"));
 		
 		// Set mouse click and key press listeners
+		KeyPressListener kpl = new KeyPressListener(gc);
 		this.addMouseListener(new MouseClickListener(gc));
-		this.addKeyListener(new KeyPressListener());
+		this.addMouseMotionListener(new MouseListener(gc));
+		this.addKeyListener(kpl);
 
 		JPanel sidePanel = new MenuPanel(new MigLayout("flowy, fillx, insets 0, al center","15px[align center]15px","10%[]13%[]20%[]20%[]"));
 		JProgressBar progressBar = new GameTimeProgressBar(gc.speedModeTime);
 		blackPlayerPanel = new MenuPanel(new MigLayout());
 		whitePlayerPanel = new MenuPanel(new MigLayout());
-		nameLabel2 = new MenuLabel(board.getPlayerNames(PlayerColor.BLACK));
-		scoreLabel2 = new MenuLabel(board.getScore(PlayerColor.BLACK)+"");
+		nameLabel2 = new MenuLabel(board.player2.getName());
+		scoreLabel2 = new MenuLabel(board.player2.getScore()+"");
 		roundLabel = new MenuLabel("Round " + board.getRoundNumber());
-		nameLabel1 = new MenuLabel(board.getPlayerNames(PlayerColor.WHITE));
-		scoreLabel1 = new MenuLabel(board.getScore(PlayerColor.WHITE)+"");
+		nameLabel1 = new MenuLabel(board.player1.getName());
+		scoreLabel1 = new MenuLabel(board.player1.getScore()+"");
 		
 		blackPlayerPanel.add(nameLabel2);
 		blackPlayerPanel.add(scoreLabel2);
@@ -108,7 +118,8 @@ public class BoardGUI extends MenuPanel implements ActionListener{
 		this.add(sidePanel, "width 215px, height 800px, dock west");
 		
 		JPanel rightBtnPanel = new MenuPanel(new MigLayout("insets 0, fillx, flowy, al center center","[align center]","[][]"));
-		JButton resignButton = new GUIButton("Resign");
+		resignButton = new GUIButton("Resign");
+		resignButton.addKeyListener(kpl);
 		
 		rightBtnPanel.add(resignButton);
 		rightBtnPanel.setOpaque(false);
@@ -134,8 +145,8 @@ public class BoardGUI extends MenuPanel implements ActionListener{
 		gc.setGUIframe(frame);
 		
 		// Enable keyboard focus
-		//frame.setFocusable(true);
-		//this.requestFocus();
+		frame.setFocusable(true);
+		this.requestFocus();
 
 		// Centre the frame
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
@@ -164,17 +175,20 @@ public class BoardGUI extends MenuPanel implements ActionListener{
 				if (square.isFocused()) {
 					g.drawImage(focusedTileImage, x, y, null);
 				}
+				if (square.isHovered()) {
+					g.drawImage(hoveredTileImage, x, y, null);
+				}
 				// draw towers
 				if (board.getSquare(i, j).isOccupied()) {
 					g.drawImage(square.getTower().getImage(), x, y, null);
 				}
 			}
 		}
-		nameLabel2.setText(board.getPlayerNames(PlayerColor.BLACK));
-		scoreLabel2.setText(board.getScore(PlayerColor.BLACK)+"");
+		nameLabel2.setText(board.player2.getName());
+		scoreLabel2.setText(board.player2.getScore()+"");
 		roundLabel.setText("Round " + board.getRoundNumber());
-		nameLabel1.setText(board.getPlayerNames(PlayerColor.WHITE));
-		scoreLabel1.setText(board.getScore(PlayerColor.WHITE)+"");
+		nameLabel1.setText(board.player1.getName());
+		scoreLabel1.setText(board.player1.getScore()+"");
 		
 		if(board.getCurrentPlayerValue() == PlayerColor.BLACK) {
 			blackPlayerPanel.setBorder(BorderFactory.createLineBorder(new Color(138, 53, 57, 128),5));
@@ -193,6 +207,12 @@ public class BoardGUI extends MenuPanel implements ActionListener{
 		}
 	}
 	
+	public void focusOnFirstButton() {
+		resignButton.requestFocusInWindow();
+	}
+	 public void exitBtns() {
+		 this.requestFocusInWindow();
+	 }
 	
 
 }

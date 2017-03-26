@@ -11,6 +11,7 @@ public class Square {
 	boolean occupied;
 	boolean focused;
 	boolean possible;
+	boolean hovered;
 	int xPosition;
 	int yPosition;
 
@@ -20,6 +21,7 @@ public class Square {
 		occupied = true;
 		focused = false;
 		possible = false;
+		hovered = false;
 	}
 
 	public Square(int color) {
@@ -27,6 +29,7 @@ public class Square {
 		tower = null;
 		occupied = false;
 		possible = false;
+		hovered = false;
 	}
 
 	public void setColor(int color) {
@@ -98,6 +101,14 @@ public class Square {
 
 	public boolean isPossible() {
 		return possible;
+	}
+	
+	public void setHovered(boolean isHovered) {
+		hovered = isHovered;
+	}
+	
+	public boolean isHovered() {
+		return hovered;
 	}
 
 }
