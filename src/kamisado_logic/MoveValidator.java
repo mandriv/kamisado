@@ -4,28 +4,25 @@ import java.util.ArrayList;
 
 public class MoveValidator {
 
-	private Board boardGrid;
-
-	public MoveValidator(Board bg) {
-		boardGrid = bg;
+	public MoveValidator() {
 	}
-
-	public ArrayList<Square> getPossibleMoveSquares() {
+	
+	public static ArrayList<Square> getPossibleMoveSquares(Board board) {
 		ArrayList<Square> list = new ArrayList<>();
 
-		Square moveSquare = boardGrid.getCurrentMovableSquare();
+		Square moveSquare = board.getCurrentMovableSquare();
 
 		//if this is first move
 		if(moveSquare == null) {
 			//if player clicked already in first move
-			if(boardGrid.hasFocusedSquare()) {
-				moveSquare = boardGrid.getFocusedSquare();
+			if(board.hasFocusedSquare()) {
+				moveSquare = board.getFocusedSquare();
 			} else {
-				if(boardGrid.hasHoveredSquare()) {
-					Square hoveredSquare = boardGrid.getHoveredSquare();
+				if(board.hasHoveredSquare()) {
+					Square hoveredSquare = board.getHoveredSquare();
 					if(hoveredSquare.isOccupied()) {
-						if(boardGrid.getHoveredSquare().getTower().getOwnerColorValue() == boardGrid.getCurrentPlayerValue()) {
-							moveSquare = boardGrid.getHoveredSquare(); //hover on your tower
+						if(board.getHoveredSquare().getTower().getOwnerColorValue() == board.getCurrentPlayerValue()) {
+							moveSquare = board.getHoveredSquare(); //hover on your tower
 						} else { //hover on enemy tower
 							return list;
 						}
@@ -39,24 +36,24 @@ public class MoveValidator {
 			}
 		}
 
-		int col = boardGrid.getSquareColCoord(moveSquare);
-		int row = boardGrid.getSquareRowCoord(moveSquare);
+		int col = board.getSquareColCoord(moveSquare);
+		int row = board.getSquareRowCoord(moveSquare);
 		// black moves
 		if (moveSquare.getTower().getOwnerColorValue() == PlayerColor.BLACK) {
 			// moves down
 			for (int i = row + 1; i <= 7; i++) {
-				if (boardGrid.getSquare(i, col).isOccupied())
+				if (board.getSquare(i, col).isOccupied())
 					break;
-				list.add(boardGrid.getSquare(i, col));
+				list.add(board.getSquare(i, col));
 			}
 			// skew moves left down
 			int j = col - 1;
 			for (int i = row + 1; i <= 7; i++) {
 				if (j < 0)
 					break;
-				if (boardGrid.getSquare(i, j).isOccupied())
+				if (board.getSquare(i, j).isOccupied())
 					break;
-				list.add(boardGrid.getSquare(i, j));
+				list.add(board.getSquare(i, j));
 				j--;
 			}
 			// skew moves right down
@@ -64,9 +61,9 @@ public class MoveValidator {
 			for (int i = row + 1; i <= 7; i++) {
 				if (j > 7)
 					break;
-				if (boardGrid.getSquare(i, j).isOccupied())
+				if (board.getSquare(i, j).isOccupied())
 					break;
-				list.add(boardGrid.getSquare(i, j));
+				list.add(board.getSquare(i, j));
 				j++;
 			}
 		}
@@ -74,18 +71,18 @@ public class MoveValidator {
 		else {
 			// forward moves
 			for (int i = row - 1; i >= 0; i--) {
-				if (boardGrid.getSquare(i, col).isOccupied())
+				if (board.getSquare(i, col).isOccupied())
 					break;
-				list.add(boardGrid.getSquare(i, col));
+				list.add(board.getSquare(i, col));
 			}
 			// skew moves left forward
 			int j = col - 1;
 			for (int i = row - 1; i >= 0; i--) {
 				if (j < 0)
 					break;
-				if (boardGrid.getSquare(i, j).isOccupied())
+				if (board.getSquare(i, j).isOccupied())
 					break;
-				list.add(boardGrid.getSquare(i, j));
+				list.add(board.getSquare(i, j));
 				j--;
 			}
 			// skew moves right forward
@@ -93,55 +90,192 @@ public class MoveValidator {
 			for (int i = row - 1; i >= 0; i--) {
 				if (j > 7)
 					break;
-				if (boardGrid.getSquare(i, j).isOccupied())
+				if (board.getSquare(i, j).isOccupied())
 					break;
-				list.add(boardGrid.getSquare(i, j));
+				list.add(board.getSquare(i, j));
 				j++;
 			}
 		}
 		return list;
 
 	}
+	
+	public static int numberOfPossibleMovesForSquare(Board board, Square square) {
+		ArrayList<Square> list = new ArrayList<>();
+		if(square.isOccupied()) {
+			int col = board.getSquareColCoord(square);
+			int row = board.getSquareRowCoord(square);
+			if (square.getTower().getOwnerColorValue() == PlayerColor.BLACK) {
+				// moves down
+				for (int i = row + 1; i <= 7; i++) {
+					if (board.getSquare(i, col).isOccupied())
+						break;
+					list.add(board.getSquare(i, col));
+				}
+				// skew moves left down
+				int j = col - 1;
+				for (int i = row + 1; i <= 7; i++) {
+					if (j < 0)
+						break;
+					if (board.getSquare(i, j).isOccupied())
+						break;
+					list.add(board.getSquare(i, j));
+					j--;
+				}
+				// skew moves right down
+				j = col + 1;
+				for (int i = row + 1; i <= 7; i++) {
+					if (j > 7)
+						break;
+					if (board.getSquare(i, j).isOccupied())
+						break;
+					list.add(board.getSquare(i, j));
+					j++;
+				}
+			}
+			// white moves
+			else {
+				// forward moves
+				for (int i = row - 1; i >= 0; i--) {
+					if (board.getSquare(i, col).isOccupied())
+						break;
+					list.add(board.getSquare(i, col));
+				}
+				// skew moves left forward
+				int j = col - 1;
+				for (int i = row - 1; i >= 0; i--) {
+					if (j < 0)
+						break;
+					if (board.getSquare(i, j).isOccupied())
+						break;
+					list.add(board.getSquare(i, j));
+					j--;
+				}
+				// skew moves right forward
+				j = col + 1;
+				for (int i = row - 1; i >= 0; i--) {
+					if (j > 7)
+						break;
+					if (board.getSquare(i, j).isOccupied())
+						break;
+					list.add(board.getSquare(i, j));
+					j++;
+				}
+			}
+		}
+		return list.size();
+	}
 
-	// Probably trash it
-	public boolean isLegalMove(Square srcSq, Square destSq) {
-		if (!(srcSq.isOccupied() && !destSq.isOccupied())){
+	public static boolean isLegalMove(Board board, Square srcSq, Square destSq) {
+		if (!srcSq.isOccupied() || destSq.isOccupied()) {
+			System.out.println("1");
 			return false;
 		}
 
-		if (srcSq.getTower().getColorValue() != boardGrid.getCurrentTowerColorValue()
-				&& boardGrid.getCurrentTowerColorValue() != GameColor.ANY){
+		if (srcSq.getTower().getColorValue() != board.getCurrentTowerColorValue()
+				&& board.getCurrentTowerColorValue() != GameColor.ANY){
+			System.out.println("2");
 			return false;
 		}
 		if (!destSq.isPossible()){
+			System.out.println("3");
 			return false;
 		}
 		return true;
 	}
+	
+	public static boolean isThreat(Board board, Square srcSq) {
+		if(srcSq.isOccupied()) {
+			int row = board.getSquareRowCoord(srcSq);
+			int col = board.getSquareColCoord(srcSq);
+			if(srcSq.getTower().getOwnerColorValue() == PlayerColor.WHITE) {
+				// forward moves
+				for (int i = row - 1; i >= 0; i--) {
+					if (board.getSquare(i, col).isOccupied())
+						break;
+					if (i == 0)
+						return true;
+				}
+				// skew moves left forward
+				int j = col - 1;
+				for (int i = row - 1; i >= 0; i--) {
+					if (j < 0)
+						break;
+					if (board.getSquare(i, j).isOccupied())
+						break;
+					if (i == 0)
+						return true;
+					j--;
+				}
+				// skew moves right forward
+				j = col + 1;
+				for (int i = row - 1; i >= 0; i--) {
+					if (j > 7)
+						break;
+					if (board.getSquare(i, j).isOccupied())
+						break;
+					if (i == 0)
+						return true;
+					j++;
+				}
+			} else {
+				// moves down
+				for (int i = row + 1; i <= 7; i++) {
+					if (board.getSquare(i, col).isOccupied())
+						break;
+					if (i == 7)
+						return true;
+				}
+				// skew moves left down
+				int j = col - 1;
+				for (int i = row + 1; i <= 7; i++) {
+					if (j < 0)
+						break;
+					if (board.getSquare(i, j).isOccupied())
+						break;
+					if (i == 7)
+						return true;
+					j--;
+				}
+				// skew moves right down
+				j = col + 1;
+				for (int i = row + 1; i <= 7; i++) {
+					if (j > 7)
+						break;
+					if (board.getSquare(i, j).isOccupied())
+						break;
+					if (i == 7)
+						return true;
+					j++;
+				}
+			}
+		}
+		return false;
+	}
 
 	//fixme
-	public boolean isDeadlock() {
-		return getPossibleMoveSquares().isEmpty();
+	public static boolean isDeadlock(Board board) {
+		return getPossibleMoveSquares(board).isEmpty();
 	}
 
 
-	public boolean isGameEnd() {
+	public static boolean isGameEnd(Board board) {
 		// check if any of white towers is at the end of grid
-		for (Square square : boardGrid.getOccupiedSquaresAsList()) {
-			if (boardGrid.getSquareRowCoord(square) == 0 && square.getTower().getOwnerColorValue() == PlayerColor.WHITE)
+		for (Square square : board.getOccupiedSquaresAsList()) {
+			if (board.getSquareRowCoord(square) == 0 && square.getTower().getOwnerColorValue() == PlayerColor.WHITE)
 				return true;
-			if (boardGrid.getSquareRowCoord(square) == 7 && square.getTower().getOwnerColorValue() == PlayerColor.BLACK)
+			if (board.getSquareRowCoord(square) == 7 && square.getTower().getOwnerColorValue() == PlayerColor.BLACK)
 				return true;
 
 		}
 		return false;
 	}
 
-	public int getWinnigPlayerValue() {
-		for (Square square : boardGrid.getOccupiedSquaresAsList()) {
-			if (boardGrid.getSquareRowCoord(square) == 0 && square.getTower().getOwnerColorValue() == PlayerColor.WHITE)
+	public static int getWinnigPlayerValue(Board board) {
+		for (Square square : board.getOccupiedSquaresAsList()) {
+			if (board.getSquareRowCoord(square) == 0 && square.getTower().getOwnerColorValue() == PlayerColor.WHITE)
 				return square.getTower().getOwnerColorValue();
-			if (boardGrid.getSquareRowCoord(square) == 7 && square.getTower().getOwnerColorValue() == PlayerColor.BLACK)
+			if (board.getSquareRowCoord(square) == 7 && square.getTower().getOwnerColorValue() == PlayerColor.BLACK)
 				return square.getTower().getOwnerColorValue();
 
 		}

@@ -7,11 +7,21 @@ public class Player {
 	private boolean ai;
 	private int moveCount;
 	private int score;
+	private int aiDifficulty;
 
-	public Player(int playerColor, String playerName, boolean isAI) {
+	public Player(int playerColor, String playerName) {
 		color = new PlayerColor(playerColor);
 		name = playerName;
-		ai = isAI;
+		ai = false;
+		moveCount = 0;
+		score = 0;
+	}
+	
+	public Player(int playerColor, String playerName, int aiDifficulty) {
+		color = new PlayerColor(playerColor);
+		name = playerName;
+		ai = true;
+		this.aiDifficulty = aiDifficulty;
 		moveCount = 0;
 		score = 0;
 	}
@@ -42,6 +52,14 @@ public class Player {
 	
 	public int getColorValue() {
 		return color.value();
+	}
+	
+	public boolean isAI() {
+		return ai;
+	}
+	
+	public int getDifficulty() {
+		return aiDifficulty;
 	}
 
 }

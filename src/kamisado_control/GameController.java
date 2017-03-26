@@ -1,5 +1,7 @@
 package kamisado_control;
 
+import java.sql.Time;
+
 import javax.activity.InvalidActivityException;
 import javax.swing.JFrame;
 import javax.swing.JProgressBar;
@@ -8,17 +10,19 @@ import javax.swing.plaf.SliderUI;
 import kamisado_GUI_frames.BoardGUI;
 import kamisado_GUI_frames.EndGameFrame;
 import kamisado_GUI_frames.EndRoundFrame;
+import kamisado_logic.AI;
 import kamisado_logic.Board;
 import kamisado_logic.GameTimer;
+import kamisado_logic.Move;
 import kamisado_logic.PlayerColor;
 import kamisado_logic.Square;
 import kamisado_logic.State;
 import kamisado_logic.StateHistory;
 
 public class GameController {
-	
+
 	public final int speedModeTime = 5; //seconds
-	
+
 	@SuppressWarnings("unused")
 	private EndRoundFrame endRoundFrame;
 	public Board board;
@@ -29,15 +33,21 @@ public class GameController {
 	private JFrame menuFrame;
 	private BoardGUI boardGUI;
 	private boolean focusOnBtns;
-	private int i = 1;
+	private boolean lockInput;
+	private AI ai;
 
-	public GameController(Board board, JFrame menuFrame) {
+	public GameController(Board board, JFrame menuFrame) throws Exception {
 		this.board = board;
 		this.menuFrame = menuFrame;
 		history = new StateHistory();
 		addCurrentStateToHistory();
 		timer = new GameTimer(speedModeTime, this, progressBar);
 		focusOnBtns = false;
+		lockInput = false;
+		ai = new AI(this);
+		if(board.isCurrentPlayerAI()){
+			ai.requestMove(board, board.getCurrentPlayerAIDif());
+		}
 	}
 
 	public void addCurrentStateToHistory() {
@@ -46,49 +56,52 @@ public class GameController {
 
 	public void undo() throws InvalidActivityException {
 		board = history.getPreviousState().getBoard();
-		
+
 		Square movableSquare = board.getCurrentMovableSquare();
 		//if not first move
 		if(movableSquare != null) 
 			movableSquare.setFocused();
-		
+
 		board.markPossibleMoves();
 	}
-	
+
 	public void redo() throws InvalidActivityException {
 		board = history.getNextState().getBoard();
-		
+
 		Square movableSquare = board.getCurrentMovableSquare();
 		//if not first move
 		if(movableSquare != null) 
 			movableSquare.setFocused();
-		
+
 		board.markPossibleMoves();
 	}
-	
-	public void mouseAction(int x, int y, boolean isClicked) {
-		Square square = board.findSquareByCoords(x, y);
-		if(square != null) {
-			if(isClicked)
-				action(square);
-			else
-				hover(square);
-		}
 
-	}
-	
-	public void keyAction(String key) {
-		switch(key) {
-		case "LEFT": case "RIGHT":
-		case "UP"  : case "DOWN":
-			hover(key);
-			break;
-		case "ENTER": case "SPACE":
-			action(board.getHoveredSquare());
-			break;
+	public void mouseAction(int x, int y, boolean isClicked) {
+		if(!lockInput) {
+			Square square = board.findSquareByCoords(x, y);
+			if(square != null) {
+				if(isClicked)
+					action(square);
+				else
+					hover(square);
+			}
 		}
 	}
-	
+
+	public void keyAction(String key) {
+		if(!lockInput) {
+			switch(key) {
+			case "LEFT": case "RIGHT":
+			case "UP"  : case "DOWN":
+				hover(key);
+				break;
+			case "ENTER": case "SPACE":
+				action(board.getHoveredSquare());
+				break;
+			}
+		}
+	}
+
 	private void hover(String dir) {
 		if(board.hasHoveredSquare()) {
 			int row = board.getSquareRowCoord(board.getHoveredSquare());
@@ -139,7 +152,7 @@ public class GameController {
 			}
 		}
 	}
-	
+
 	private void hover(Square square) {
 		if(board.hasHoveredSquare())
 			board.getHoveredSquare().setHovered(false);
@@ -148,7 +161,7 @@ public class GameController {
 		focusOnBtns = false;
 		boardGUI.requestFocusInWindow();
 	}
-	
+
 	private void action(Square desiredSquare) {
 		boolean hasFocused = board.hasFocusedSquare();
 		Square focusedSquare = board.getFocusedSquare();
@@ -157,9 +170,9 @@ public class GameController {
 		if (hasFocused && !desiredSquare.isOccupied() ) {
 			requestMove(focusedSquare, desiredSquare);
 		}
-		
+
 		Square movableSquare = board.getCurrentMovableSquare();
-		
+
 		//if not first move
 		if(movableSquare != null) {
 			movableSquare.setFocused();
@@ -174,14 +187,14 @@ public class GameController {
 						desiredSquare.setFocused();
 				}
 			}
-				
-					
+
+
 		}
-		
+
 		board.markPossibleMoves();
 	}
-	
-	private boolean requestMove(Square srcSq, Square dstSq) {
+
+	public boolean requestMove(Square srcSq, Square dstSq) {
 		if (board.makeMove(srcSq, dstSq)) {
 			if(board.isSpeedMode()){
 				resetProgressBar();
@@ -190,11 +203,41 @@ public class GameController {
 			addCurrentStateToHistory();
 			srcSq.defocus();
 			if(board.endRound) {
-				handleEndRound();	
+				if(!board.isCurrentPlayerAI())
+					handleEndRound();
+				else {
+					ai.requestFill(board, board.getCurrentPlayerAIDif());
+				}
+			}
+			if(board.isCurrentPlayerAI()){
+				System.out.println("miau");
+				ai.requestMove(board, board.getCurrentPlayerAIDif());
 			}
 			return true;
 		}
 		return false;
+	}
+
+	public void requestRawMove(Square srcSq, Square dstSq) {
+		board.makeRawMove(srcSq, dstSq);
+		if(board.isSpeedMode()) {
+			resetProgressBar();
+			restartTimer();
+		}
+		addCurrentStateToHistory();
+		srcSq.defocus();
+		if(board.endRound) {
+			if(!board.isCurrentPlayerAI())
+				handleEndRound();
+			else {
+				ai.requestFill(board, board.getCurrentPlayerAIDif());
+				ai.requestMove(board, board.getCurrentPlayerAIDif());
+			}
+		}
+		if(board.isCurrentPlayerAI()){
+			ai.requestMove(board, board.getCurrentPlayerAIDif());
+		}
+
 	}
 
 	public void handleEndRound() {
@@ -208,49 +251,60 @@ public class GameController {
 			endRoundFrame = new EndRoundFrame(this, board.getCurrentPlayerName());
 		}
 	}
-	
+
 	private void handleEndGame() {
 		@SuppressWarnings("unused")
 		EndGameFrame endGameFrame = new EndGameFrame(board.getCurrentPlayerName(), this);
 	}
-	
+
 	public void restartTimer() {
-		System.out.println("wolany");
 		timer.cancel();
 		timer = new GameTimer(speedModeTime, this, progressBar);
 		timer.start();
 	}
-	
+
 	public void setProgressBar(JProgressBar progressBar) {
 		this.progressBar = progressBar;
 	}
-	
+
 	public void setGUIframe(JFrame frame) {
 		guiFrame = frame;
 	}
-	
+
 	public JFrame getGUIframe() {
 		return guiFrame;
 	}
-	
+
 	public void setGUI(BoardGUI gui) {
 		boardGUI = gui;
 	}
-	
+
 	public JFrame getMenuFrame() {
 		return menuFrame;
 	}
-	
+
 	public void resetProgressBar() {
 		progressBar.setValue(0);
 	}
-	
+
 	public void syncBoard() {
 		board = new Board(history.getCurrentState().getBoard());
 	}
-	
+
 	public void resetBoard() {
 		board = new Board(board.player1, board.player2, board.getPointsLimit(), board.isSpeedMode());
+	}
+
+	public void switchBoard(Board newBoard) {
+		board = new Board(newBoard);
+	}
+
+	public void lock() {
+		lockInput = true;
+	}
+
+	public void unlock() {
+		lockInput = false;
 	}
 
 }
