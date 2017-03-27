@@ -173,8 +173,32 @@ public class MoveValidator {
 		}
 
 		if (srcSq.getTower().getColorValue() != board.getCurrentTowerColorValue()
-				&& board.getCurrentTowerColorValue() != GameColor.ANY){
+				&& board.getCurrentTowerColorValue() != GameColor.ANY) {
 			System.out.println("2");
+			System.out.println(board);
+			return false;
+		}
+		if (!destSq.isPossible()){
+			System.out.println("3");
+			return false;
+		}
+		return true;
+	}
+	
+	public static boolean isLegalMove(Board board, Move move) {
+		
+		Square srcSq = board.getSquare(move.srcRow, move.srcCol);
+		Square destSq = board.getSquare(move.dstRow, move.dstCol);
+		
+		if (!srcSq.isOccupied() || destSq.isOccupied()) {
+			System.out.println("1");
+			return false;
+		}
+
+		if (srcSq.getTower().getColorValue() != board.getCurrentTowerColorValue()
+				&& board.getCurrentTowerColorValue() != GameColor.ANY) {
+			System.out.println("2");
+			System.out.println((srcSq.getTower().getColorValue()));
 			return false;
 		}
 		if (!destSq.isPossible()){

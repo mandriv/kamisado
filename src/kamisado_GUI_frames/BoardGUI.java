@@ -9,6 +9,7 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.activity.InvalidActivityException;
 import javax.print.attribute.standard.RequestingUserName;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -119,6 +120,9 @@ public class BoardGUI extends MenuPanel implements ActionListener{
 		
 		JPanel rightBtnPanel = new MenuPanel(new MigLayout("insets 0, fillx, flowy, al center center","[align center]","[][]"));
 		resignButton = new GUIButton("Resign");
+		JButton undoButton = new GUIButton("Undo");
+		JButton redoButton = new GUIButton("Redo");
+		
 		resignButton.addKeyListener(kpl);
 		
 		rightBtnPanel.add(resignButton);
@@ -130,6 +134,32 @@ public class BoardGUI extends MenuPanel implements ActionListener{
 			public void actionPerformed(ActionEvent e) {
 				gc.getMenuFrame().setVisible(true);
 				frame.dispose();
+			}
+		});
+		
+		undoButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try {
+					gc.undo();
+				} catch (InvalidActivityException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
+		
+		redoButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try {
+					gc.redo();
+				} catch (InvalidActivityException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 		});
 		

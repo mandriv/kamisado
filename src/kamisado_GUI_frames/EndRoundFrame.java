@@ -14,6 +14,7 @@ import kamisado_GUI_components.MenuLabel;
 import kamisado_GUI_components.MenuPanel;
 import kamisado_GUI_components.MenuRadioButton;
 import kamisado_control.GameController;
+import kamisado_logic.Board;
 import net.miginfocom.swing.MigLayout;
 
 public class EndRoundFrame extends JFrame{
@@ -94,6 +95,9 @@ public class EndRoundFrame extends JFrame{
 					dispose();
 					control.board.endRound = false;
 					control.board.nextRound();
+					if(control.board.isCurrentPlayerAI()) {
+						control.ai.requestMove(new Board(control.board), control.board.getCurrentPlayerAIDif());
+					}
 				} else {
 					JOptionPane.showMessageDialog(null, "Please select fill side", "Problem", JOptionPane.ERROR_MESSAGE);
 				}

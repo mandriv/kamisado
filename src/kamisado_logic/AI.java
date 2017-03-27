@@ -24,9 +24,9 @@ public class AI {
 
 	public void requestMove(Board board, int difficulty) {
 		switch(difficulty) {
-		case EASY:   makeEasyMove(board);   break;
-		case NORMAL: makeMediumMove(board); break;
-		case HARD:   makeHardMove(board);   break;
+			case EASY:   makeEasyMove(board);   break;
+			case NORMAL: makeMediumMove(board); break;
+			case HARD:   makeHardMove(board);   break;
 		}
 	}
 
@@ -58,10 +58,11 @@ public class AI {
 				new java.util.TimerTask() {
 					@Override
 					public void run() {
-						board.makeMove(srcSq, destSq);
-						srcSq.defocus();
-						board.getCurrentMovableSquare().setFocused();
-						board.markPossibleMoves();
+						int srcRow = board.getSquareRowCoord(srcSq);
+						int srcCol = board.getSquareColCoord(srcSq);
+						int dstRow = board.getSquareRowCoord(destSq);
+						int dstCol = board.getSquareColCoord(destSq);
+						control.requestMove(new Move(srcRow, srcCol, dstRow, dstCol));
 					}
 				}, 
 				2000 
@@ -76,20 +77,9 @@ public class AI {
 		} else{
 			move = getBestMove(board, 5);
 		}
-		Square srcSq = board.getSquare(move.srcRow, move.srcRow);
-		Square dstSq = board.getSquare(move.dstRow, move.dstRow);
-		
-		if(board.hasFocusedSquare()){
-			board.getFocusedSquare().defocus();
-		}
-		srcSq.setFocused();
-		board.markPossibleMoves();
-		
-		control.requestMove(srcSq, dstSq);
-		
-		srcSq.defocus();
-		board.getCurrentMovableSquare().setFocused();
-		board.markPossibleMoves();
+
+		control.requestMove(move);
+
 	}
 
 	private void makeHardMove(Board board) {
@@ -129,7 +119,7 @@ public class AI {
 
 			executeMove(board, move);
 
-			double evaluationResult = -1 * negaMax(depthOfSearch, board, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+			double evaluationResult = -1 * negaMax(depthOfSearch, board, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, 1);
 			
 			hashMap.put(move, evaluationResult);
 			
@@ -147,7 +137,7 @@ public class AI {
 		return bestMove;
 	}
 
-	private double negaMax(int depth, Board givenBoard, double alpha, double beta) {
+	private double negaMax(int depth, Board givenBoard, double alpha, double beta, int sign) {
 		Board board = new Board(givenBoard);
 
 		if (depth == 0 || isGameOver(board)){
@@ -159,7 +149,7 @@ public class AI {
 
 		for(Move currentMove : moves){		
 			executeMove(board, currentMove);
-			double score = -1 * negaMax(depth - 1, board, -beta, -alpha);
+			double score = -1 * negaMax(depth - 1, board, -beta, -alpha, -sign);
 			board = new Board(givenBoard);
 
 			if( score > currentMax){
@@ -180,9 +170,10 @@ public class AI {
 		double valueBlack = 0;
 		if(isGameOver(board)) {
 			if(board.getCurrentPlayerValue() == PlayerColor.WHITE){
-				return Double.POSITIVE_INFINITY;
-			} 
-			return Double.NEGATIVE_INFINITY;
+				valueWhite = Double.POSITIVE_INFINITY;
+			} else {
+				valueBlack = Double.NEGATIVE_INFINITY;
+			}
 		}
 
 		valueWhite += getNumberOfOneMoveWinSquaresForWhitePlayer(board);
@@ -231,7 +222,7 @@ public class AI {
 		if(board.getCurrentMovableSquare() == null) {
 			for(Square square: board.getOccupiedTilesByCurrentPlayer()) {
 				if(board.hasFocusedSquare()){
-					board.getFocusedSquare().defocus();
+					board.defocusAll();
 				}
 				square.setFocused();
 				board.markPossibleMoves();
@@ -249,7 +240,7 @@ public class AI {
 		} else {
 			Square square = board.getCurrentMovableSquare();
 			if(board.hasFocusedSquare()){
-				board.getFocusedSquare().defocus();
+				board.defocusAll();
 			}
 			square.setFocused();
 			board.markPossibleMoves();
@@ -278,7 +269,7 @@ public class AI {
 	private void executeMove(Board board, Move move) {
 		int srcRow = move.srcRow;
 		int srcCol = move.srcCol;
-		int dstRow = move.dstCol;
+		int dstRow = move.dstRow;
 		int dstCol = move.dstCol;
 
 		Square srcSq =  board.getSquare(srcRow, srcCol);
@@ -286,7 +277,7 @@ public class AI {
 
 
 		if(board.hasFocusedSquare()){
-			board.getFocusedSquare().defocus();
+			board.defocusAll();
 		}
 		srcSq.setFocused();
 		board.markPossibleMoves();

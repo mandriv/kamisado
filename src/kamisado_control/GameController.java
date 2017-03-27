@@ -21,7 +21,7 @@ import kamisado_logic.StateHistory;
 
 public class GameController {
 
-	public final int speedModeTime = 5; //seconds
+	public final int speedModeTime = 10; //seconds
 
 	@SuppressWarnings("unused")
 	private EndRoundFrame endRoundFrame;
@@ -34,7 +34,7 @@ public class GameController {
 	private BoardGUI boardGUI;
 	private boolean focusOnBtns;
 	private boolean lockInput;
-	private AI ai;
+	public AI ai;
 
 	public GameController(Board board, JFrame menuFrame) throws Exception {
 		this.board = board;
@@ -209,15 +209,48 @@ public class GameController {
 					ai.requestFill(board, board.getCurrentPlayerAIDif());
 				}
 			}
-			if(board.isCurrentPlayerAI()){
-				System.out.println("miau");
-				ai.requestMove(board, board.getCurrentPlayerAIDif());
+			if(board.isCurrentPlayerAI()) {
+				ai.requestMove(new Board(board), board.getCurrentPlayerAIDif());
 			}
 			return true;
 		}
 		return false;
 	}
+	
+	public boolean requestMove(Move move) {
+		
+		Square srcSq = board.getSquare(move.srcRow, move.srcCol);
+		board.defocusAll();
+		srcSq.setFocused();
+		board.markPossibleMoves();
+		
+		if (board.makeMove(move)) {
+			if(board.isSpeedMode()){
+				resetProgressBar();
+				restartTimer();
+			}
+			addCurrentStateToHistory();
+			srcSq.defocus();
+			board.defocusAll();
+			board.getCurrentMovableSquare().setFocused();
+			board.markPossibleMoves();
+			if(board.endRound) {
+				if(!board.isCurrentPlayerAI())
+					handleEndRound();
+				else {
+					ai.requestFill(board, board.getCurrentPlayerAIDif());
+				}
+			}
+			if(board.isCurrentPlayerAI()) {
+				ai.requestMove(new Board(board), board.getCurrentPlayerAIDif());
+			}
+			return true;
+		}
+		
+		return false;
+	}
 
+	/*
 	public void requestRawMove(Square srcSq, Square dstSq) {
 		board.makeRawMove(srcSq, dstSq);
 		if(board.isSpeedMode()) {
@@ -239,6 +272,7 @@ public class GameController {
 		}
 
 	}
+	*/
 
 	public void handleEndRound() {
 		if(board.isSpeedMode()) {
