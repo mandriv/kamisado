@@ -1,4 +1,4 @@
-package kamisado_control;
+package kamisado.control;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

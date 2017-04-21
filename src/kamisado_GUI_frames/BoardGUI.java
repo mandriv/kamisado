@@ -20,13 +20,13 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.Timer;
 
+import kamisado.control.GameController;
+import kamisado.control.KeyPressListener;
+import kamisado.control.MouseClickListener;
+import kamisado.control.MouseListener;
 import kamisado_GUI_components.GUIButton;
 import kamisado_GUI_components.MenuLabel;
 import kamisado_GUI_components.MenuPanel;
-import kamisado_control.GameController;
-import kamisado_control.KeyPressListener;
-import kamisado_control.MouseClickListener;
-import kamisado_control.MouseListener;
 import kamisado_logic.Board;
 import kamisado_logic.GameTimeProgressBar;
 import kamisado_logic.PlayerColor;

@@ -9,11 +9,11 @@ import java.awt.event.ItemListener;
 
 import javax.swing.*;
 
+import kamisado.control.GameController;
 import kamisado_GUI_components.GUIButton;
 import kamisado_GUI_components.MenuLabel;
 import kamisado_GUI_components.MenuPanel;
 import kamisado_GUI_components.MenuRadioButton;
-import kamisado_control.GameController;
 import kamisado_logic.Board;
 import net.miginfocom.swing.MigLayout;
 

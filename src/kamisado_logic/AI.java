@@ -7,150 +7,166 @@ import java.util.Timer;
 import java.util.concurrent.ThreadLocalRandom;
 
 import javax.activity.InvalidActivityException;
-import kamisado_control.GameController;
 
-public class AI {
+import kamisado.control.GameController;
 
-	public static final int EASY = 1;
-	public static final int NORMAL = 2;
-	public static final int HARD = 3;
+public class AI{
+
+	private static final int EASY = 1;
+	private static final int NORMAL = 2;
+	private static final int HARD = 3;
 	private int n = 1;
 
 	private GameController control;
+	private Thread thread;
 	
 	public AI(GameController gc) throws Exception {
 		control = gc;
 	}
 
 	public void requestMove(Board board, int difficulty) {
-		switch(difficulty) {
-			case EASY:   makeEasyMove(board);   break;
-			case NORMAL: makeMediumMove(board); break;
-			case HARD:   makeHardMove(board);   break;
+		
+		if(difficulty == EASY) {
+			thread = new Thread() {
+		        public void run() {
+		        	control.requestMove(getBestMove(board, 1));
+		        }
+		    };
+		    thread.start();
+		} else if (difficulty == NORMAL) {
+			thread = new Thread() {
+		        public void run() {
+		        	if(board.getCurrentMovableSquare() == null) //uf first move
+		        		control.requestMove(getBestMove(board, 4));
+		        	else
+		        		control.requestMove(getBestMove(board, 5));
+		        }
+		    };
+		    thread.start();
+		} else if (difficulty == HARD) {
+			thread = new Thread() {
+		        public void run() {
+		        	if(board.getCurrentMovableSquare() == null) //uf first move
+		        		control.requestMove(getBestMove(board, 5));
+		        	else
+		        		control.requestMove(getBestMove(board, 6));
+		        }
+		    };
+		    thread.start();
 		}
 	}
 
-	private void makeEasyMove(Board board) {
-		Square srcSq, destSq;
-		if(board.getCurrentMovableSquare() == null) {
-			ArrayList<Square> occupiedTiles = board.getOccupiedTilesByCurrentPlayer();
-			srcSq = occupiedTiles.get(getRandomInt(0, occupiedTiles.size()-1));
-		} else {
-			srcSq = board.getCurrentMovableSquare();
-		}
-		new Timer().schedule( 
-				new java.util.TimerTask() {
-					@Override
-					public void run() {
-						srcSq.setFocused();
-						board.markPossibleMoves();
-					}
-				}, 
-				1000 
-				);
-
-		srcSq.setFocused();
-		board.markPossibleMoves();
-		ArrayList<Square> possibleSquares = board.getPossibleTiles();
-		destSq = possibleSquares.get(getRandomInt(0, possibleSquares.size()-1));
-
-		new Timer().schedule( 
-				new java.util.TimerTask() {
-					@Override
-					public void run() {
-						int srcRow = board.getSquareRowCoord(srcSq);
-						int srcCol = board.getSquareColCoord(srcSq);
-						int dstRow = board.getSquareRowCoord(destSq);
-						int dstCol = board.getSquareColCoord(destSq);
-						control.requestMove(new Move(srcRow, srcCol, dstRow, dstCol));
-					}
-				}, 
-				2000 
-				);
-
-	}
-
-	private void makeMediumMove(Board board) {
-		Move move;
-		if(board.getCurrentMovableSquare() == null) {
-			move = getBestMove(board, 3);
-		} else{
-			move = getBestMove(board, 5);
-		}
-
-		control.requestMove(move);
-
-	}
-
-	private void makeHardMove(Board board) {
-		// TODO Auto-generated method stub
-
-	}
 
 	public void requestFill(Board board, int difficulty) {
-		switch(difficulty) {
-		case EASY:   makeEasyFill(board);   break;
+		if(difficulty == EASY) {
+			thread = new Thread() {
+		        public void run() {
+		        	makeBestFill(board, 2);
+		        }
+		    };
+		    thread.start();
+		} else if (difficulty == NORMAL) {
+			thread = new Thread() {
+		        public void run() {
+		        	makeBestFill(board, 5);
+		        }
+		    };
+		    thread.start();
+		} else if (difficulty == HARD) {
+			thread = new Thread() {
+		        public void run() {
+		        	makeBestFill(board, 8);
+		        }
+		    };
+		    thread.start();
 		}
 	}
 
-	private void makeEasyFill(Board board) {
-		if(getRandomInt(0,1) % 2 == 0) {
-			board.fillFromLeft();
-		} else {
+	
+	private void makeBestFill(Board board, int depthOfSearch) {
+		
+		Board boardCopy = new Board(board);	
+		boardCopy.fillFromLeft();
+		double evalLeft = -negaMax(depthOfSearch, boardCopy, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+		
+		boardCopy = new Board(board);
+		boardCopy.fillFromRight();
+		double evalRight = -negaMax(depthOfSearch, boardCopy, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+		
+		if (evalRight > evalLeft)
 			board.fillFromRight();
-		}
+		else
+			board.fillFromLeft();
 	}
+	
 	private Move getBestMove(Board currentBoard, int depthOfSearch) {
 		n = 1;
 		System.out.println("=================");
 		System.out.println("getting best move");
 		System.out.println("thinking...");
 		double startTime = System.currentTimeMillis();
-		HashMap<Move, Double> hashMap = new HashMap<>();
-		Board board = new Board(currentBoard);
-		List<Move> validMoves = getPossibleMoves(board);
-		for(Move m: validMoves){
-			System.out.println(m);
-		}
+		
+		List<Move> validMoves = getPossibleMoves(currentBoard);
 		double bestResult = Double.NEGATIVE_INFINITY;
 		Move bestMove = null;
-
+		
 		for (Move move : validMoves) {
-
-			executeMove(board, move);
-
-			double evaluationResult = -1 * negaMax(depthOfSearch, board, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, 1);
 			
-			hashMap.put(move, evaluationResult);
+			currentBoard.defocusAll();
+			currentBoard.dehoverAll();
+			currentBoard.getSquare(move.srcRow, move.srcCol).setFocused();
+			currentBoard.getSquare(move.dstRow, move.dstCol).setHovered(true);
+			currentBoard.markPossibleMoves();
 			
-			board = new Board(currentBoard);
+			Board board = new Board(currentBoard);
+			
+			board.defocusAll();			
+			board.getSquare(move.srcRow, move.srcCol).setFocused();						
+			board.markPossibleMoves();
+			
+			board.makeMove(move);	
+			
+			board.defocusAll();
+			
+			double evaluationResult = -negaMax(depthOfSearch, board, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
 
+			System.out.println("Move "+move+" : "+evaluationResult+" pts");
 			if( evaluationResult > bestResult){
 				bestResult = evaluationResult;
 				bestMove = move;
 			}
 
 		}
+		
 		System.out.println("done thinking! best move is: "+bestMove+" with "+bestResult+" pts, depth of search: "+depthOfSearch );
 		double stopTime = System.currentTimeMillis();
 		System.out.println(n+" evaluations in "+(stopTime - startTime)/1000 + "s");
+		
 		return bestMove;
 	}
 
-	private double negaMax(int depth, Board givenBoard, double alpha, double beta, int sign) {
-		Board board = new Board(givenBoard);
-
-		if (depth == 0 || isGameOver(board)){
-			return eval(board);
+	private double negaMax(int depth, Board givenBoard, double alpha, double beta) {
+		
+		if (depth <= 0 || isGameOver(givenBoard)){
+			return eval(givenBoard);
 		}
 
-		List<Move> moves = getPossibleMoves(board);
+		List<Move> validMoves = getPossibleMoves(givenBoard);
 		double currentMax = Double.NEGATIVE_INFINITY;
 
-		for(Move currentMove : moves){		
-			executeMove(board, currentMove);
-			double score = -1 * negaMax(depth - 1, board, -beta, -alpha, -sign);
-			board = new Board(givenBoard);
+		for(Move move : validMoves){	
+			
+			Board board = new Board(givenBoard);
+			
+			board.defocusAll();
+			board.getSquare(move.srcRow, move.srcCol).setFocused();
+			board.markPossibleMoves();
+			
+			board.makeMove(move);
+			
+			board.defocusAll();
+			
+			double score = -negaMax(depth - 1, board, -beta, -alpha);
 
 			if( score > currentMax){
 				currentMax = score;
@@ -168,13 +184,6 @@ public class AI {
 		n++;
 		double valueWhite = 0;
 		double valueBlack = 0;
-		if(isGameOver(board)) {
-			if(board.getCurrentPlayerValue() == PlayerColor.WHITE){
-				valueWhite = Double.POSITIVE_INFINITY;
-			} else {
-				valueBlack = Double.NEGATIVE_INFINITY;
-			}
-		}
 
 		valueWhite += getNumberOfOneMoveWinSquaresForWhitePlayer(board);
 		valueBlack += getNumberOfOneMoveWinSquaresForBlackPlayer(board);
@@ -190,6 +199,9 @@ public class AI {
 			valueBlack += row;
 			valueBlack += MoveValidator.numberOfPossibleMovesForSquare(board, sq);
 		}
+		
+		if(isGameOver(board))
+			return Double.NEGATIVE_INFINITY;
 
 		if(board.getCurrentPlayerValue() == PlayerColor.WHITE){
 			return valueWhite - valueBlack;
@@ -260,29 +272,6 @@ public class AI {
 
 	private boolean isGameOver(Board board) {
 		return MoveValidator.isGameEnd(board);
-	}
-
-	private int getRandomInt(int min, int max) {
-		return ThreadLocalRandom.current().nextInt(min, max + 1);
-	}
-
-	private void executeMove(Board board, Move move) {
-		int srcRow = move.srcRow;
-		int srcCol = move.srcCol;
-		int dstRow = move.dstRow;
-		int dstCol = move.dstCol;
-
-		Square srcSq =  board.getSquare(srcRow, srcCol);
-		Square destSq = board.getSquare(dstRow, dstCol);
-
-
-		if(board.hasFocusedSquare()){
-			board.defocusAll();
-		}
-		srcSq.setFocused();
-		board.markPossibleMoves();
-		board.makeRawMove(srcSq, destSq);
-
 	}
 
 }

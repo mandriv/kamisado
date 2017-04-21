@@ -19,14 +19,13 @@ import javax.swing.JTextField;
 
 import com.mashape.unirest.http.exceptions.UnirestException;
 
+import kamisado.control.LoginActionListener;
+import kamisado.control.RegisterActionListener;
 import kamisado_GUI_components.MenuButton;
 import kamisado_GUI_components.MenuLabel;
 import kamisado_GUI_components.MenuPanel;
 import kamisado_GUI_components.MenuPasswordField;
 import kamisado_GUI_components.MenuTextField;
-
-import kamisado_control.LoginActionListener;
-import kamisado_control.RegisterActionListener;
 import kamisado_mp.MultiplayerClient;
 import net.miginfocom.swing.MigLayout;
 

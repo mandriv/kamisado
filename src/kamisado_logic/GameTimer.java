@@ -5,7 +5,7 @@ import java.util.TimerTask;
 
 import javax.swing.JProgressBar;
 
-import kamisado_control.GameController;
+import kamisado.control.GameController;
 
 public class GameTimer {
 	
@@ -22,7 +22,7 @@ public class GameTimer {
 	}
     
     public void start() {
-    	timer.schedule(new RemindTask(), seconds*1000);
+    	timer.schedule(new OutOfTimeTask(), seconds*1000);
     	timer.scheduleAtFixedRate(new ProgressTask(), 0, 1000);
     }
     
@@ -30,7 +30,7 @@ public class GameTimer {
     	timer.cancel();
     }
 
-    class RemindTask extends TimerTask {
+    class OutOfTimeTask extends TimerTask {
         public void run() {
             control.board.switchSide();
             control.addCurrentStateToHistory();

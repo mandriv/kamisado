@@ -115,8 +115,8 @@ public class PreGameMenu extends MenuPanel{
 		JToggleButton human1TgBtn = new IconToggleButton(human, humanSelected, nameField1);
 		JToggleButton human2TgBtn = new IconToggleButton(human, humanSelected, nameField2);
 
-		computer1TgBtn.setSelected(true);
-		human2TgBtn.setSelected(true);
+		computer2TgBtn.setSelected(true);
+		human1TgBtn.setSelected(true);
 		roundsBox.setSelectedIndex(1);
 
 		bg1.add(computer1TgBtn);

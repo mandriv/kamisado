@@ -168,18 +168,18 @@ public class MoveValidator {
 
 	public static boolean isLegalMove(Board board, Square srcSq, Square destSq) {
 		if (!srcSq.isOccupied() || destSq.isOccupied()) {
-			System.out.println("1");
+			System.out.println("illegal move type 1");
 			return false;
 		}
 
 		if (srcSq.getTower().getColorValue() != board.getCurrentTowerColorValue()
 				&& board.getCurrentTowerColorValue() != GameColor.ANY) {
-			System.out.println("2");
+			System.out.println("illegal move type 2");
 			System.out.println(board);
 			return false;
 		}
 		if (!destSq.isPossible()){
-			System.out.println("3");
+			System.out.println("illegal move type 3");
 			return false;
 		}
 		return true;

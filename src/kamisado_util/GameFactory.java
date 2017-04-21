@@ -2,8 +2,8 @@ package kamisado_util;
 
 import javax.swing.JFrame;
 
+import kamisado.control.GameController;
 import kamisado_GUI_frames.BoardGUI;
-import kamisado_control.GameController;
 import kamisado_logic.Board;
 import kamisado_logic.Player;
 import kamisado_logic.PlayerColor;

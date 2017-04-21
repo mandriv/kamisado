@@ -36,10 +36,10 @@ public class MainMenu extends JPanel {
 	private JPanel btnPanel;
 	private JPanel settingsPanel;
 
-	JFrame frame;
+	private JFrame frame;
 	
-	MenuCheckBox soundCB;
-	JButton startBtn;
+	private MenuCheckBox soundCB;
+	private JButton startBtn;
 
 	public MainMenu(SoundTrack st) {
 
@@ -49,11 +49,13 @@ public class MainMenu extends JPanel {
 		menuBackground = new ImageIcon(getClass().getResource("/kamisado_media/frameBackgrounds/mainmenu.png")).getImage();
 		this.setPreferredSize(new Dimension(menuBackground.getWidth(null), menuBackground.getHeight(null)));
 
-		// Adds menu buttons to this panel
+		// Cards layout - grid bag for having it centered
 		this.setLayout(new GridBagLayout());
 		cards = new CardLayout();
 		container =  new JPanel(cards);
 		this.add(container);
+		
+		//Enter fires action
 		UIManager.put("Button.focusInputMap", new UIDefaults.LazyInputMap(new
 				Object[] {
 				    "ENTER", "pressed",
@@ -64,6 +66,8 @@ public class MainMenu extends JPanel {
 				    "ENTER", "pressed",
 				    "released ENTER", "released"
 				}));
+		
+		//Add buttons
 		addMenuButtons();
 		addSettingsButtons();
 
@@ -157,7 +161,7 @@ public class MainMenu extends JPanel {
 		container.add(btnPanel, "main");
 	}
 
-	public void addSettingsButtons() {
+	private void addSettingsButtons() {
 		// Create a new panel for settings
 		settingsPanel = new JPanel(new GridLayout(0, 1, 10, 10));
 		settingsPanel.setBackground(new Color(20, 20, 20));

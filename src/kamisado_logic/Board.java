@@ -13,7 +13,7 @@ public class Board {
 
 	public Square[][] boardArray;
 	private GameColor currentTowerColor;
-	private Player currentPlayer;
+	public Player currentPlayer;
 	public Player player1;
 	public Player player2;
 	private int round;
@@ -117,7 +117,7 @@ public class Board {
 	}
 	 */
 
-	//Copy  constructor (for history)
+	//Copy  constructor
 	public Board(Board original) {
 		boardArray = new Square[8][8];
 
@@ -144,7 +144,7 @@ public class Board {
 		speedMode = original.speedMode;
 	}
 
-	public void createSquares() {
+	private void createSquares() {
 
 		int a = 0, b = 1, c = 2, d = 3, e = 4, f = 5, g = 6, h = 7;
 		for (int i = 0; i <= 7; i++) {
@@ -245,6 +245,13 @@ public class Board {
 		for (Square square : getSquaresAsList()) {
 			if (square.isFocused())
 				square.defocus();
+		}
+	}
+	
+	public void dehoverAll() {
+		for (Square square : getSquaresAsList()) {
+			if (square.isHovered())
+				square.dehover();
 		}
 	}
 
@@ -350,10 +357,6 @@ public class Board {
 		return currentPlayer.getDifficulty();
 	}
 
-	public int getScore(Player player) {
-		return player.getScore();
-	}
-
 	public boolean isSpeedMode() {
 		return speedMode;
 	}
@@ -380,42 +383,10 @@ public class Board {
 	}
 
 	public boolean makeMove(Move move) {
-		if (!MoveValidator.isLegalMove(this, move))
-			return false;
-
 		Square srcSq = getSquare(move.srcRow, move.srcCol);
 		Square destSq = getSquare(move.dstRow, move.dstCol);
-
-		Tower t = srcSq.getTower();
-		srcSq.clearSquare();
-		destSq.setTower(t);
-		currentTowerColor.setValue(destSq.getColor());
-		if (MoveValidator.isGameEnd(this))
-			endRound = true;
-		else {
-			currentPlayer.incrementMoveCount();
-			switchSide();
-		}
-
-		/*
-		if (validator.isDeadlock())
-			handleDeadLock();
-		 */
-		return true;
-	}
-
-	public boolean makeRawMove(Square srcSq, Square destSq) {
-		Tower t = srcSq.getTower();
-		srcSq.clearSquare();
-		destSq.setTower(t);
-		currentTowerColor.setValue(destSq.getColor());
-		if (MoveValidator.isGameEnd(this))
-			endRound = true;
-		else {
-			currentPlayer.incrementMoveCount();
-			switchSide();
-		}
-		return true;
+		
+		return makeMove(srcSq, destSq);
 	}
 
 	public void switchSide() {
@@ -531,6 +502,9 @@ public class Board {
 		return builder.toString();
 	}
 
+	public boolean equals(Object b) {
+		return toString().equals(b.toString());
+	}
 
 
 }

@@ -103,6 +103,10 @@ public class Square {
 		return possible;
 	}
 	
+	public void dehover() {
+		hovered = false;
+	}
+	
 	public void setHovered(boolean isHovered) {
 		hovered = isHovered;
 	}

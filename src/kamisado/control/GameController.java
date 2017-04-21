@@ -1,4 +1,4 @@
-package kamisado_control;
+package kamisado.control;
 
 import java.sql.Time;
 
@@ -202,6 +202,7 @@ public class GameController {
 			}
 			addCurrentStateToHistory();
 			srcSq.defocus();
+			guiFrame.repaint();
 			if(board.endRound) {
 				if(!board.isCurrentPlayerAI())
 					handleEndRound();
@@ -210,7 +211,7 @@ public class GameController {
 				}
 			}
 			if(board.isCurrentPlayerAI()) {
-				ai.requestMove(new Board(board), board.getCurrentPlayerAIDif());
+				ai.requestMove(board, board.getCurrentPlayerAIDif());
 			}
 			return true;
 		}
@@ -235,11 +236,7 @@ public class GameController {
 			board.getCurrentMovableSquare().setFocused();
 			board.markPossibleMoves();
 			if(board.endRound) {
-				if(!board.isCurrentPlayerAI())
-					handleEndRound();
-				else {
-					ai.requestFill(board, board.getCurrentPlayerAIDif());
-				}
+				handleEndRound();
 			}
 			if(board.isCurrentPlayerAI()) {
 				ai.requestMove(new Board(board), board.getCurrentPlayerAIDif());
@@ -282,7 +279,13 @@ public class GameController {
 		if(board.getCurrentPlayerScore() + 1 == board.getPointsLimit()) {
 			handleEndGame();
 		} else {
-			endRoundFrame = new EndRoundFrame(this, board.getCurrentPlayerName());
+			if(board.isCurrentPlayerAI()) {
+				ai.requestFill(board, board.getCurrentPlayerAIDif());
+				board.endRound = false;
+				board.nextRound();
+				board.defocusAll();
+			} else
+				endRoundFrame = new EndRoundFrame(this, board.getCurrentPlayerName());
 		}
 	}
 

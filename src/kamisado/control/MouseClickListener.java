@@ -1,4 +1,4 @@
-package kamisado_control;
+package kamisado.control;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;

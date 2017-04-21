@@ -11,10 +11,10 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRootPane;
 
+import kamisado.control.GameController;
 import kamisado_GUI_components.MenuButton;
 import kamisado_GUI_components.MenuLabel;
 import kamisado_GUI_components.MenuPanel;
-import kamisado_control.GameController;
 import net.miginfocom.swing.MigLayout;
 
 public class EndGameFrame extends JFrame{
@@ -24,7 +24,7 @@ public class EndGameFrame extends JFrame{
 	public EndGameFrame(String name, GameController control) {
 		super();
 		
-		JLabel messageLabel = new MenuLabel("Congratulations " + name + ", you won the game!");
+		JLabel messageLabel = new MenuLabel(name + " won the game!");
 		JButton rematchButton = new MenuButton("Rematch");
 		JButton exitBtn = new MenuButton("Main menu");
 		
