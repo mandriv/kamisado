@@ -9,8 +9,8 @@ import javax.swing.JTextField;
 
 import com.mashape.unirest.http.exceptions.UnirestException;
 
-import kamisado_mp.MultiplayerClient;
-import kamisado_mp.User;
+import kamisado.mp.MultiplayerClient;
+import kamisado.mp.User;
 
 public class RegisterActionListener implements ActionListener{
 	

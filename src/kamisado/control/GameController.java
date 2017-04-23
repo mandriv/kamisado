@@ -7,17 +7,17 @@ import javax.swing.JFrame;
 import javax.swing.JProgressBar;
 import javax.swing.plaf.SliderUI;
 
-import kamisado_GUI_frames.BoardGUI;
-import kamisado_GUI_frames.EndGameFrame;
-import kamisado_GUI_frames.EndRoundFrame;
-import kamisado_logic.AI;
-import kamisado_logic.Board;
-import kamisado_logic.GameTimer;
-import kamisado_logic.Move;
-import kamisado_logic.PlayerColor;
-import kamisado_logic.Square;
-import kamisado_logic.State;
-import kamisado_logic.StateHistory;
+import kamisado.GUIframes.BoardGUI;
+import kamisado.GUIframes.EndGameFrame;
+import kamisado.GUIframes.EndRoundFrame;
+import kamisado.logic.AI;
+import kamisado.logic.Board;
+import kamisado.logic.GameTimer;
+import kamisado.logic.Move;
+import kamisado.logic.PlayerColor;
+import kamisado.logic.Square;
+import kamisado.logic.State;
+import kamisado.logic.StateHistory;
 
 public class GameController {
 
@@ -202,7 +202,6 @@ public class GameController {
 			}
 			addCurrentStateToHistory();
 			srcSq.defocus();
-			guiFrame.repaint();
 			if(board.endRound) {
 				if(!board.isCurrentPlayerAI())
 					handleEndRound();
@@ -239,37 +238,13 @@ public class GameController {
 				handleEndRound();
 			}
 			if(board.isCurrentPlayerAI()) {
-				ai.requestMove(new Board(board), board.getCurrentPlayerAIDif());
+				ai.requestMove(board, board.getCurrentPlayerAIDif());
 			}
 			return true;
 		}
 		
 		return false;
 	}
-
-	/*
-	public void requestRawMove(Square srcSq, Square dstSq) {
-		board.makeRawMove(srcSq, dstSq);
-		if(board.isSpeedMode()) {
-			resetProgressBar();
-			restartTimer();
-		}
-		addCurrentStateToHistory();
-		srcSq.defocus();
-		if(board.endRound) {
-			if(!board.isCurrentPlayerAI())
-				handleEndRound();
-			else {
-				ai.requestFill(board, board.getCurrentPlayerAIDif());
-				ai.requestMove(board, board.getCurrentPlayerAIDif());
-			}
-		}
-		if(board.isCurrentPlayerAI()){
-			ai.requestMove(board, board.getCurrentPlayerAIDif());
-		}
-
-	}
-	*/
 
 	public void handleEndRound() {
 		if(board.isSpeedMode()) {
@@ -329,7 +304,7 @@ public class GameController {
 	}
 
 	public void resetBoard() {
-		board = new Board(board.player1, board.player2, board.getPointsLimit(), board.isSpeedMode());
+		board = new Board(board.player1, board.player2, board.getPointsLimit(), board.isSpeedMode(), board.randomBoard);
 	}
 
 	public void switchBoard(Board newBoard) {

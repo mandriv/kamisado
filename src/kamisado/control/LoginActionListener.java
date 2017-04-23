@@ -7,8 +7,8 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
-import kamisado_GUI_frames.MultiplayerMenu;
-import kamisado_mp.MultiplayerClient;
+import kamisado.GUIframes.MultiplayerMenu;
+import kamisado.mp.MultiplayerClient;
 
 public class LoginActionListener implements ActionListener{
 	

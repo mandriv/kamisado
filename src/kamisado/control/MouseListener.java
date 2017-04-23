@@ -3,7 +3,7 @@ package kamisado.control;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 
-import kamisado_logic.Square;
+import kamisado.logic.Square;
 
 public class MouseListener implements MouseMotionListener {
 	

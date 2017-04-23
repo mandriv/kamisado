@@ -7,10 +7,10 @@ import javax.swing.JFrame;
 import org.junit.Test;
 
 import kamisado.control.GameController;
-import kamisado_logic.AI;
-import kamisado_logic.Board;
-import kamisado_logic.Player;
-import kamisado_logic.PlayerColor;
+import kamisado.logic.AI;
+import kamisado.logic.Board;
+import kamisado.logic.Player;
+import kamisado.logic.PlayerColor;
 
 public class AITest {
 
