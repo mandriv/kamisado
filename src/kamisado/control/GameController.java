@@ -14,6 +14,7 @@ import kamisado.logic.AI;
 import kamisado.logic.Board;
 import kamisado.logic.GameTimer;
 import kamisado.logic.Move;
+import kamisado.logic.MoveValidator;
 import kamisado.logic.PlayerColor;
 import kamisado.logic.Square;
 import kamisado.logic.State;
@@ -21,7 +22,7 @@ import kamisado.logic.StateHistory;
 
 public class GameController {
 
-	public final int speedModeTime = 10; //seconds
+	public static final int SPEED_MODE_TIME = 10; //seconds
 
 	@SuppressWarnings("unused")
 	private EndRoundFrame endRoundFrame;
@@ -41,39 +42,13 @@ public class GameController {
 		this.menuFrame = menuFrame;
 		history = new StateHistory();
 		addCurrentStateToHistory();
-		timer = new GameTimer(speedModeTime, this, progressBar);
+		timer = new GameTimer(SPEED_MODE_TIME, this, progressBar);
 		focusOnBtns = false;
 		lockInput = false;
 		ai = new AI(this);
 		if(board.isCurrentPlayerAI()){
 			ai.requestMove(board, board.getCurrentPlayerAIDif());
 		}
-	}
-
-	public void addCurrentStateToHistory() {
-		history.addState(new State(board));
-	}
-
-	public void undo() throws InvalidActivityException {
-		board = history.getPreviousState().getBoard();
-
-		Square movableSquare = board.getCurrentMovableSquare();
-		//if not first move
-		if(movableSquare != null) 
-			movableSquare.setFocused();
-
-		board.markPossibleMoves();
-	}
-
-	public void redo() throws InvalidActivityException {
-		board = history.getNextState().getBoard();
-
-		Square movableSquare = board.getCurrentMovableSquare();
-		//if not first move
-		if(movableSquare != null) 
-			movableSquare.setFocused();
-
-		board.markPossibleMoves();
 	}
 
 	public void mouseAction(int x, int y, boolean isClicked) {
@@ -200,14 +175,14 @@ public class GameController {
 				resetProgressBar();
 				restartTimer();
 			}
+			board.defocusAll();
+			board.getCurrentMovableSquare().setFocused();
+			board.markPossibleMoves();
 			addCurrentStateToHistory();
-			srcSq.defocus();
 			if(board.endRound) {
-				if(!board.isCurrentPlayerAI())
-					handleEndRound();
-				else {
-					ai.requestFill(board, board.getCurrentPlayerAIDif());
-				}
+				handleEndRound();
+				if(isGameOver())
+					return true;
 			}
 			if(board.isCurrentPlayerAI()) {
 				ai.requestMove(board, board.getCurrentPlayerAIDif());
@@ -216,34 +191,27 @@ public class GameController {
 		}
 		return false;
 	}
-	
+	/*
 	public boolean requestMove(Move move) {
 		
 		Square srcSq = board.getSquare(move.srcRow, move.srcCol);
+		Square destSq = board.getSquare(move.dstRow, move.dstCol);
+		
+		return requestMove(srcSq, destSq);
+	}
+	*/
+	public boolean requestMove(Move move) {
+		
+		Square srcSq = board.getSquare(move.srcRow, move.srcCol);
+		Square destSq = board.getSquare(move.dstRow, move.dstCol);
 		board.defocusAll();
 		srcSq.setFocused();
 		board.markPossibleMoves();
 		
-		if (board.makeMove(move)) {
-			if(board.isSpeedMode()){
-				resetProgressBar();
-				restartTimer();
-			}
-			addCurrentStateToHistory();
-			srcSq.defocus();
-			board.defocusAll();
-			board.getCurrentMovableSquare().setFocused();
-			board.markPossibleMoves();
-			if(board.endRound) {
-				handleEndRound();
-			}
-			if(board.isCurrentPlayerAI()) {
-				ai.requestMove(board, board.getCurrentPlayerAIDif());
-			}
-			return true;
-		}
+		if(board.endRound)
+			System.out.println("chuj");
 		
-		return false;
+		return requestMove(srcSq, destSq);
 	}
 
 	public void handleEndRound() {
@@ -251,17 +219,17 @@ public class GameController {
 			timer.cancel();
 			resetProgressBar();
 		}
-		if(board.getCurrentPlayerScore() + 1 == board.getPointsLimit()) {
+		board.currentPlayer.incrementScore();
+		board.defocusAll();
+		if(board.getCurrentPlayerScore() == board.getPointsLimit()) {
 			handleEndGame();
 		} else {
-			if(board.isCurrentPlayerAI()) {
-				ai.requestFill(board, board.getCurrentPlayerAIDif());
-				board.endRound = false;
-				board.nextRound();
-				board.defocusAll();
-			} else
+			if(board.isCurrentPlayerAI())
+				ai.requestFill(board, board.getCurrentPlayerAIDif());	
+			else
 				endRoundFrame = new EndRoundFrame(this, board.getCurrentPlayerName());
 		}
+		board.nextRound();
 	}
 
 	private void handleEndGame() {
@@ -271,8 +239,34 @@ public class GameController {
 
 	public void restartTimer() {
 		timer.cancel();
-		timer = new GameTimer(speedModeTime, this, progressBar);
+		timer = new GameTimer(SPEED_MODE_TIME, this, progressBar);
 		timer.start();
+	}
+	
+	public void addCurrentStateToHistory() {
+		history.addState(new State(board));
+	}
+
+	public void undo() throws InvalidActivityException {
+		board = history.getPreviousState().getBoard();
+
+		Square movableSquare = board.getCurrentMovableSquare();
+		//if not first move
+		if(movableSquare != null) 
+			movableSquare.setFocused();
+
+		board.markPossibleMoves();
+	}
+
+	public void redo() throws InvalidActivityException {
+		board = history.getNextState().getBoard();
+
+		Square movableSquare = board.getCurrentMovableSquare();
+		//if not first move
+		if(movableSquare != null) 
+			movableSquare.setFocused();
+
+		board.markPossibleMoves();
 	}
 
 	public void setProgressBar(JProgressBar progressBar) {
@@ -317,6 +311,10 @@ public class GameController {
 
 	public void unlock() {
 		lockInput = false;
+	}
+	
+	private boolean isGameOver() {
+		return board.player1.getScore() == board.getPointsLimit() || board.player2.getScore() == board.getPointsLimit();
 	}
 
 }

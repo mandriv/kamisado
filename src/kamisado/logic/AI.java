@@ -26,64 +26,71 @@ public class AI{
 
 	public void requestMove(Board board, int difficulty) {
 		
-		if(difficulty == EASY) {
-			thread = new Thread() {
-		        public void run() {
-		        	control.requestMove(getBestMove(board, 1));
-		        }
-		    };
-		    thread.start();
-		} else if (difficulty == NORMAL) {
-			thread = new Thread() {
-		        public void run() {
-		        	if(board.getCurrentMovableSquare() == null) //if first move
-		        		control.requestMove(getBestMove(board, 4));
-		        	else
-		        		control.requestMove(getBestMove(board, 5));
-		        }
-		    };
-		    thread.start();
-		} else if (difficulty == HARD) {
-			thread = new Thread() {
-		        public void run() {
-		        	if(board.getCurrentMovableSquare() == null) //if first move
-		        		control.requestMove(getBestMove(board, 5));
-		        	else
-		        		control.requestMove(getBestMove(board, 6));
-		        }
-		    };
-		    thread.start();
+		//a bit hackish but you need a new thread in order to have gui painted, 
+		//couldn't make gui separate thread so he we go, so sorry
+		if(board.currentPlayer.getMoveCount() == 0 && board.getRoundNumber() == 1) {
+			if(difficulty == EASY) {
+				thread = new Thread() {
+			        public void run() {
+			        	control.requestMove(getBestMove(board, 1));
+			        }
+			    };
+			    thread.start();
+			} else if (difficulty == NORMAL) {
+				thread = new Thread() {
+			        public void run() {
+			        	if(board.getCurrentMovableSquare() == null) //if first move
+			        		control.requestMove(getBestMove(board, 4));
+			        	else
+			        		control.requestMove(getBestMove(board, 5));
+			        }
+			    };
+			    thread.start();
+			} else if (difficulty == HARD) {
+				thread = new Thread() {
+			        public void run() {
+			        	if(board.getCurrentMovableSquare() == null) //if first move
+			        		control.requestMove(getBestMove(board, 5));
+			        	else
+			        		control.requestMove(getBestMove(board, 6));
+			        }
+			    };
+			    thread.start();
+			}
+		} else {
+			if(difficulty == EASY) {
+			        	control.requestMove(getBestMove(board, 1));
+			} else if (difficulty == NORMAL) {
+			        	if(board.getCurrentMovableSquare() == null) //if first move
+			        		control.requestMove(getBestMove(board, 4));
+			        	else
+			        		control.requestMove(getBestMove(board, 5));
+			} else if (difficulty == HARD) {
+			        	if(board.getCurrentMovableSquare() == null) //if first move
+			        		control.requestMove(getBestMove(board, 5));
+			        	else
+			        		control.requestMove(getBestMove(board, 6));
+			}
 		}
 	}
 
 
 	public void requestFill(Board board, int difficulty) {
 		if(difficulty == EASY) {
-			thread = new Thread() {
-		        public void run() {
-		        	makeBestFill(board, 2);
-		        }
-		    };
-		    thread.start();
+			makeBestFill(board, 2);
 		} else if (difficulty == NORMAL) {
-			thread = new Thread() {
-		        public void run() {
-		        	makeBestFill(board, 5);
-		        }
-		    };
-		    thread.start();
+		    makeBestFill(board, 5);
 		} else if (difficulty == HARD) {
-			thread = new Thread() {
-		        public void run() {
-		        	makeBestFill(board, 8);
-		        }
-		    };
-		    thread.start();
+			makeBestFill(board, 7); //maybe 6? could be >5 sec on older machines
 		}
 	}
 
 	
 	private void makeBestFill(Board board, int depthOfSearch) {
+		
+		System.out.println("=================");
+		System.out.println("getting best fill");
+		System.out.println("thinking...");
 		
 		Board boardCopy = new Board(board);	
 		boardCopy.fillFromLeft();
@@ -92,7 +99,8 @@ public class AI{
 		boardCopy = new Board(board);
 		boardCopy.fillFromRight();
 		double evalRight = -negaMax(depthOfSearch, boardCopy, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
-		
+		System.out.println("Fill from left: "+evalLeft+" pts");
+		System.out.println("Fill from right: "+evalRight+" pts");
 		if (evalRight > evalLeft)
 			board.fillFromRight();
 		else

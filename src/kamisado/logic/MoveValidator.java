@@ -8,7 +8,11 @@ public class MoveValidator {
 	}
 	
 	public static ArrayList<Square> getPossibleMoveSquares(Board board) {
+				
 		ArrayList<Square> list = new ArrayList<>();
+		
+		if(board.endRound) //no moves if endround
+			return list;
 
 		Square moveSquare = board.getCurrentMovableSquare();
 
@@ -190,22 +194,7 @@ public class MoveValidator {
 		Square srcSq = board.getSquare(move.srcRow, move.srcCol);
 		Square destSq = board.getSquare(move.dstRow, move.dstCol);
 		
-		if (!srcSq.isOccupied() || destSq.isOccupied()) {
-			System.out.println("1");
-			return false;
-		}
-
-		if (srcSq.getTower().getColorValue() != board.getCurrentTowerColorValue()
-				&& board.getCurrentTowerColorValue() != GameColor.ANY) {
-			System.out.println("2");
-			System.out.println((srcSq.getTower().getColorValue()));
-			return false;
-		}
-		if (!destSq.isPossible()){
-			System.out.println("3");
-			return false;
-		}
-		return true;
+		return isLegalMove(board, srcSq, destSq);
 	}
 	
 	public static boolean isThreat(Board board, Square srcSq) {
@@ -290,7 +279,6 @@ public class MoveValidator {
 		return false;
 	}
 
-
 	public static boolean isRoundEnd(Board board) {
 		// check if any of white towers is at the end of grid
 		for (Square square : board.getOccupiedSquaresAsList()) {
@@ -309,9 +297,18 @@ public class MoveValidator {
 				return square.getTower().getOwnerColorValue();
 			if (board.getSquareRowCoord(square) == 7 && square.getTower().getOwnerColorValue() == PlayerColor.BLACK)
 				return square.getTower().getOwnerColorValue();
-
 		}
 		return -1;
+	}
+	
+	public static Tower getWinningTower(Board board) {
+		for (Square square : board.getOccupiedSquaresAsList()) {
+			if (board.getSquareRowCoord(square) == 0 && square.getTower().getOwnerColorValue() == PlayerColor.WHITE)
+				return square.getTower();
+			if (board.getSquareRowCoord(square) == 7 && square.getTower().getOwnerColorValue() == PlayerColor.BLACK)
+				return square.getTower();
+		}
+		return null;
 	}
 
 }

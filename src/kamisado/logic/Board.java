@@ -143,7 +143,8 @@ public class Board {
 				Square sq = original.getSquare(i, j);
 				if(sq.isOccupied()) {
 					Tower originalTower = sq.getTower();
-					Tower t = new Tower(originalTower.getColorValue(), originalTower.getOwnerColorValue());
+					Tower t = new Tower(originalTower.getColorValue(), originalTower.getOwnerColorValue(),
+							             originalTower.getSumoLevel());
 					getSquare(i, j).setTower(t);
 				}
 			}
@@ -395,8 +396,10 @@ public class Board {
 		destSq.setTower(t);
 		currentTowerColor.setValue(destSq.getColor());
 		currentPlayer.incrementMoveCount();
-		if (MoveValidator.isRoundEnd(this))
+		if (MoveValidator.isRoundEnd(this)) {
 			endRound = true;
+			MoveValidator.getWinningTower(this).upgrade();
+		}
 		else {
 			switchSide();
 			if(MoveValidator.isBlocked(this)) {
@@ -434,9 +437,9 @@ public class Board {
 		currentTowerColor.setValue(GameColor.ANY);
 		player1.resetMoveCount();
 		player2.resetMoveCount();
-		currentPlayer.incrementScore();
 		round++;
 		switchSide();
+		endRound = false;
 	}
 
 	public void fillFromLeft() {

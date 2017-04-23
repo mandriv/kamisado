@@ -25,6 +25,12 @@ public class Tower {
 		player = new PlayerColor(playerNum);
 		sumo = 0;
 	}
+	
+	public Tower(int towerColor, int playerNum, int lvl) {
+		color = new GameColor(towerColor);
+		player = new PlayerColor(playerNum);
+		sumo = lvl;
+	}
 
 	public Image getImage() {
 		return new ImageIcon(getClass()

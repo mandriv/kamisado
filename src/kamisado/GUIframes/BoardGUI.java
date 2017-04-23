@@ -87,7 +87,7 @@ public class BoardGUI extends MenuPanel implements ActionListener{
 		this.addKeyListener(kpl);
 
 		JPanel sidePanel = new MenuPanel(new MigLayout("flowy, fillx, insets 0, al center","15px[align center]15px","10%[]13%[]20%[]20%[]"));
-		JProgressBar progressBar = new GameTimeProgressBar(gc.speedModeTime);
+		JProgressBar progressBar = new GameTimeProgressBar(gc.SPEED_MODE_TIME);
 		blackPlayerPanel = new MenuPanel(new MigLayout());
 		whitePlayerPanel = new MenuPanel(new MigLayout());
 		nameLabel2 = new MenuLabel(board.player2.getName());

@@ -93,11 +93,6 @@ public class EndRoundFrame extends JFrame{
 			public void actionPerformed(ActionEvent e) {
 				if(leftRadio.isSelected() || rightRadio.isSelected()){
 					dispose();
-					control.board.endRound = false;
-					control.board.nextRound();
-					if(control.board.isCurrentPlayerAI()) {
-						control.ai.requestMove(new Board(control.board), control.board.getCurrentPlayerAIDif());
-					}
 				} else {
 					JOptionPane.showMessageDialog(null, "Please select fill side", "Problem", JOptionPane.ERROR_MESSAGE);
 				}
