@@ -88,8 +88,8 @@ public class BoardGUI extends MenuPanel implements ActionListener{
 
 		JPanel sidePanel = new MenuPanel(new MigLayout("flowy, fillx, insets 0, al center","15px[align center]15px","10%[]13%[]20%[]20%[]"));
 		JProgressBar progressBar = new GameTimeProgressBar(gc.SPEED_MODE_TIME);
-		blackPlayerPanel = new MenuPanel(new MigLayout());
-		whitePlayerPanel = new MenuPanel(new MigLayout());
+		blackPlayerPanel = new MenuPanel(new MigLayout("al center"));
+		whitePlayerPanel = new MenuPanel(new MigLayout("al center"));
 		nameLabel2 = new MenuLabel(board.player2.getName());
 		scoreLabel2 = new MenuLabel(board.player2.getScore()+"");
 		roundLabel = new MenuLabel("Round " + board.getRoundNumber());
@@ -103,9 +103,9 @@ public class BoardGUI extends MenuPanel implements ActionListener{
 		whitePlayerPanel.add(scoreLabel1);
 		
 		sidePanel.add(progressBar);
-		sidePanel.add(blackPlayerPanel);
+		sidePanel.add(blackPlayerPanel, "sg");
 		sidePanel.add(roundLabel);
-		sidePanel.add(whitePlayerPanel);
+		sidePanel.add(whitePlayerPanel, "sg");
 		
 		sidePanel.setOpaque(false);
 		
@@ -118,16 +118,16 @@ public class BoardGUI extends MenuPanel implements ActionListener{
 		
 		this.add(sidePanel, "width 215px, height 800px, dock west");
 		
-		JPanel rightBtnPanel = new MenuPanel(new MigLayout("insets 0, fillx, flowy, al center center","[align center]","[][]"));
+		JPanel rightBtnPanel = new MenuPanel(new MigLayout("insets 0, fillx, flowy, al center center","[al center]","[][]"));
 		resignButton = new GUIButton("Resign");
 		JButton undoButton = new GUIButton("Undo");
 		JButton redoButton = new GUIButton("Redo");
 		
 		resignButton.addKeyListener(kpl);
 		
-		rightBtnPanel.add(undoButton);
-		rightBtnPanel.add(redoButton);
-		rightBtnPanel.add(resignButton);
+		rightBtnPanel.add(undoButton, "sg");
+		rightBtnPanel.add(redoButton, "sg");
+		rightBtnPanel.add(resignButton, "sg");
 		rightBtnPanel.setOpaque(false);
 		
 		resignButton.addActionListener(new ActionListener() {
@@ -143,8 +143,8 @@ public class BoardGUI extends MenuPanel implements ActionListener{
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-
-					gc.undo();
+				//gc.undo();	
+				System.out.println(board.getJSON().toString());
 			}
 		});
 		
@@ -152,9 +152,7 @@ public class BoardGUI extends MenuPanel implements ActionListener{
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-
-					gc.redo();
-					
+				gc.redo();			
 			}
 		});	
 		

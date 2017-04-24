@@ -4,6 +4,8 @@ import java.awt.Image;
 
 import javax.swing.ImageIcon;
 
+import org.json.JSONObject;
+
 public class Square {
 
 	GameColor squareColor;
@@ -113,6 +115,14 @@ public class Square {
 	
 	public boolean isHovered() {
 		return hovered;
+	}
+	
+	public JSONObject getJSON() {
+		JSONObject json = new JSONObject();
+		json.put("color", getColor());
+		if(isOccupied())
+			json.put("tower", getTower().getJSON());	
+		return json;
 	}
 
 }

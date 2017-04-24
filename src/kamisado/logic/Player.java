@@ -1,5 +1,7 @@
 package kamisado.logic;
 
+import org.json.JSONObject;
+
 public class Player {
 	
 	private PlayerColor color;
@@ -20,10 +22,19 @@ public class Player {
 	public Player(int playerColor, String playerName, int aiDifficulty) {
 		color = new PlayerColor(playerColor);
 		name = playerName;
-		ai = true;
+		ai = aiDifficulty > 0;
 		this.aiDifficulty = aiDifficulty;
 		moveCount = 0;
 		score = 0;
+	}
+	
+	public Player(int playerColor, String playerName, int aiDifficulty, int moveCount, int score) {
+		color = new PlayerColor(playerColor);
+		name = playerName;
+		ai = aiDifficulty > 0;
+		this.aiDifficulty = aiDifficulty;
+		this.moveCount = moveCount;
+		this.score = score;
 	}
 	
 	public int getScore() {
@@ -60,6 +71,16 @@ public class Player {
 	
 	public int getDifficulty() {
 		return aiDifficulty;
+	}
+	
+	public JSONObject getJSON() {
+		JSONObject json = new JSONObject();
+		json.put("color", getColorValue());
+		json.put("name", name);
+		json.put("aiDifficulty", aiDifficulty);
+		json.put("moveCount", moveCount);
+		json.put("score", score);
+		return json;
 	}
 
 }

@@ -4,6 +4,8 @@ import java.awt.Image;
 
 import javax.swing.ImageIcon;
 
+import org.json.JSONObject;
+
 /**
  * @author Wojciech Cichoradzki, Jakub Rudzki
  *
@@ -76,6 +78,14 @@ public class Tower {
 	public void upgrade() {
 		if(sumo < 3)
 			sumo++;
+	}
+	
+	public JSONObject getJSON() {
+		JSONObject json = new JSONObject();
+		json.put("color", getColorValue());
+		json.put("owner", getOwnerColorValue());
+		json.put("sumo", getSumoLevel());
+		return json;
 	}
 
 }

@@ -13,6 +13,9 @@ import java.util.Deque;
 import java.util.List;
 import java.util.Stack;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import kamisado.util.UniqueRandom2DArrayFactory;
 
 
@@ -72,75 +75,48 @@ public class Board {
 		markPossibleMoves();
 	}
 
-	/*
-	//Saved from file game constructor
-	public Board(String saveName) throws IOException {
-		String path = System.getProperty("user.home") + File.separator + "Kamisado Saves" + File.separator + saveName;
-		File file = new File(path);
-		String tokenizedState;
-		BufferedReader br = new BufferedReader(new FileReader(file));
-		tokenizedState = br.readLine();
-
-
-		System.out.println(tokenizedState);
-
+	public Board(JSONObject json) throws IOException {
 		boardArray = new Square[8][8];
-
-		createSquares();
-
-		String[] tokens = tokenizedState.split(",");
-		int l = 0;
-		for(int i = 0; i <= 7 ; i++) {
-			for(int j = 0; j <= 7 ; j ++) {
-				Square sq = boardArray[i][j];
-				if (!tokens[l].equals("xx")){
-					System.out.println("adding "+tokens[l]);
-					int playerColor;
-					if(tokens[l].charAt(0) == 'b') {
-						playerColor = PlayerColor.BLACK;
-					} else {
-						playerColor = PlayerColor.WHITE;
-					}
-					int towerColor = Integer.parseInt(Character.toString(tokens[l].charAt(1)));
-					sq.setTower(new Tower(towerColor, playerColor));
+		JSONArray boardArrJSON = json.getJSONArray("board");
+		for(int i = 0; i <= 7; i++) {
+			JSONArray rowJSON = boardArrJSON.getJSONArray(i);
+			for(int j = 0; j <= 7; i++) {
+				JSONObject squareJSON = rowJSON.getJSONObject(j);
+				boardArray[i][j] = new Square(squareJSON.getInt("color"));
+				if(squareJSON.has("tower")) {
+					JSONObject towerJSON = squareJSON.getJSONObject("tower");
+					Tower t = new Tower(towerJSON.getInt("color"), towerJSON.getInt("owner"), towerJSON.getInt("sumo"));
+					getSquare(i, j).setTower(t);
 				}
-				l++;
 			}
 		}
-
-		gameState = new PlayerColor(Integer.parseInt(br.readLine()));
-		currentTowerColor = new GameColor(Integer.parseInt(br.readLine()));
-		moveCount = new int[2];
-		moveCount[PlayerColor.WHITE] = Integer.parseInt(br.readLine());
-		moveCount[PlayerColor.BLACK] = Integer.parseInt(br.readLine());
-		validator = new MoveValidator(this);
-		markPossibleMoves();
-
-		name = new String[2];
-		name[PlayerColor.WHITE] = br.readLine();
-		name[PlayerColor.BLACK] = br.readLine();
-
-		score = new int[2];
-		score[PlayerColor.WHITE] = Integer.parseInt(br.readLine());
-		score[PlayerColor.BLACK] = Integer.parseInt(br.readLine());
-
-		round =  Integer.parseInt(br.readLine());
-
-		br.close();
+		JSONObject player1JSON = json.getJSONObject("player1");
+		JSONObject player2JSON = json.getJSONObject("player2");
+		player1 = new Player(player1JSON.getInt("color"), player1JSON.getString("name"), player1JSON.getInt("aiDifficulty"),
+				             player1JSON.getInt("moveCount"), player1JSON.getInt("score"));
+		player2 = new Player(player2JSON.getInt("color"), player2JSON.getString("name"), player2JSON.getInt("aiDifficulty"),
+	             player2JSON.getInt("moveCount"), player2JSON.getInt("score"));
+		
+		if(json.getInt("currentPlayer") == 0)
+			currentPlayer = player1;
+		else
+			currentPlayer = player2;
+		currentTowerColor = new GameColor(json.getInt("currentTowerColor"));
+		round = json.getInt("round");
+		pointsLimit = json.getInt("pointsLimit");
+		speedMode = json.getBoolean("random");
 
 	}
-	 */
 
 	//Copy  constructor
 	public Board(Board original) {
 		boardArray = new Square[8][8];
 
-		createSquares();
-
-		//tower positions
+		//squares
 		for(int i = 0; i <= 7 ; i++) {
 			for(int j = 0 ; j <=7 ; j++) {
 				Square sq = original.getSquare(i, j);
+				boardArray[i][j] = new Square(sq.getColor());
 				if(sq.isOccupied()) {
 					Tower originalTower = sq.getTower();
 					Tower t = new Tower(originalTower.getColorValue(), originalTower.getOwnerColorValue(),
@@ -537,6 +513,31 @@ public class Board {
 			builder.append("\n");
 		}
 		return builder.toString();
+	}
+	
+	public JSONObject getJSON() {
+		JSONObject json = new JSONObject();
+		
+		JSONArray boardArr = new JSONArray();
+		for(int i = 0; i <=7 ; i++){
+			JSONArray rowArr = new JSONArray();
+			for(int j = 0; j <= 7 ; j++) {
+				rowArr.put(boardArray[i][j].getJSON());
+			}
+			boardArr.put(rowArr);
+		}
+		
+		json.put("board", boardArr);
+		json.put("currentPlayer", currentPlayer.getColorValue());
+		json.put("currentTowerColor", currentTowerColor.getValue());
+		json.put("player1", player1.getJSON());
+		json.put("player2", player2.getJSON());
+		json.put("round", round);
+		json.put("pointsLimit", pointsLimit);
+		json.put("speedMode", speedMode);
+		json.put("random", randomBoard);
+		
+		return json;
 	}
 
 	public boolean equals(Object b) {
