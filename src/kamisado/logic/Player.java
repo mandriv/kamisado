@@ -46,6 +46,18 @@ public class Player {
 		aiDifficulty = p.aiDifficulty;
 	}
 	
+	public Player(JSONObject json) {
+		
+		color = new PlayerColor(json.getInt("color"));
+		name  = json.getString("name");
+		aiDifficulty = json.getInt("aiDifficulty");
+		if(aiDifficulty!=0)
+			ai = true;
+		moveCount = json.getInt("moveCount");
+		score = json.getInt("score");	
+		
+	}
+	
 	public int getScore() {
 		return score;
 	}
@@ -66,10 +78,6 @@ public class Player {
 		return moveCount;
 	}
 	
-	public void incrementMoveCount() {
-		moveCount++;
-	}
-	
 	public void resetMoveCount() {
 		moveCount = 0;
 	}
@@ -84,6 +92,19 @@ public class Player {
 	
 	public int getDifficulty() {
 		return aiDifficulty;
+	}
+	
+	public void incrementMoveCount() {
+		moveCount++;
+	}
+	
+	public String getAIdiff() {
+		switch(aiDifficulty) {
+			case 1:  return "EASY";
+			case 2:  return "NORMAL";
+			case 3:  return "HARD";
+			default: return "";
+		}
 	}
 	
 	public JSONObject getJSON() {

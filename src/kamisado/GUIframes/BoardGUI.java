@@ -167,11 +167,11 @@ public class BoardGUI extends MenuPanel implements ActionListener{
 				 
 				if (userSelection == JFileChooser.APPROVE_OPTION) {
 					File file = fileChooser.getSelectedFile();
-					if (FilenameUtils.getExtension(file.getName()).equalsIgnoreCase("ksv")) {
+					if (FilenameUtils.getExtension(file.getName()).equalsIgnoreCase("ksv")) { //ksv == kamisado save (file) :)
 					    // filename is OK as-is
 					} else {
-					    file = new File(file.toString() + ".ksv");  // append .xml if "foo.jpg.xml" is OK
-					    file = new File(file.getParentFile(), FilenameUtils.getBaseName(file.getName())+".ksv"); // ALTERNATIVELY: remove the extension (if any) and replace it with ".xml"
+					    file = new File(file.toString() + ".ksv");  // append .ksv if "foo.jpg.ksv" is OK
+					    file = new File(file.getParentFile(), FilenameUtils.getBaseName(file.getName())+".ksv"); // ALTERNATIVELY: remove the extension (if any) and replace it with ".ksv"
 					}
 					Path path = Paths.get(file.getAbsolutePath());
 				    Charset charset = Charset.forName("US-ASCII");

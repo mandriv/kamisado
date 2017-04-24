@@ -157,8 +157,7 @@ public class MainMenu extends JPanel {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				
+				StatsFrame statsFrame = new StatsFrame();
 			}
 		});
 		settingsBtn.addActionListener(new ActionListener() {

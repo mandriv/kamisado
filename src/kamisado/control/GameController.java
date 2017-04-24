@@ -1,6 +1,11 @@
 package kamisado.control;
 
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+
 import javax.activity.InvalidActivityException;
 import javax.swing.JFrame;
 import javax.swing.JProgressBar;
@@ -17,6 +22,7 @@ import kamisado.logic.PlayerColor;
 import kamisado.logic.Square;
 import kamisado.logic.State;
 import kamisado.logic.StateHistory;
+import kamisado.util.GameStat;
 
 public class GameController {
 
@@ -192,13 +198,13 @@ public class GameController {
 	}
 
 	public boolean requestMove(Move move) {
-		
+
 		Square srcSq = board.getSquare(move.srcRow, move.srcCol);
 		Square destSq = board.getSquare(move.dstRow, move.dstCol);
 		board.defocusAll();
 		srcSq.setFocused();
 		board.markPossibleMoves();
-		
+
 		return requestMove(srcSq, destSq);
 	}
 
@@ -225,6 +231,30 @@ public class GameController {
 	}
 
 	private void handleEndGame() {
+		
+		//add only human vs comp to saves
+		if((board.player1.isAI() && !board.player2.isAI())||(!board.player1.isAI() && board.player2.isAI())) {
+			GameStat gs = new GameStat(board.player1, board.player2);
+
+			BufferedWriter bw = null;
+			File file = new File(System.getProperty("user.dir") + File.separator + "kamisado.log");
+
+			try {
+				// APPEND MODE SET HERE
+				bw = new BufferedWriter(new FileWriter(file, true));
+				bw.write(gs.getJSON().toString());
+				bw.newLine();
+				bw.flush();
+			} catch (IOException ioe) {
+				ioe.printStackTrace();
+			} finally {                       // always close the file
+				if (bw != null) try {
+					bw.close();
+				} catch (IOException ioe2) {
+					// just ignore it
+				}
+			}
+		}
 		@SuppressWarnings("unused")
 		EndGameFrame endGameFrame = new EndGameFrame(board.getCurrentPlayerName(), this);
 	}
@@ -234,7 +264,7 @@ public class GameController {
 		timer = new GameTimer(SPEED_MODE_TIME, this, progressBar);
 		timer.start();
 	}
-	
+
 	public void addCurrentStateToHistory() {
 		history.addState(new State(board));
 	}
@@ -243,7 +273,7 @@ public class GameController {
 		history.undo();
 		syncBoard();
 	}
-	
+
 	public void redo() {
 		history.redo();
 		syncBoard();
@@ -298,7 +328,7 @@ public class GameController {
 	public void unlock() {
 		lockInput = false;
 	}
-	
+
 	private boolean isGameOver() {
 		return board.player1.getScore() >= board.getPointsLimit() || board.player2.getScore() >= board.getPointsLimit();
 	}
