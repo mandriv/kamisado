@@ -12,15 +12,15 @@ import kamisado.control.GameController;
 
 public class AI{
 
-	private static final int EASY = 1;
+	private static final int EASY   = 1;
 	private static final int NORMAL = 2;
-	private static final int HARD = 3;
+	private static final int HARD   = 3;
 	private int n = 1;
 
 	private GameController control;
 	private Thread thread;
 	
-	public AI(GameController gc) throws Exception {
+	public AI(GameController gc) {
 		control = gc;
 	}
 

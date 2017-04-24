@@ -9,6 +9,10 @@ import javax.swing.ImageIcon;
  *
  */
 public class Tower {
+	
+	private static final int RANGE_SUMO        = 5;
+	private static final int RANGE_DOUBLESUMO  = 3;
+	private static final int RANGE_TRIPLESUMO  = 1;
 
 	PlayerColor player;
 	GameColor color;
@@ -40,6 +44,15 @@ public class Tower {
 	
 	public int getSumoLevel() {
 		return sumo;
+	}
+	
+	public int getRange() {
+		switch(sumo) {
+			case 1: return RANGE_SUMO;
+			case 2: return RANGE_DOUBLESUMO;
+			case 3: return RANGE_TRIPLESUMO;
+			default: return 7;
+		}
 	}
 	
 	public Image getSumoImage() {

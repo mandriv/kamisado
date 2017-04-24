@@ -406,6 +406,7 @@ public class Board {
 				if(MoveValidator.isDeadlock(this)) {
 					switchSide();
 					endRound = true;
+					MoveValidator.getDeadlockWinningTower(this, destSq).upgrade();
 				} else {
 					switchSide();
 				}

@@ -1,8 +1,6 @@
 package kamisado.util;
 
-import kamisado.logic.Board;
-import kamisado.logic.Player;
-import kamisado.logic.PlayerColor;
+
 
 public class ThreadDriver { // NO_UCD (unused code)
 
@@ -13,6 +11,7 @@ public class ThreadDriver { // NO_UCD (unused code)
 		Thread game = new Thread(new StartGame(st));
 		game.start();
 		music.start();
+
 		
 	}
 	

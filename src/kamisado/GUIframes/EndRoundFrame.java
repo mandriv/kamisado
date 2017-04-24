@@ -22,7 +22,9 @@ public class EndRoundFrame extends JFrame{
 	private static final long serialVersionUID = 1L;
 
 	public EndRoundFrame(GameController control, String winnerPlayer) {
-		super("End round");	
+		super("End round");
+		
+		control.addCurrentStateToHistory();
 		
 		JPanel container = new MenuPanel(new MigLayout("align center center","","[][align center][]"));
 		JPanel middlePanel = new MenuPanel(new MigLayout());

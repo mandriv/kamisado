@@ -1,11 +1,9 @@
 package kamisado.control;
 
-import java.sql.Time;
 
 import javax.activity.InvalidActivityException;
 import javax.swing.JFrame;
 import javax.swing.JProgressBar;
-import javax.swing.plaf.SliderUI;
 
 import kamisado.GUIframes.BoardGUI;
 import kamisado.GUIframes.EndGameFrame;
@@ -14,7 +12,6 @@ import kamisado.logic.AI;
 import kamisado.logic.Board;
 import kamisado.logic.GameTimer;
 import kamisado.logic.Move;
-import kamisado.logic.MoveValidator;
 import kamisado.logic.PlayerColor;
 import kamisado.logic.Square;
 import kamisado.logic.State;
@@ -34,10 +31,10 @@ public class GameController {
 	private JFrame menuFrame;
 	private BoardGUI boardGUI;
 	private boolean focusOnBtns;
-	private boolean lockInput;
+	private boolean lockInput; //useless for now, optional future feature - lock any input on board while waiting for ai
 	public AI ai;
 
-	public GameController(Board board, JFrame menuFrame) throws Exception {
+	public GameController(Board board, JFrame menuFrame){
 		this.board = board;
 		this.menuFrame = menuFrame;
 		history = new StateHistory();
@@ -144,6 +141,7 @@ public class GameController {
 		//if second click (1. On tower 2. On Empty space
 		if (hasFocused && !desiredSquare.isOccupied() ) {
 			requestMove(focusedSquare, desiredSquare);
+			return;
 		}
 
 		Square movableSquare = board.getCurrentMovableSquare();
@@ -223,13 +221,16 @@ public class GameController {
 		board.defocusAll();
 		if(board.getCurrentPlayerScore() == board.getPointsLimit()) {
 			handleEndGame();
+			return;
 		} else {
-			if(board.isCurrentPlayerAI())
-				ai.requestFill(board, board.getCurrentPlayerAIDif());	
-			else
-				endRoundFrame = new EndRoundFrame(this, board.getCurrentPlayerName());
+			if(board.isCurrentPlayerAI()) {
+				ai.requestFill(board, board.getCurrentPlayerAIDif());
+			} else {
+				String winner = board.getCurrentPlayerName();
+				board.nextRound();
+				endRoundFrame = new EndRoundFrame(this, winner);
+			}
 		}
-		board.nextRound();
 	}
 
 	private void handleEndGame() {
@@ -247,26 +248,14 @@ public class GameController {
 		history.addState(new State(board));
 	}
 
-	public void undo() throws InvalidActivityException {
-		board = history.getPreviousState().getBoard();
-
-		Square movableSquare = board.getCurrentMovableSquare();
-		//if not first move
-		if(movableSquare != null) 
-			movableSquare.setFocused();
-
-		board.markPossibleMoves();
+	public void undo() {
+		history.undo();
+		syncBoard();
 	}
-
-	public void redo() throws InvalidActivityException {
-		board = history.getNextState().getBoard();
-
-		Square movableSquare = board.getCurrentMovableSquare();
-		//if not first move
-		if(movableSquare != null) 
-			movableSquare.setFocused();
-
-		board.markPossibleMoves();
+	
+	public void redo() {
+		history.redo();
+		syncBoard();
 	}
 
 	public void setProgressBar(JProgressBar progressBar) {
@@ -295,6 +284,12 @@ public class GameController {
 
 	public void syncBoard() {
 		board = new Board(history.getCurrentState().getBoard());
+		Square movableSquare = board.getCurrentMovableSquare();
+		//if not first move
+		if(movableSquare != null) 
+			movableSquare.setFocused();
+
+		board.markPossibleMoves();
 	}
 
 	public void resetBoard() {

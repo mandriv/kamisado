@@ -42,26 +42,35 @@ public class MoveValidator {
 
 		int col = board.getSquareColCoord(moveSquare);
 		int row = board.getSquareRowCoord(moveSquare);
+		Tower t = moveSquare.getTower();
 		// black moves
-		if (moveSquare.getTower().getOwnerColorValue() == PlayerColor.BLACK) {
+		if (t.getOwnerColorValue() == PlayerColor.BLACK) {
+			
 			// moves down
-			for (int i = row + 1; i <= 7; i++) {
-				if (board.getSquare(i, col).isOccupied())
+			int x;
+			int y = row;
+			for(int i = 1; i <= t.getRange(); i++) {
+				if (y+i > 7)
 					break;
-				list.add(board.getSquare(i, col));
+				if (board.getSquare(y+i, col).isOccupied()){
+					if(t.getSumoLevel() > 0)
+						markIfPushPossible(t, board.getSquare(y+i, col));
+					break;
+				}
+				list.add(board.getSquare(y+i, col));
 			}
+			
 			// skew moves left down
-			int j = col - 1;
-			for (int i = row + 1; i <= 7; i++) {
-				if (j < 0)
+			y = row;
+			x = col;
+			for(int i = 1; i <= t.getRange(); i++) {
+				if (x-i < 0 || y+i > 7 || board.getSquare(y+i, x-i).isOccupied())
 					break;
-				if (board.getSquare(i, j).isOccupied())
-					break;
-				list.add(board.getSquare(i, j));
-				j--;
+				list.add(board.getSquare(y+i, x-i));
 			}
+
 			// skew moves right down
-			j = col + 1;
+			int j = col + 1;
 			for (int i = row + 1; i <= 7; i++) {
 				if (j > 7)
 					break;
@@ -74,23 +83,30 @@ public class MoveValidator {
 		// white moves
 		else {
 			// forward moves
-			for (int i = row - 1; i >= 0; i--) {
-				if (board.getSquare(i, col).isOccupied())
+			int x;
+			int y = row;
+			for(int i = 1; i <= t.getRange(); i++) {
+				if (y-i < 0)
 					break;
-				list.add(board.getSquare(i, col));
+				if (board.getSquare(y-i, col).isOccupied()){
+					if(t.getSumoLevel() > 0)
+						markIfPushPossible(t, board.getSquare(y-i, col));
+					break;
+				} else
+				list.add(board.getSquare(y-i, col));
 			}
+			
 			// skew moves left forward
-			int j = col - 1;
-			for (int i = row - 1; i >= 0; i--) {
-				if (j < 0)
+			y = row;
+			x = col;
+			for(int i = 1; i <= t.getRange(); i++) {
+				if (x-i < 0 || y-i < 0 || board.getSquare(y-i, x-i).isOccupied())
 					break;
-				if (board.getSquare(i, j).isOccupied())
-					break;
-				list.add(board.getSquare(i, j));
-				j--;
+				list.add(board.getSquare(y-i, x-i));
 			}
+			
 			// skew moves right forward
-			j = col + 1;
+			int j = col + 1;
 			for (int i = row - 1; i >= 0; i--) {
 				if (j > 7)
 					break;
@@ -102,6 +118,10 @@ public class MoveValidator {
 		}
 		return list;
 
+	}
+	
+	private static void markIfPushPossible(Tower t, Square dstSq) {
+		
 	}
 	
 	public static int numberOfPossibleMovesForSquare(Board board, Square square) {
@@ -306,6 +326,17 @@ public class MoveValidator {
 			if (board.getSquareRowCoord(square) == 0 && square.getTower().getOwnerColorValue() == PlayerColor.WHITE)
 				return square.getTower();
 			if (board.getSquareRowCoord(square) == 7 && square.getTower().getOwnerColorValue() == PlayerColor.BLACK)
+				return square.getTower();
+		}
+		return null;
+	}
+	
+	//not tested
+	public static Tower getDeadlockWinningTower(Board board, Square dstSq) {
+		int winner = (dstSq.getTower().getOwnerColorValue() + 1) % 2;
+		int color =  dstSq.getTower().getColorValue();
+		for(Square square : board.getOccupiedSquaresAsList()) {
+			if(square.getTower().getColorValue() == color && square.getTower().getOwnerColorValue() == winner)
 				return square.getTower();
 		}
 		return null;

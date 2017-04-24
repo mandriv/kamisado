@@ -125,6 +125,8 @@ public class BoardGUI extends MenuPanel implements ActionListener{
 		
 		resignButton.addKeyListener(kpl);
 		
+		rightBtnPanel.add(undoButton);
+		rightBtnPanel.add(redoButton);
 		rightBtnPanel.add(resignButton);
 		rightBtnPanel.setOpaque(false);
 		
@@ -141,12 +143,8 @@ public class BoardGUI extends MenuPanel implements ActionListener{
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				try {
+
 					gc.undo();
-				} catch (InvalidActivityException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
 			}
 		});
 		
@@ -154,14 +152,11 @@ public class BoardGUI extends MenuPanel implements ActionListener{
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				try {
+
 					gc.redo();
-				} catch (InvalidActivityException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+					
 			}
-		});
+		});	
 		
 		this.add(rightBtnPanel, "width 215px, height 800px, dock east");
 		

@@ -7,8 +7,8 @@ import javax.activity.InvalidActivityException;
 
 public class StateHistory {
 	
-	List<State> history;
-	int currentState;
+	public List<State> history;
+	public int currentState;
 	
 	public StateHistory() {
 		history = new ArrayList<>();
@@ -30,22 +30,23 @@ public class StateHistory {
 		return history.get(currentState);
 	}
 	
-	public State getPreviousState() throws InvalidActivityException {
-		if(currentState > 0) {
-			return history.get(--currentState);
-		} else {
-			throw new InvalidActivityException("Can't get any further back in history!");
-		}
-
-		
+	
+	public boolean canUndo() {
+		return currentState >= 2;
 	}
 	
-	public State getNextState() throws InvalidActivityException {
-		if(currentState < history.size()-1) {
-			return history.get(++currentState);
-		} else {
-			throw new InvalidActivityException("Can't predict future");
-		}
+	public void undo() {
+		if(canUndo())
+			currentState -= 2;
+	}
+	
+	public boolean canRedo() {
+		return (((history.size()-1) - currentState) >= 2) ;
+	}
+	
+	public void redo() {
+		if(canRedo())
+			currentState += 2;
 	}
 
 }
