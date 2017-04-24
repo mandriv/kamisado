@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -26,17 +27,22 @@ public class StatsFrame extends JFrame{
 	public StatsFrame() {
 		super("Statistics");
 		
-		JTabbedPane tabbedPane = new JTabbedPane();
-		tabbedPane.addTab("General", getGeneralPanel());
-		tabbedPane.addTab("Games", getGamesPanel());
-		
-		this.add(tabbedPane);
-		this.setPreferredSize(new Dimension(600, 500));
-		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		this.pack();
-		this.setVisible(true);
-		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-		this.setLocation(dim.width / 2 - this.getSize().width / 2, dim.height / 2 - this.getSize().height / 2);
+		if(Stats.getStats().size() == 0) {
+			JOptionPane.showMessageDialog(null, "No games in history! :(", "Ooopsie!",
+			        JOptionPane.WARNING_MESSAGE);
+		} else {
+			JTabbedPane tabbedPane = new JTabbedPane();
+			tabbedPane.addTab("General", getGeneralPanel());
+			tabbedPane.addTab("Games", getGamesPanel());
+			
+			this.add(tabbedPane);
+			this.setPreferredSize(new Dimension(600, 500));
+			this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+			this.pack();
+			this.setVisible(true);
+			Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+			this.setLocation(dim.width / 2 - this.getSize().width / 2, dim.height / 2 - this.getSize().height / 2);
+		}
 		
 	}
 	

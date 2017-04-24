@@ -1,1 +1,2 @@
 {"gameStat":{"player1":{"score":0,"color":0,"name":"Jack","aiDifficulty":0,"moveCount":6},"player2":{"score":4,"color":1,"name":"Computer","aiDifficulty":2,"moveCount":6},"time":"24/04/2017 14:55:02"}}
+{"gameStat":{"player1":{"score":0,"color":0,"name":"Jack","aiDifficulty":0,"moveCount":5},"player2":{"score":1,"color":1,"name":"Computer","aiDifficulty":3,"moveCount":4},"time":"24/04/2017 17:19:12"}}

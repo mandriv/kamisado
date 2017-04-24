@@ -189,9 +189,9 @@ public class BoardGUI extends MenuPanel implements ActionListener{
 		undoButton.addActionListener(new ActionListener() {
 			
 			@Override
-			public void actionPerformed(ActionEvent e) {
-				//gc.undo();	
-				System.out.println(board.getJSON().toString());
+			public void actionPerformed(ActionEvent e) {	
+				gc.undo();
+				System.out.println(gc.history.currentState);
 			}
 		});
 		
@@ -199,7 +199,8 @@ public class BoardGUI extends MenuPanel implements ActionListener{
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				gc.redo();			
+				gc.redo();
+				System.out.println(gc.history.currentState);
 			}
 		});	
 		
@@ -274,6 +275,7 @@ public class BoardGUI extends MenuPanel implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent ev) {
 		if(ev.getSource()==refresherTimer){
+			board = control.board;
 			repaint();// this will call at every 0.1 second
 		}
 	}
