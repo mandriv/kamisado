@@ -15,6 +15,11 @@ public class Tower {
 	private static final int RANGE_SUMO        = 5;
 	private static final int RANGE_DOUBLESUMO  = 3;
 	private static final int RANGE_TRIPLESUMO  = 1;
+	
+	private static final int POINTS_SUMO        =  1;
+	private static final int POINTS_DOUBLESUMO  =  3;
+	private static final int POINTS_TRIPLESUMO  =  7;
+	private static final int POINTS_QUADSUMO    = 15;
 
 	PlayerColor player;
 	GameColor color;
@@ -76,8 +81,18 @@ public class Tower {
 	}
 	
 	public void upgrade() {
-		if(sumo < 3)
+		if(sumo <= 3)
 			sumo++;
+	}
+	
+	public int getPointsForWinning() {
+		switch(sumo) {
+			case 1: return POINTS_SUMO;
+			case 2: return POINTS_DOUBLESUMO;
+			case 3: return POINTS_TRIPLESUMO;
+			case 4: return POINTS_QUADSUMO;
+			default : return 0;
+		}
 	}
 	
 	public JSONObject getJSON() {

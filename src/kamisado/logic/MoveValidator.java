@@ -53,8 +53,8 @@ public class MoveValidator {
 				if (y+i > 7)
 					break;
 				if (board.getSquare(y+i, col).isOccupied()){
-					if(t.getSumoLevel() > 0)
-						markIfPushPossible(t, board.getSquare(y+i, col));
+					if(t.getSumoLevel() > 0 && isPushPossible(t, board.getSquare(y+i, col), board))
+						list.add(board.getSquare(y+i, col));
 					break;
 				}
 				list.add(board.getSquare(y+i, col));
@@ -68,17 +68,16 @@ public class MoveValidator {
 					break;
 				list.add(board.getSquare(y+i, x-i));
 			}
-
+			
 			// skew moves right down
-			int j = col + 1;
-			for (int i = row + 1; i <= 7; i++) {
-				if (j > 7)
+			y = row;
+			x = col;
+			for(int i = 1; i <= t.getRange(); i++) {
+				if (x+i > 7 || y+i > 7 || board.getSquare(y+i, x+i).isOccupied())
 					break;
-				if (board.getSquare(i, j).isOccupied())
-					break;
-				list.add(board.getSquare(i, j));
-				j++;
+				list.add(board.getSquare(y+i, x+i));
 			}
+
 		}
 		// white moves
 		else {
@@ -89,8 +88,9 @@ public class MoveValidator {
 				if (y-i < 0)
 					break;
 				if (board.getSquare(y-i, col).isOccupied()){
-					if(t.getSumoLevel() > 0)
-						markIfPushPossible(t, board.getSquare(y-i, col));
+					if(t.getSumoLevel() > 0 && isPushPossible(t, board.getSquare(y-i, col), board)) {
+						list.add(board.getSquare(y-i, col));
+					}	
 					break;
 				} else
 				list.add(board.getSquare(y-i, col));
@@ -106,22 +106,47 @@ public class MoveValidator {
 			}
 			
 			// skew moves right forward
-			int j = col + 1;
-			for (int i = row - 1; i >= 0; i--) {
-				if (j > 7)
+			y = row;
+			x = col;
+			for(int i = 1; i <= t.getRange(); i++) {
+				if (x+i > 7 || y-i < 0 || board.getSquare(y-i, x+i).isOccupied())
 					break;
-				if (board.getSquare(i, j).isOccupied())
-					break;
-				list.add(board.getSquare(i, j));
-				j++;
+				list.add(board.getSquare(y-i, x+i));
 			}
+			
 		}
 		return list;
 
 	}
 	
-	private static void markIfPushPossible(Tower t, Square dstSq) {
+	private static boolean isPushPossible(Tower sumoTower, Square dstSq, Board board) {
+		int n = 1;
 		
+		int row = board.getSquareRowCoord(dstSq);
+		int col = board.getSquareColCoord(dstSq);
+		
+		
+		for(int i = 1; i <= 3; i++) {
+			if(sumoTower.getOwnerColorValue() == PlayerColor.BLACK) {
+				if(row+i > 7)
+					break;
+				if(board.getSquare(row+i, col).isOccupied())
+					n++;
+				else
+					if(n <= sumoTower.getSumoLevel())
+						return true;
+			} else {
+				if(row-i < 0)
+					break;
+				if(board.getSquare(row-i, col).isOccupied())
+					n++;
+				else
+					if(n <= sumoTower.getSumoLevel())
+						return true;
+			}
+		}
+		
+		return false;
 	}
 	
 	public static int numberOfPossibleMovesForSquare(Board board, Square square) {
@@ -129,61 +154,70 @@ public class MoveValidator {
 		if(square.isOccupied()) {
 			int col = board.getSquareColCoord(square);
 			int row = board.getSquareRowCoord(square);
-			if (square.getTower().getOwnerColorValue() == PlayerColor.BLACK) {
+			Tower t = square.getTower();
+			if (t.getOwnerColorValue() == PlayerColor.BLACK) {
 				// moves down
-				for (int i = row + 1; i <= 7; i++) {
-					if (board.getSquare(i, col).isOccupied())
+				int x;
+				int y = row;
+				for(int i = 1; i <= t.getRange(); i++) {
+					if (y+i > 7)
 						break;
-					list.add(board.getSquare(i, col));
+					if (board.getSquare(y+i, col).isOccupied()){
+						if(t.getSumoLevel() > 0 && isPushPossible(t, board.getSquare(y+i, col), board))
+							list.add(board.getSquare(y+i, col));
+						break;
+					}
+					list.add(board.getSquare(y+i, col));
 				}
 				// skew moves left down
-				int j = col - 1;
-				for (int i = row + 1; i <= 7; i++) {
-					if (j < 0)
+				y = row;
+				x = col;
+				for(int i = 1; i <= t.getRange(); i++) {
+					if (x-i < 0 || y+i > 7 || board.getSquare(y+i, x-i).isOccupied())
 						break;
-					if (board.getSquare(i, j).isOccupied())
-						break;
-					list.add(board.getSquare(i, j));
-					j--;
-				}
+					list.add(board.getSquare(y+i, x-i));
+				}			
 				// skew moves right down
-				j = col + 1;
-				for (int i = row + 1; i <= 7; i++) {
-					if (j > 7)
+				y = row;
+				x = col;
+				for(int i = 1; i <= t.getRange(); i++) {
+					if (x+i > 7 || y+i > 7 || board.getSquare(y+i, x+i).isOccupied())
 						break;
-					if (board.getSquare(i, j).isOccupied())
-						break;
-					list.add(board.getSquare(i, j));
-					j++;
+					list.add(board.getSquare(y+i, x+i));
 				}
 			}
 			// white moves
 			else {
-				// forward moves
-				for (int i = row - 1; i >= 0; i--) {
-					if (board.getSquare(i, col).isOccupied())
+				int x;
+				int y = row;
+				for(int i = 1; i <= t.getRange(); i++) {
+					if (y-i < 0)
 						break;
-					list.add(board.getSquare(i, col));
+					if (board.getSquare(y-i, col).isOccupied()){
+						if(t.getSumoLevel() > 0 && isPushPossible(t, board.getSquare(y-i, col), board)) {
+							list.add(board.getSquare(y-i, col));
+						}	
+						break;
+					} else
+					list.add(board.getSquare(y-i, col));
 				}
+				
 				// skew moves left forward
-				int j = col - 1;
-				for (int i = row - 1; i >= 0; i--) {
-					if (j < 0)
+				y = row;
+				x = col;
+				for(int i = 1; i <= t.getRange(); i++) {
+					if (x-i < 0 || y-i < 0 || board.getSquare(y-i, x-i).isOccupied())
 						break;
-					if (board.getSquare(i, j).isOccupied())
-						break;
-					list.add(board.getSquare(i, j));
-					j--;
+					list.add(board.getSquare(y-i, x-i));
 				}
+				
 				// skew moves right forward
-				j = col + 1;
-				for (int i = row - 1; i >= 0; i--) {
-					if (j > 7)
+				y = row;
+				x = col;
+				for(int i = 1; i <= t.getRange(); i++) {
+					if (x+i > 7 || y-i < 0 || board.getSquare(y-i, x+i).isOccupied())
 						break;
-					if (board.getSquare(i, j).isOccupied())
-						break;
-					list.add(board.getSquare(i, j));
-					j++;
+					list.add(board.getSquare(y-i, x+i));
 				}
 			}
 		}
@@ -191,7 +225,7 @@ public class MoveValidator {
 	}
 
 	public static boolean isLegalMove(Board board, Square srcSq, Square destSq) {
-		if (!srcSq.isOccupied() || destSq.isOccupied()) {
+		if (!srcSq.isOccupied()) {
 			System.out.println("illegal move type 1");
 			return false;
 		}
@@ -333,6 +367,8 @@ public class MoveValidator {
 	
 	//not tested
 	public static Tower getDeadlockWinningTower(Board board, Square dstSq) {
+		if(dstSq == null)
+			return null;
 		int winner = (dstSq.getTower().getOwnerColorValue() + 1) % 2;
 		int color =  dstSq.getTower().getColorValue();
 		for(Square square : board.getOccupiedSquaresAsList()) {

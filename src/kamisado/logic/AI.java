@@ -92,12 +92,10 @@ public class AI{
 		System.out.println("getting best fill");
 		System.out.println("thinking...");
 		
-		Board boardCopy = new Board(board);	
+		Board boardCopy = new Board(board);
 		boardCopy.fillFromLeft();
 		double evalLeft = -negaMax(depthOfSearch, boardCopy, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
-		
 		boardCopy = new Board(board);
-		boardCopy.fillFromRight();
 		double evalRight = -negaMax(depthOfSearch, boardCopy, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
 		System.out.println("Fill from left: "+evalLeft+" pts");
 		System.out.println("Fill from right: "+evalRight+" pts");
@@ -131,8 +129,7 @@ public class AI{
 			board.defocusAll();			
 			board.getSquare(move.srcRow, move.srcCol).setFocused();						
 			board.markPossibleMoves();
-			
-			board.makeMove(move);	
+			board.makeMove(move);
 			
 			board.defocusAll();
 			
@@ -155,7 +152,7 @@ public class AI{
 
 	private double negaMax(int depth, Board givenBoard, double alpha, double beta) {
 		
-		if (depth <= 0 || isGameOver(givenBoard)){
+		if (depth <= 0 || givenBoard.endRound){
 			return eval(givenBoard);
 		}
 
@@ -208,8 +205,14 @@ public class AI{
 			valueBlack += MoveValidator.numberOfPossibleMovesForSquare(board, sq);
 		}
 		
-		if(isGameOver(board))
-			return Double.NEGATIVE_INFINITY;
+		if(board.endRound) {
+			if (MoveValidator.getWinningTower(board) != null) {
+				Tower t = MoveValidator.getWinningTower(board);
+				return -10000 * (t.getSumoLevel()+1);
+			} else {
+				return -10000;
+			}
+		}
 
 		if(board.getCurrentPlayerValue() == PlayerColor.WHITE){
 			return valueWhite - valueBlack;
@@ -275,11 +278,6 @@ public class AI{
 		}
 
 		return possibleMoves;
-	}
-
-
-	private boolean isGameOver(Board board) {
-		return MoveValidator.isRoundEnd(board);
 	}
 
 }

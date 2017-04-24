@@ -8,17 +8,28 @@ import java.awt.RenderingHints.Key;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import javax.activity.InvalidActivityException;
 import javax.print.attribute.standard.RequestingUserName;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.Timer;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
+import org.apache.commons.io.FilenameUtils;
 
 import kamisado.GUIcomponents.GUIButton;
 import kamisado.GUIcomponents.MenuLabel;
@@ -120,14 +131,19 @@ public class BoardGUI extends MenuPanel implements ActionListener{
 		
 		JPanel rightBtnPanel = new MenuPanel(new MigLayout("insets 0, fillx, flowy, al center center","[al center]","[][]"));
 		resignButton = new GUIButton("Resign");
+		JButton saveButton = new GUIButton("Save");
 		JButton undoButton = new GUIButton("Undo");
 		JButton redoButton = new GUIButton("Redo");
 		
 		resignButton.addKeyListener(kpl);
+		saveButton.addKeyListener(kpl);
+		undoButton.addKeyListener(kpl);
+		redoButton.addKeyListener(kpl);
 		
+		rightBtnPanel.add(resignButton, "sg");
+		rightBtnPanel.add(saveButton, "sg");
 		rightBtnPanel.add(undoButton, "sg");
 		rightBtnPanel.add(redoButton, "sg");
-		rightBtnPanel.add(resignButton, "sg");
 		rightBtnPanel.setOpaque(false);
 		
 		resignButton.addActionListener(new ActionListener() {
@@ -136,6 +152,37 @@ public class BoardGUI extends MenuPanel implements ActionListener{
 			public void actionPerformed(ActionEvent e) {
 				gc.getMenuFrame().setVisible(true);
 				frame.dispose();
+			}
+		});
+		
+		saveButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser fileChooser = new JFileChooser();
+				fileChooser.setDialogTitle("Specify a file to save");   
+				fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Kamisado saves", "ksv"));
+				fileChooser.setAcceptAllFileFilterUsed(false);
+				int userSelection = fileChooser.showSaveDialog(frame);
+				 
+				if (userSelection == JFileChooser.APPROVE_OPTION) {
+					File file = fileChooser.getSelectedFile();
+					if (FilenameUtils.getExtension(file.getName()).equalsIgnoreCase("ksv")) {
+					    // filename is OK as-is
+					} else {
+					    file = new File(file.toString() + ".ksv");  // append .xml if "foo.jpg.xml" is OK
+					    file = new File(file.getParentFile(), FilenameUtils.getBaseName(file.getName())+".ksv"); // ALTERNATIVELY: remove the extension (if any) and replace it with ".xml"
+					}
+					Path path = Paths.get(file.getAbsolutePath());
+				    Charset charset = Charset.forName("US-ASCII");
+				    String s = board.getJSON().toString();
+				    try (BufferedWriter writer = 
+				    		Files.newBufferedWriter(path,charset)) {
+				        writer.write(s, 0, s.length());
+				    } catch (IOException x) {
+				        System.err.format("IOException: %s%n", x);
+				    }
+				}
 			}
 		});
 		
@@ -227,7 +274,6 @@ public class BoardGUI extends MenuPanel implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent ev) {
 		if(ev.getSource()==refresherTimer){
-			board = control.board;
 			repaint();// this will call at every 0.1 second
 		}
 	}

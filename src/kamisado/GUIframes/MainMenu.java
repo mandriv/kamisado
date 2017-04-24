@@ -10,17 +10,29 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
+import org.json.JSONObject;
 
 import kamisado.GUIcomponents.MenuButton;
 import kamisado.GUIcomponents.MenuCheckBox;
+import kamisado.util.GameFactory;
 import kamisado.util.SoundTrack;
 
 public class MainMenu extends JPanel {
@@ -100,8 +112,8 @@ public class MainMenu extends JPanel {
 		startBtn = new MenuButton("New game");
 		JButton loadBtn = new MenuButton("Load game");
 		JButton onlineBtn = new MenuButton("Play Online");
+		JButton statsBtn = new MenuButton("Stats");
 		JButton settingsBtn = new MenuButton("Settings");
-		JButton helpBtn = new MenuButton("Help");
 		JButton exitBtn = new MenuButton("Exit");
 		
 		startBtn.addActionListener(new ActionListener() {
@@ -116,7 +128,21 @@ public class MainMenu extends JPanel {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-
+				JFileChooser fileChooser = new JFileChooser();
+				fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+				fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Kamisado saves", "ksv"));
+				fileChooser.setAcceptAllFileFilterUsed(false);
+				int result = fileChooser.showOpenDialog(frame);
+				if (result == JFileChooser.APPROVE_OPTION) {
+					Path path = Paths.get(fileChooser.getSelectedFile().getAbsolutePath());
+				    Charset charset = Charset.forName("US-ASCII");
+					try (BufferedReader reader = Files.newBufferedReader(path, charset)) {
+					    String line = reader.readLine();
+					    GameFactory.createGameFromJSON(new JSONObject(line), frame);
+					} catch (IOException x) {
+					    System.err.format("IOException: %s%n", x);
+					}
+				}
 			}
 		});
 		onlineBtn.addActionListener(new ActionListener() {
@@ -127,20 +153,20 @@ public class MainMenu extends JPanel {
 				SignInUpFrame signInUpFrame = new SignInUpFrame(frame);
 			}
 		});
+		statsBtn.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 		settingsBtn.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				cards.show(container, "settings");
 				soundCB.requestFocusInWindow();
-			}
-		});
-		helpBtn.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				
 			}
 		});
 		exitBtn.addActionListener(new ActionListener() {
@@ -153,9 +179,9 @@ public class MainMenu extends JPanel {
 		
 		btnPanel.add(startBtn);	
 		btnPanel.add(loadBtn);		
-		btnPanel.add(onlineBtn);		
+		btnPanel.add(onlineBtn);	
+		btnPanel.add(statsBtn);
 		btnPanel.add(settingsBtn);	
-		btnPanel.add(helpBtn);
 		btnPanel.add(exitBtn);
 
 		container.add(btnPanel, "main");

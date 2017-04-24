@@ -75,12 +75,13 @@ public class Board {
 		markPossibleMoves();
 	}
 
-	public Board(JSONObject json) throws IOException {
+	//for loading from json
+	public Board(JSONObject json){
 		boardArray = new Square[8][8];
 		JSONArray boardArrJSON = json.getJSONArray("board");
 		for(int i = 0; i <= 7; i++) {
 			JSONArray rowJSON = boardArrJSON.getJSONArray(i);
-			for(int j = 0; j <= 7; i++) {
+			for(int j = 0; j <= 7; j++) {
 				JSONObject squareJSON = rowJSON.getJSONObject(j);
 				boardArray[i][j] = new Square(squareJSON.getInt("color"));
 				if(squareJSON.has("tower")) {
@@ -125,11 +126,13 @@ public class Board {
 				}
 			}
 		}
-
-		currentPlayer = original.currentPlayer;
+		player1 = new Player(original.player1);
+		player2 = new Player(original.player2);
+		if(original.currentPlayer == original.player1)
+			currentPlayer = player1;
+		else
+			currentPlayer = player2;
 		currentTowerColor = new GameColor(original.getCurrentTowerColorValue());
-		player1 = original.player1;
-		player2 = original.player2;		
 		round = original.getRoundNumber();
 		pointsLimit = original.getPointsLimit();	
 		speedMode = original.speedMode;
@@ -367,14 +370,23 @@ public class Board {
 	public boolean makeMove(Square srcSq, Square destSq) {
 		if (!MoveValidator.isLegalMove(this, srcSq, destSq))
 			return false;
-		Tower t = srcSq.getTower();
-		srcSq.clearSquare();
-		destSq.setTower(t);
-		currentTowerColor.setValue(destSq.getColor());
+		if(!destSq.isOccupied()) {
+			Tower t = srcSq.getTower();
+			srcSq.clearSquare();
+			destSq.setTower(t);
+			currentTowerColor.setValue(destSq.getColor());
+		} else {
+			int nextColor = sumoPush(destSq);
+			Tower t = srcSq.getTower();
+			srcSq.clearSquare();
+			destSq.setTower(t);
+			currentTowerColor.setValue(nextColor);
+		}
 		currentPlayer.incrementMoveCount();
 		if (MoveValidator.isRoundEnd(this)) {
 			endRound = true;
 			MoveValidator.getWinningTower(this).upgrade();
+			currentPlayer.addPoints(MoveValidator.getWinningTower(this));
 		}
 		else {
 			switchSide();
@@ -383,6 +395,7 @@ public class Board {
 					switchSide();
 					endRound = true;
 					MoveValidator.getDeadlockWinningTower(this, destSq).upgrade();
+					currentPlayer.addPoints(MoveValidator.getDeadlockWinningTower(this, destSq));
 				} else {
 					switchSide();
 				}
@@ -400,6 +413,37 @@ public class Board {
 		Square destSq = getSquare(move.dstRow, move.dstCol);
 		
 		return makeMove(srcSq, destSq);
+	}
+	
+	//return color value of the last tile of push
+	private int sumoPush(Square firstSq) {
+		
+		int row = getSquareRowCoord(firstSq);
+		int col = getSquareColCoord(firstSq);
+		int lastRow = row;
+		int i = 1;
+		if(getCurrentPlayerValue() == PlayerColor.BLACK) {
+			while(getSquare(row+i, col).isOccupied()) {
+				i++;
+			}
+			lastRow = row+i;
+			for(int j = 0; j < i; j++) {
+				boardArray[row+i-j][col].setTower(getSquare(row+i-j-1, col).getTower());
+			}
+		} else {
+			while(getSquare(row-i, col).isOccupied()) {
+				i++;
+			}
+			lastRow = row-i;
+			for(int j = 0; j < i; j++) {
+				boardArray[row-i-j][col].setTower(getSquare(row-i-j+1, col).getTower());
+			}
+		}
+		
+		firstSq.clearSquare();
+		
+		return getSquare(lastRow, col).getColor();
+		
 	}
 
 	public void switchSide() {

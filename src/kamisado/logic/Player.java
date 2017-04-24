@@ -37,11 +37,24 @@ public class Player {
 		this.score = score;
 	}
 	
+	public Player(Player p) {
+		color = p.color;
+		name  = p.name;
+		ai    = p.ai;
+		moveCount    = p.moveCount; 
+		score = p.score;
+		aiDifficulty = p.aiDifficulty;
+	}
+	
 	public int getScore() {
 		return score;
 	}
 	
-	public void incrementScore() {
+	public void addPoints(Tower winningTower) {
+		score += winningTower.getPointsForWinning();
+	}
+	
+	public void addPoint() {
 		score++;
 	}
 	

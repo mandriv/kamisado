@@ -8,14 +8,14 @@ import org.json.JSONObject;
 
 public class Square {
 
-	GameColor squareColor;
-	Tower tower;
-	boolean occupied;
-	boolean focused;
-	boolean possible;
-	boolean hovered;
-	int xPosition;
-	int yPosition;
+	private GameColor squareColor;
+	private Tower tower;
+	private boolean occupied;
+	private boolean focused;
+	private boolean possible;
+	private boolean hovered;
+	private int xPosition;
+	private int yPosition;
 
 	public Square(int color, Tower tower) {
 		squareColor = new GameColor(color);

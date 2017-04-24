@@ -2,6 +2,8 @@ package kamisado.util;
 
 import javax.swing.JFrame;
 
+import org.json.JSONObject;
+
 import kamisado.GUIframes.BoardGUI;
 import kamisado.control.GameController;
 import kamisado.logic.Board;
@@ -95,6 +97,12 @@ public class GameFactory {
 		GameController gc = new GameController(b, menuFrame);
 		BoardGUI bgui = new BoardGUI(gc);
 		
+	}
+	
+	public static void createGameFromJSON(JSONObject json, JFrame menuFrame) {
+		Board b = new Board(json);
+		GameController gc = new GameController(b, menuFrame);
+		BoardGUI bgui = new BoardGUI(gc);
 	}
 
 }

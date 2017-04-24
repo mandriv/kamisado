@@ -12,6 +12,7 @@ import kamisado.logic.AI;
 import kamisado.logic.Board;
 import kamisado.logic.GameTimer;
 import kamisado.logic.Move;
+import kamisado.logic.MoveValidator;
 import kamisado.logic.PlayerColor;
 import kamisado.logic.Square;
 import kamisado.logic.State;
@@ -139,7 +140,7 @@ public class GameController {
 		Square focusedSquare = board.getFocusedSquare();
 
 		//if second click (1. On tower 2. On Empty space
-		if (hasFocused && !desiredSquare.isOccupied() ) {
+		if (hasFocused) {
 			requestMove(focusedSquare, desiredSquare);
 			return;
 		}
@@ -189,15 +190,7 @@ public class GameController {
 		}
 		return false;
 	}
-	/*
-	public boolean requestMove(Move move) {
-		
-		Square srcSq = board.getSquare(move.srcRow, move.srcCol);
-		Square destSq = board.getSquare(move.dstRow, move.dstCol);
-		
-		return requestMove(srcSq, destSq);
-	}
-	*/
+
 	public boolean requestMove(Move move) {
 		
 		Square srcSq = board.getSquare(move.srcRow, move.srcCol);
@@ -205,9 +198,6 @@ public class GameController {
 		board.defocusAll();
 		srcSq.setFocused();
 		board.markPossibleMoves();
-		
-		if(board.endRound)
-			System.out.println("chuj");
 		
 		return requestMove(srcSq, destSq);
 	}
@@ -217,14 +207,15 @@ public class GameController {
 			timer.cancel();
 			resetProgressBar();
 		}
-		board.currentPlayer.incrementScore();
 		board.defocusAll();
-		if(board.getCurrentPlayerScore() == board.getPointsLimit()) {
+		if(board.getCurrentPlayerScore() >= board.getPointsLimit()) {
 			handleEndGame();
 			return;
 		} else {
 			if(board.isCurrentPlayerAI()) {
 				ai.requestFill(board, board.getCurrentPlayerAIDif());
+				board.nextRound();
+				board.markPossibleMoves();
 			} else {
 				String winner = board.getCurrentPlayerName();
 				board.nextRound();
@@ -309,7 +300,7 @@ public class GameController {
 	}
 	
 	private boolean isGameOver() {
-		return board.player1.getScore() == board.getPointsLimit() || board.player2.getScore() == board.getPointsLimit();
+		return board.player1.getScore() >= board.getPointsLimit() || board.player2.getScore() >= board.getPointsLimit();
 	}
 
 }
