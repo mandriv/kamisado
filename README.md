@@ -2,7 +2,7 @@
 
 Kamisado is an abstract strategy board game for two players that's played on an 8x8 multicoloured board. Each player controls a set of eight octagonal dragon tower pieces. Each player’s set of dragon towers contains a tower to match each of the colours that appear on the squares of the board (i.e., a brown tower, a green tower, etc.). One player’s towers have gold dragons mounted on the top, while the other player’s towers are topped with black dragons.
 
-For server implementation [https://github.com/mandriv/kamisado-server](click here) 
+For server implementation [click here](https://github.com/mandriv/kamisado-server) 
 
 ## Project features
 
@@ -20,7 +20,7 @@ You can also:
 
 ## Tech
 
-The core of the project relies on MVC desigin pattern represented primarly by three classes: Board.java (Model), BoardGUI.java (View), GameController.java (Controller). Computers moves are generated using AI.java class. Depending on difficulty, AI checks all the possible moves for 1-6 next consecutive turns and picks the best one based on the evaluation function. This function returns the evaluation score based on a couple of factors:
+The core of the project relies on MVC desigin pattern represented primarly by three classes: Board.java (Model), BoardGUI.java (View), GameController.java (Controller). Computers moves are generated using AI.java class. Depending on difficulty, AI checks all the possible moves for 1-6 next consecutive turns using negamax algorithm with alpha beta pruning and picks the best one based on the evaluation function. This function returns the evaluation score based on a couple of factors:
 
   - Number of one move instant wins possibilites
   - Number of possible moves
