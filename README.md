@@ -27,5 +27,3 @@ The core of the project relies on MVC desigin pattern represented primarly by th
   - Type of piece used for final move (e.g. it is better to finish round with double sumo than with a tower)
  
 Each game can be saved and loaded. Game data is stored as JSON objects and can we loaded with provided constructor. Each human vs computer game is saved for stats purposes.
-
-Online part is not yet fully developed. It relies on Node.js server hosted currently on heroku, which serves mainly as RESTful API for users and games management and Socket.io connections. The idea is to have the model and controller part served online, so the user has only a view of the logic behind the game. Each action request is to be served by WebSockets (Socket.io) using JSON objects. Server has basic security precautions like authorization, authentication (implemented using JSON Web Tokens).
